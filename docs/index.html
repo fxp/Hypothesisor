@@ -72,6 +72,9 @@
 
   pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13.5px; line-height: 1.5; }
 
+  .demo-wrap { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(37, 99, 235, 0.35); background: #0f172a; }
+  .demo-wrap video { display: block; width: 100%; height: auto; }
+
   table.depth { width: 100%; border-collapse: collapse; font-size: 14.5px; }
   table.depth th, table.depth td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
   table.depth th { background: #f8fafc; font-weight: 600; }
@@ -109,6 +112,18 @@
     </div>
   </div>
 </header>
+
+<section>
+  <div class="container">
+    <h2>看它怎么跑</h2>
+    <div class="demo-wrap">
+      <video src="demo.mp4" poster="demo-poster.jpg" controls preload="metadata" playsinline></video>
+    </div>
+    <p style="color: var(--mute); margin-top: 12px; font-size: 14px;">
+      约 47 秒 · 1440p · 演示：打开任意网页 → 点扩展 → 选风格 → 生成候选 → 勾选发布 → 在原页面查看叠加标注
+    </p>
+  </div>
+</section>
 
 <section>
   <div class="container">
