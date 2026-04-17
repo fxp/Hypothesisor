@@ -40,7 +40,13 @@ const FORMAT_SUFFIX = `
 【quote 规范】
 1. 必须是原文逐字引用，不可改动
 2. 原文是英文则引用英文；中文则引中文
-3. 不要引用标题、URL、导航元数据`;
+3. 不要引用标题、URL、导航元数据
+
+【JSON 输出硬约束 —— 违反会导致解析失败】
+- 只输出 JSON 数组本体，不要代码块、不要解释文字
+- 字符串值内的换行写成 \\n（两个字符）；不要直接换行
+- 所有引号用 ASCII 双引号 "，不要用 "、"、'
+- 示例 comment 字段：  "comment": "**点题**\\n\\n展开说明内容"`;
 
 function computeDepth(n) {
   if (n < 4000)  return { lo: 3,  hi: 5,  label: "短文" };
@@ -108,12 +114,39 @@ export async function callGLM({ content, url, mode, style, apiKey }) {
   try {
     return JSON.parse(match[0]);
   } catch (e) {
-    // Light repair: trim trailing comma, fix single quotes
-    const repaired = match[0]
-      .replace(/,\s*([\]\}])/g, "$1")
-      .replace(/[\u201c\u201d]/g, '"');
-    return JSON.parse(repaired);
+    try {
+      return JSON.parse(repairJSON(match[0]));
+    } catch (e2) {
+      throw new Error(`JSON 解析失败（已尝试修复）：${e2.message}`);
+    }
   }
+}
+
+// Repair common LLM JSON issues:
+//   - raw control chars (\n \r \t) inside string literals
+//   - trailing commas before ] or }
+//   - curly/smart quotes used as delimiters
+function repairJSON(s) {
+  s = s.replace(/[\u201c\u201d]/g, '"').replace(/[\u2018\u2019]/g, "'");
+  let out = "";
+  let inStr = false;
+  let esc = false;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (esc) { out += c; esc = false; continue; }
+    if (c === "\\") { out += c; esc = true; continue; }
+    if (c === '"') { inStr = !inStr; out += c; continue; }
+    if (inStr) {
+      if (c === "\n") out += "\\n";
+      else if (c === "\r") out += "\\r";
+      else if (c === "\t") out += "\\t";
+      else if (c.charCodeAt(0) < 0x20) out += "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0");
+      else out += c;
+    } else {
+      out += c;
+    }
+  }
+  return out.replace(/,\s*([\]\}])/g, "$1");
 }
 
 export function validateQuote(content, quote) {
