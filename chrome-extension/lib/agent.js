@@ -20,33 +20,29 @@ const STYLE_PROMPTS = {
 };
 
 const FORMAT_SUFFIX = `
-请以 JSON 数组返回标注，每个对象包含：
+请返回 JSON 对象 {"annotations": [ ...标注数组 ]}。每条标注字段：
 - "quote": 原文精确引用（10~60 字，逐字不改）
-- "comment": 标注正文（见下方格式要求）
+- "headline": 一句话点题（≤20 字，纯文本，不要加星号 / 引号 / 换行）
+- "detail": 展开说明（40~80 字，一两句话，说清楚为什么重要 / 机制 / 含义）
 - "tags": 2~3 个英文小写短标签
 
-【comment 排版规范（使用 Hypothesis 支持的 Markdown）】
-结构固定为两行，用一个空行分隔：
-  **一句话点题**（≤20 字，加粗；是你对这条引用的 takeaway）
-
-  展开说明（40~80 字，一两句话，说清楚为什么重要 / 背后的机制 / 有什么含义）
+程序会自动把 headline 与 detail 拼成 Markdown（加粗点题 + 空行 + 展开），你只需填字段本身。
 
 其他要求：
-- 总字数控制在 60~120 字，**不要超过 120 字**
-- 避免套话、过渡词、结尾总结式的"总之…""这反映了…"
-- 允许在展开部分用 "A → B" 这类符号表达因果或对比，不用长句堆叠
-- 不要给引用复述一遍，要加增量信息（数字、对比、隐含假设、延伸思考）
+- 避免套话、过渡词、结尾式"总之…""这反映了…"
+- 允许用 "A → B" 表达因果或对比，不用长句堆叠
+- 不要复述引用，要加增量信息（数字、对比、隐含假设、延伸思考）
 
 【quote 规范】
 1. 必须是原文逐字引用，不可改动
 2. 原文是英文则引用英文；中文则引中文
 3. 不要引用标题、URL、导航元数据
 
-【JSON 输出硬约束 —— 违反会导致解析失败】
-- 只输出 JSON 数组本体，不要代码块、不要解释文字
-- 字符串值内的换行写成 \\n（两个字符）；不要直接换行
-- 所有引号用 ASCII 双引号 "，不要用 "、"、'
-- 示例 comment 字段：  "comment": "**点题**\\n\\n展开说明内容"`;
+【JSON 硬约束】
+- 只输出 JSON 对象本体，不要代码块、不要解释文字
+- 所有字符串字段都必须用 ASCII 双引号 " 包裹，不要裸值、不要花引号
+- 字符串内禁止出现真实换行，如需换行写成 \\n
+- 示例：{"annotations":[{"quote":"...","headline":"点题一句话","detail":"展开 40-80 字","tags":["a","b"]}]}`;
 
 function computeDepth(n) {
   if (n < 4000)  return { lo: 3,  hi: 5,  label: "短文" };
@@ -100,6 +96,7 @@ export async function callGLM({ content, url, mode, style, apiKey }) {
     body: JSON.stringify({
       model: BIGMODEL_MODEL,
       max_tokens: maxTokens,
+      response_format: { type: "json_object" },
       messages: [
         { role: "system", content: system },
         { role: "user", content: `URL: ${url}\n\n文章内容：\n\n${truncated}` },
@@ -109,16 +106,34 @@ export async function callGLM({ content, url, mode, style, apiKey }) {
   if (!resp.ok) throw new Error(`BigModel ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
   const data = await resp.json();
   const text = data.choices?.[0]?.message?.content || "";
-  const match = text.match(/\[[\s\S]*\]/);
-  if (!match) throw new Error("LLM 未返回 JSON 数组");
-  try {
-    return JSON.parse(match[0]);
-  } catch (e) {
-    try {
-      return JSON.parse(repairJSON(match[0]));
-    } catch (e2) {
-      throw new Error(`JSON 解析失败（已尝试修复）：${e2.message}`);
-    }
+  const parsed = parseLLMJson(text);
+  const list = Array.isArray(parsed) ? parsed : parsed.annotations || parsed.items || parsed.data || [];
+  return list.map((a) => ({
+    quote: a.quote || "",
+    comment: a.comment || buildComment(a.headline, a.detail),
+    tags: Array.isArray(a.tags) ? a.tags : [],
+  }));
+}
+
+function buildComment(headline, detail) {
+  const h = (headline || "").trim().replace(/^\*+|\*+$/g, "");
+  const d = (detail || "").trim();
+  if (!h && !d) return "";
+  if (!h) return d;
+  if (!d) return `**${h}**`;
+  return `**${h}**\n\n${d}`;
+}
+
+function parseLLMJson(text) {
+  // Try direct first
+  try { return JSON.parse(text); } catch (_) {}
+  // Extract first {...} or [...] block
+  const block = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+  if (!block) throw new Error("LLM 未返回 JSON");
+  try { return JSON.parse(block[0]); } catch (_) {}
+  // Repair and retry
+  try { return JSON.parse(repairJSON(block[0])); } catch (e) {
+    throw new Error(`JSON 解析失败（已尝试修复）：${e.message}`);
   }
 }
 
