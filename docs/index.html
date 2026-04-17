@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hypothesisor · 让 AI 为你读懂网页，一键标注到 Hypothesis</title>
+<meta name="description" content="Chrome 扩展，用 GLM 读当前网页、生成高质量 Hypothesis 标注。BYO key，无后端。" />
+<style>
+  :root {
+    --violet: #7C3AED;
+    --blue: #2563EB;
+    --cyan: #06B6D4;
+    --mint: #34D399;
+    --ink: #0f172a;
+    --mute: #475569;
+    --line: #e2e8f0;
+    --bg: #fafafa;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font: 16px/1.6 -apple-system, "Helvetica Neue", "PingFang SC", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    background: linear-gradient(135deg, var(--violet), var(--blue) 55%, var(--cyan));
+    color: white;
+    padding: 72px 0 88px;
+  }
+  header .container { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+  .logo { width: 96px; height: 112px; flex-shrink: 0; }
+  .hero h1 { font-size: 42px; margin: 0 0 8px; letter-spacing: -0.5px; }
+  .hero p.tagline { font-size: 19px; margin: 0 0 20px; opacity: 0.92; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: transform 0.1s;
+  }
+  .btn:hover { transform: translateY(-1px); text-decoration: none; }
+  .btn.primary { background: white; color: var(--violet); }
+  .btn.ghost { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.4); }
+
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  h2 { font-size: 26px; margin: 0 0 20px; letter-spacing: -0.3px; }
+  h3 { font-size: 17px; margin: 0 0 6px; }
+
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .feat { background: white; border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .feat .tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; background: linear-gradient(135deg, var(--violet), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px; }
+  .feat p { color: var(--mute); margin: 0; font-size: 14.5px; }
+
+  ol.steps { counter-reset: step; list-style: none; padding: 0; }
+  ol.steps > li { counter-increment: step; position: relative; padding: 14px 14px 14px 60px; background: white; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; }
+  ol.steps > li::before {
+    content: counter(step);
+    position: absolute; left: 16px; top: 14px;
+    width: 32px; height: 32px; line-height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--violet), var(--blue));
+    color: white; text-align: center; font-weight: 700;
+  }
+  ol.steps li code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13.5px; }
+
+  pre { background: #0f172a; color: #e2e8f0; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13.5px; line-height: 1.5; }
+
+  table.depth { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  table.depth th, table.depth td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  table.depth th { background: #f8fafc; font-weight: 600; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--mute); font-size: 13.5px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <svg class="logo" viewBox="0 0 384 448" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="384" y2="448" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+          <stop offset="1" stop-color="#ffffff" stop-opacity="0.75"/>
+        </linearGradient>
+        <linearGradient id="dot" x1="272" y1="248" x2="336" y2="312" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#FDE68A"/>
+          <stop offset="1" stop-color="#34D399"/>
+        </linearGradient>
+      </defs>
+      <path d="M36 0 H348 A36 36 0 0 1 384 36 V348 A36 36 0 0 1 348 384 H240 L192 444 L144 384 H36 A36 36 0 0 1 0 348 V36 A36 36 0 0 1 36 0 Z" fill="url(#bg)"/>
+      <text x="192" y="312" text-anchor="middle" font-family="system-ui, -apple-system, 'Helvetica Neue', sans-serif" font-size="320" font-weight="900" fill="#2563EB" letter-spacing="-12">h</text>
+      <circle cx="304" cy="288" r="30" fill="url(#dot)"/>
+    </svg>
+    <div class="hero">
+      <h1>Hypothesisor</h1>
+      <p class="tagline">让 AI 为你读懂网页，一键标注到 Hypothesis。</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/fxp/Hypothesisor">GitHub</a>
+        <a class="btn ghost" href="https://github.com/fxp/Hypothesisor/archive/refs/heads/main.zip">下载源码</a>
+        <a class="btn ghost" href="#install">安装指引</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <h2>为什么做这个</h2>
+    <p style="color: var(--mute); max-width: 680px;">
+      在 <a href="https://web.hypothes.is/">Hypothesis</a> 上做标注是高质量阅读的放大器，但人工标注慢、容易放弃。
+      Hypothesisor 用 GLM 读完整页正文，按你选的「风格」（非共识观点、金句、批判视角、AI 洞察…）
+      一次生成 5-40 条有质量的候选标注，你勾选发布即可。长文会自动加深分析。
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>核心能力</h2>
+    <div class="features">
+      <div class="feat">
+        <div class="tag">Depth-aware</div>
+        <h3>按长度自适应深度</h3>
+        <p>短文 3-5 条，长文 12-18 条，深度长文 18-28 条，超长篇章 25-40 条。覆盖各个章节。</p>
+      </div>
+      <div class="feat">
+        <div class="tag">6+1 styles</div>
+        <h3>7 种标注风格</h3>
+        <p>非共识观点 / 数据 / 行动 / 金句 / 批判性 / 令人惊讶的事实 / 任意自定义描述。</p>
+      </div>
+      <div class="feat">
+        <div class="tag">Client-side</div>
+        <h3>纯前端，无后端</h3>
+        <p>抓正文、调 GLM、POST Hypothesis 全在扩展里完成。Token 只存本地。</p>
+      </div>
+      <div class="feat">
+        <div class="tag">Quote-verified</div>
+        <h3>引用原文逐字校验</h3>
+        <p>只有在当前页面正文中能逐字命中的引用才能发布，杜绝 AI "改编"原文。</p>
+      </div>
+      <div class="feat">
+        <div class="tag">Markdown</div>
+        <h3>精炼两行排版</h3>
+        <p>每条标注统一「加粗点题 + 展开说明」结构，≤120 字，Hypothesis 原生渲染 Markdown。</p>
+      </div>
+      <div class="feat">
+        <div class="tag">BYO key</div>
+        <h3>你自己的 key</h3>
+        <p>配置一次 Hypothesis Token 和 BigModel API Key 就能用，没有中间商。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="container">
+    <h2>安装</h2>
+    <ol class="steps">
+      <li>
+        <h3>下载源码</h3>
+        <p>克隆仓库或下载 ZIP：<code>git clone https://github.com/fxp/Hypothesisor.git</code></p>
+      </li>
+      <li>
+        <h3>加载扩展</h3>
+        <p>Chrome 打开 <code>chrome://extensions</code> → 右上角开「开发者模式」→ 点「加载已解压的扩展程序」→ 选 <code>chrome-extension/</code> 目录。</p>
+      </li>
+      <li>
+        <h3>填 2 个 key</h3>
+        <p>点扩展图标 → 齿轮 ⚙ → 填入：</p>
+        <ul>
+          <li><strong>Hypothesis Token</strong> ： <a href="https://hypothes.is/account/developer">hypothes.is/account/developer</a></li>
+          <li><strong>BigModel API Key</strong>：<a href="https://open.bigmodel.cn/usercenter/apikeys">open.bigmodel.cn/usercenter/apikeys</a></li>
+        </ul>
+      </li>
+      <li>
+        <h3>开始标注</h3>
+        <p>在任意网页点扩展图标 → 选模式/风格 → 「生成标注」→ 勾选想发布的条目 → 「发布选中」。装 <a href="https://web.hypothes.is/start/">Hypothesis 浏览器插件</a>后回到原页面即可看到叠加的标注。</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>深度档位</h2>
+    <table class="depth">
+      <thead><tr><th>正文长度</th><th>档位</th><th>标注条数</th><th>输出 token</th></tr></thead>
+      <tbody>
+        <tr><td>&lt; 4k 字符</td><td>短文</td><td>3–5</td><td>4096</td></tr>
+        <tr><td>4k – 12k</td><td>中等</td><td>6–10</td><td>4096</td></tr>
+        <tr><td>12k – 30k</td><td>长文</td><td>12–18</td><td>6144</td></tr>
+        <tr><td>30k – 60k</td><td>深度长文</td><td>18–28</td><td>8192</td></tr>
+        <tr><td>&gt; 60k（截至 60k）</td><td>超长篇章</td><td>25–40</td><td>8192</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2>架构</h2>
+<pre>chrome-extension/
+├── manifest.json         # MV3 声明
+├── popup.{html,css,js}   # 主界面
+├── options.{html,js}     # Token 设置
+├── lib/agent.js          # 抽文本 → GLM → 验引用 → POST Hypothesis
+├── icons/icon.svg
+└── README.md</pre>
+    <p style="color: var(--mute);">
+      抽文本：<code>chrome.scripting.executeScript</code> 读 <code>article / main / [role=main]</code> 的 <code>innerText</code>。
+      BigModel 与 Hypothesis 两家 API 均直连，无后端。存储用 <code>chrome.storage.local</code>。
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    MIT License · 脱胎于 <a href="https://github.com/fxp/Hypothesisor/tree/main/chrome-extension">hypothesis-annotator</a> skill
+  </div>
+</footer>
+
+</body>
+</html>

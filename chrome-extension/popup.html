@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>Hypothesisor</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>Hypothesisor</h1>
+    <a id="openOptions" href="#" title="设置">⚙</a>
+  </header>
+
+  <section class="target">
+    <div id="pageTitle" class="muted">—</div>
+    <div id="pageUrl" class="url muted"></div>
+  </section>
+
+  <section class="controls">
+    <label>模式
+      <select id="mode">
+        <option value="general">general（通用）</option>
+        <option value="academic">academic（学术）</option>
+        <option value="news">news（新闻）</option>
+        <option value="tech">tech（技术）</option>
+      </select>
+    </label>
+    <label>风格
+      <select id="style">
+        <option value="">默认</option>
+        <option value="non-consensus">非共识观点</option>
+        <option value="data">具体数据</option>
+        <option value="actionable">可执行建议</option>
+        <option value="gold-sentences">金句收藏</option>
+        <option value="critique">批判性阅读</option>
+        <option value="surprise">令人惊讶的事实</option>
+        <option value="__custom__">自定义…</option>
+      </select>
+    </label>
+    <input id="styleCustom" type="text" placeholder="描述你的标注偏好" hidden />
+    <button id="generate" class="primary">生成标注</button>
+  </section>
+
+  <div id="status" class="status"></div>
+
+  <section id="results" class="results"></section>
+
+  <footer>
+    <button id="publishAll" disabled>发布选中</button>
+    <span id="counts" class="muted"></span>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

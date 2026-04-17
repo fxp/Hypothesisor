@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<title>Hypothesisor 设置</title>
+<style>
+  body { font: 14px/1.5 -apple-system, system-ui, "PingFang SC", sans-serif; max-width: 560px; margin: 40px auto; padding: 0 20px; color: #1a1a1a; }
+  h1 { font-size: 20px; margin-bottom: 24px; }
+  label { display: block; margin-bottom: 18px; }
+  label > span { display: block; font-weight: 600; margin-bottom: 4px; }
+  label > small { display: block; color: #777; font-size: 12px; margin-bottom: 6px; }
+  input, select { width: 100%; padding: 8px; font: inherit; border: 1px solid #ddd; border-radius: 4px; }
+  button { padding: 8px 18px; font: inherit; background: #BD1C2B; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  button:hover { background: #a3151f; }
+  #status { margin-left: 12px; color: #1a7f3f; }
+  a { color: #0969da; }
+</style>
+</head>
+<body>
+  <h1>Hypothesisor 设置</h1>
+
+  <label>
+    <span>Hypothesis Token <span style="color:#BD1C2B">*</span></span>
+    <small>到 <a href="https://hypothes.is/account/developer" target="_blank">hypothes.is/account/developer</a> 生成</small>
+    <input id="hypothesisToken" type="password" autocomplete="off" />
+  </label>
+
+  <label>
+    <span>BigModel API Key <span style="color:#BD1C2B">*</span></span>
+    <small>到 <a href="https://open.bigmodel.cn/usercenter/apikeys" target="_blank">open.bigmodel.cn/usercenter/apikeys</a> 申请。默认使用 glm-4-plus 模型。</small>
+    <input id="bigmodelKey" type="password" autocomplete="off" />
+  </label>
+
+  <label>
+    <span>默认模式</span>
+    <select id="defaultMode">
+      <option value="general">general（通用）</option>
+      <option value="academic">academic（学术）</option>
+      <option value="news">news（新闻）</option>
+      <option value="tech">tech（技术）</option>
+    </select>
+  </label>
+
+  <label>
+    <span>默认风格</span>
+    <small>预置 key（non-consensus / data / actionable / gold-sentences / critique / surprise）或任意自定义描述；留空用 mode 默认。</small>
+    <input id="defaultStyle" type="text" placeholder="例如：具有洞察的观点或者令人惊讶的事实" />
+  </label>
+
+  <div>
+    <button id="save">保存</button>
+    <span id="status"></span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
