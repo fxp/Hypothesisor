@@ -1,0 +1,56 @@
+{
+  "extName":         { "message": "Hypothesisor" },
+  "extDesc":         { "message": "用 GLM 读懂当前网页，一键在 Hypothesis 上生成高质量标注。BYO key，纯前端，开源。" },
+
+  "popup_settings_title":  { "message": "设置" },
+  "popup_label_mode":      { "message": "模式" },
+  "popup_label_style":     { "message": "风格" },
+  "popup_style_default":   { "message": "默认" },
+  "popup_style_custom":    { "message": "自定义…" },
+  "popup_style_placeholder": { "message": "描述你的标注偏好" },
+  "popup_btn_generate":    { "message": "生成标注" },
+  "popup_btn_publish":     { "message": "发布选中" },
+
+  "mode_general":   { "message": "general（通用）" },
+  "mode_academic":  { "message": "academic（学术）" },
+  "mode_news":      { "message": "news（新闻）" },
+  "mode_tech":      { "message": "tech（技术）" },
+
+  "style_non_consensus":  { "message": "非共识观点" },
+  "style_data":           { "message": "具体数据" },
+  "style_actionable":     { "message": "可执行建议" },
+  "style_gold_sentences": { "message": "金句收藏" },
+  "style_critique":       { "message": "批判性阅读" },
+  "style_surprise":       { "message": "令人惊讶的事实" },
+
+  "status_fetching":      { "message": "抓取页面正文…" },
+  "status_need_bigmodel": { "message": "请先在设置中填入 BigModel API Key" },
+  "status_need_token":    { "message": "请先在设置中填入 Hypothesis Token" },
+  "status_need_token_publish": { "message": "请先在设置中配置 Hypothesis Token" },
+  "status_calling_llm":   { "message": "正文 $CHARS$ 字符，调用 GLM 生成标注…", "placeholders": { "chars": { "content": "$1" } } },
+  "status_generated":     { "message": "生成 $TOTAL$ 条，$VALID$ 条引用有效", "placeholders": { "total": { "content": "$1" }, "valid": { "content": "$2" } } },
+  "status_publishing":    { "message": "发布中：「$QUOTE$」…", "placeholders": { "quote": { "content": "$1" } } },
+  "status_done":          { "message": "完成：已发布 $N$ 条", "placeholders": { "n": { "content": "$1" } } },
+  "status_failed":        { "message": "失败：$ERR$", "placeholders": { "err": { "content": "$1" } } },
+  "status_short_content": { "message": "页面正文过短或无法读取" },
+
+  "counts_summary":       { "message": "$SEL$ 选中 · $POSTED$ 已发布 · $TOTAL$ 生成", "placeholders": { "sel": { "content": "$1" }, "posted": { "content": "$2" }, "total": { "content": "$3" } } },
+
+  "ann_quote_missing":    { "message": "引用未在当前页面正文中找到，已跳过" },
+
+  "page_no_title":        { "message": "（无标题）" },
+
+  "options_h1":              { "message": "Hypothesisor 设置" },
+  "options_label_token":     { "message": "Hypothesis Token" },
+  "options_hint_token":      { "message": "到 " },
+  "options_label_bigmodel":  { "message": "BigModel API Key" },
+  "options_hint_bigmodel":   { "message": "到 $URL$ 申请。默认使用 glm-4-plus 模型。", "placeholders": { "url": { "content": "$1" } } },
+  "options_label_mode":      { "message": "默认模式" },
+  "options_label_style":     { "message": "默认风格" },
+  "options_hint_style":      { "message": "预置 key（non-consensus / data / actionable / gold-sentences / critique / surprise）或任意自定义描述；留空用 mode 默认。" },
+  "options_style_placeholder": { "message": "例如：具有洞察的观点或者令人惊讶的事实" },
+  "options_btn_save":        { "message": "保存" },
+  "options_saved":           { "message": "已保存" },
+
+  "required":  { "message": "*" }
+}

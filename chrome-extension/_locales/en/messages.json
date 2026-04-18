@@ -1,0 +1,56 @@
+{
+  "extName":         { "message": "Hypothesisor", "description": "Extension name" },
+  "extDesc":         { "message": "Read the current page with an LLM and post high-quality annotations to Hypothesis in one click. BYO key, client-side, open source.", "description": "Extension description" },
+
+  "popup_settings_title":  { "message": "Settings" },
+  "popup_label_mode":      { "message": "Mode" },
+  "popup_label_style":     { "message": "Style" },
+  "popup_style_default":   { "message": "Default" },
+  "popup_style_custom":    { "message": "Custom…" },
+  "popup_style_placeholder": { "message": "Describe your annotation preference" },
+  "popup_btn_generate":    { "message": "Generate annotations" },
+  "popup_btn_publish":     { "message": "Publish selected" },
+
+  "mode_general":   { "message": "general (universal)" },
+  "mode_academic":  { "message": "academic" },
+  "mode_news":      { "message": "news" },
+  "mode_tech":      { "message": "tech" },
+
+  "style_non_consensus":  { "message": "Non-consensus takes" },
+  "style_data":           { "message": "Concrete data" },
+  "style_actionable":     { "message": "Actionable advice" },
+  "style_gold_sentences": { "message": "Gold sentences" },
+  "style_critique":       { "message": "Critical reading" },
+  "style_surprise":       { "message": "Surprising facts" },
+
+  "status_fetching":      { "message": "Fetching page text…" },
+  "status_need_bigmodel": { "message": "Please configure your BigModel API key in Settings." },
+  "status_need_token":    { "message": "Please configure your Hypothesis Token in Settings." },
+  "status_need_token_publish": { "message": "Please configure your Hypothesis Token first." },
+  "status_calling_llm":   { "message": "$CHARS$ chars of text — calling GLM…", "placeholders": { "chars": { "content": "$1" } } },
+  "status_generated":     { "message": "Generated $TOTAL$ candidates, $VALID$ with valid quotes.", "placeholders": { "total": { "content": "$1" }, "valid": { "content": "$2" } } },
+  "status_publishing":    { "message": "Publishing: \u00ab$QUOTE$\u00bb…", "placeholders": { "quote": { "content": "$1" } } },
+  "status_done":          { "message": "Done. Published $N$ annotations.", "placeholders": { "n": { "content": "$1" } } },
+  "status_failed":        { "message": "Failed: $ERR$", "placeholders": { "err": { "content": "$1" } } },
+  "status_short_content": { "message": "Page text is too short or unreadable." },
+
+  "counts_summary":       { "message": "$SEL$ selected · $POSTED$ published · $TOTAL$ generated", "placeholders": { "sel": { "content": "$1" }, "posted": { "content": "$2" }, "total": { "content": "$3" } } },
+
+  "ann_quote_missing":    { "message": "Quote not found in page text — skipped." },
+
+  "page_no_title":        { "message": "(no title)" },
+
+  "options_h1":              { "message": "Hypothesisor Settings" },
+  "options_label_token":     { "message": "Hypothesis Token" },
+  "options_hint_token":      { "message": "Generate one at " },
+  "options_label_bigmodel":  { "message": "BigModel API Key" },
+  "options_hint_bigmodel":   { "message": "Get one at $URL$. Uses the glm-4-plus model by default.", "placeholders": { "url": { "content": "$1" } } },
+  "options_label_mode":      { "message": "Default mode" },
+  "options_label_style":     { "message": "Default style" },
+  "options_hint_style":      { "message": "Preset key (non-consensus / data / actionable / gold-sentences / critique / surprise) or any custom description. Leave empty to use the mode default." },
+  "options_style_placeholder": { "message": "e.g. insightful or surprising claims" },
+  "options_btn_save":        { "message": "Save" },
+  "options_saved":           { "message": "Saved" },
+
+  "required":  { "message": "*" }
+}

@@ -1,4 +1,7 @@
 import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
+import { applyI18n, t } from "./lib/i18n.js";
+
+applyI18n();
 
 const $ = (id) => document.getElementById(id);
 let state = { tab: null, content: "", annotations: [] };
@@ -8,7 +11,7 @@ async function init() {
   state.tab = tab;
   state.canonicalUrl = tab?.url || "";
   state.title = tab?.title || "";
-  $("pageTitle").textContent = tab?.title || "（无标题）";
+  $("pageTitle").textContent = tab?.title || t("page_no_title");
   $("pageUrl").textContent = tab?.url || "";
 
   const s = await getSettings();
@@ -58,7 +61,7 @@ function render() {
     const meta = a.posted
       ? `<div class="meta">✅ <a href="${a.postedUrl}" target="_blank">${a.postedUrl}</a></div>`
       : a.invalid
-      ? `<div class="meta">⚠️ 引用未在当前页面正文中找到，已跳过</div>`
+      ? `<div class="meta">⚠️ ${escape(t("ann_quote_missing"))}</div>`
       : a.error
       ? `<div class="meta" style="color:#BD1C2B">❌ ${a.error}</div>`
       : "";
@@ -101,31 +104,32 @@ function updatePublishButton() {
   const selectable = state.annotations.filter((a) => !a.invalid && !a.posted);
   const selected = selectable.filter((a) => a.selected);
   $("publishAll").disabled = selected.length === 0;
-  $("counts").textContent = `${selected.length} 选中 · ${state.annotations.filter((a) => a.posted).length} 已发布 · ${state.annotations.length} 生成`;
+  const posted = state.annotations.filter((a) => a.posted).length;
+  $("counts").textContent = t("counts_summary", String(selected.length), String(posted), String(state.annotations.length));
 }
 
 $("generate").addEventListener("click", async () => {
   if (!state.tab) return;
   $("generate").disabled = true;
-  setStatus("抓取页面正文…");
+  setStatus(t("status_fetching"));
   try {
     const extracted = await extractTabText(state.tab.id);
     state.content = extracted.text || "";
     state.canonicalUrl = extracted.url || state.tab.url;
     state.title = extracted.title || state.tab.title || "";
     if (!state.content || state.content.length < 100) {
-      throw new Error("页面正文过短或无法读取");
+      throw new Error(t("status_short_content"));
     }
     const { bigmodelKey, hypothesisToken } = await getSettings();
     if (!bigmodelKey) {
-      setStatus("请先在设置中填入 BigModel API Key", "error");
+      setStatus(t("status_need_bigmodel"), "error");
       return;
     }
     if (!hypothesisToken) {
-      setStatus("请先在设置中填入 Hypothesis Token", "error");
+      setStatus(t("status_need_token"), "error");
       return;
     }
-    setStatus(`正文 ${state.content.length} 字符，调用 GLM 生成标注…`);
+    setStatus(t("status_calling_llm", String(state.content.length)));
     const raw = await callGLM({
       content: state.content,
       url: state.canonicalUrl,
@@ -145,10 +149,10 @@ $("generate").addEventListener("click", async () => {
       };
     });
     const valid = state.annotations.filter((a) => !a.invalid).length;
-    setStatus(`生成 ${state.annotations.length} 条，${valid} 条引用有效`, "success");
+    setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
     render();
   } catch (e) {
-    setStatus("失败：" + e.message, "error");
+    setStatus(t("status_failed", e.message), "error");
   } finally {
     $("generate").disabled = false;
   }
@@ -157,13 +161,13 @@ $("generate").addEventListener("click", async () => {
 $("publishAll").addEventListener("click", async () => {
   const { hypothesisToken } = await getSettings();
   if (!hypothesisToken) {
-    setStatus("请先在设置中配置 Hypothesis Token", "error");
+    setStatus(t("status_need_token_publish"), "error");
     return;
   }
   $("publishAll").disabled = true;
   const pending = state.annotations.filter((a) => a.selected && !a.invalid && !a.posted);
   for (const a of pending) {
-    setStatus(`发布中：「${a.quote.slice(0, 30)}…」`);
+    setStatus(t("status_publishing", a.quote.slice(0, 30)));
     try {
       const { url } = await postAnnotation({
         url: state.canonicalUrl,
@@ -184,7 +188,7 @@ $("publishAll").addEventListener("click", async () => {
     render();
   }
   const ok = state.annotations.filter((a) => a.posted).length;
-  setStatus(`完成：已发布 ${ok} 条`, "success");
+  setStatus(t("status_done", String(ok)), "success");
 });
 
 init();
