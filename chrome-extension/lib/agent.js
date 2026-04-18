@@ -75,38 +75,29 @@ export async function extractTabText(tabId) {
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId },
     func: () => {
-      const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE", "IFRAME"]);
+      // Match Hypothesis client's text-range.ts: walk every Text node
+      // under the root with SHOW_TEXT and no acceptNode filter, so our
+      // offsets align byte-for-byte with what their anchoring sees.
       function flatten(root) {
-        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-          acceptNode(n) {
-            let p = n.parentElement;
-            while (p) {
-              if (SKIP_TAGS.has(p.tagName)) return NodeFilter.FILTER_REJECT;
-              p = p.parentElement;
-            }
-            return n.nodeValue && n.nodeValue.length ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-          },
-        });
+        const it = root.ownerDocument.createNodeIterator(root, NodeFilter.SHOW_TEXT);
         let out = "";
         let n;
-        while ((n = walker.nextNode())) out += n.nodeValue;
+        while ((n = it.nextNode())) out += n.data;
         return out;
       }
       const article = document.querySelector("article, main, [role='main']");
       const text = flatten(article || document.body);
 
-      // Resolve canonical URL: prefer <link rel=canonical>, otherwise
-      // strip well-known tracking params from the current URL so it
-      // matches what the Hypothesis client uses when fetching annotations.
-      let canonical = document.querySelector("link[rel=canonical]")?.href || "";
+      // Resolve canonical URL the way the Hypothesis client does:
+      // prefer <link rel=canonical>, else og:url, else strip only the
+      // fragment from location.href. Do NOT drop query params — their
+      // client keeps them, and if we strip them our annotation's URI
+      // won't match the URI they query.
+      const canonicalLink = document.querySelector("link[rel=canonical]")?.href;
+      const ogUrl = document.querySelector("meta[property='og:url']")?.getAttribute("content");
+      let canonical = canonicalLink || ogUrl || "";
       if (!canonical) {
         const u = new URL(location.href);
-        const drop = new Set([
-          "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
-          "fbclid", "gclid", "mc_cid", "mc_eid", "ref", "ref_src", "ref_url",
-          "share", "spm",
-        ]);
-        for (const k of [...u.searchParams.keys()]) if (drop.has(k)) u.searchParams.delete(k);
         u.hash = "";
         canonical = u.toString();
       }
@@ -217,8 +208,10 @@ export function validateQuote(content, quote) {
 }
 
 // Raw context — no whitespace normalization, so prefix/suffix match the
-// flat DOM text Hypothesis sees during anchoring.
-function getContext(content, start, end, n = 32) {
+// flat DOM text Hypothesis sees during anchoring. 48 chars gives the
+// prefix/suffix weights (20 each in the Hypothesis scoring model)
+// enough signal to disambiguate repeated or short quotes.
+function getContext(content, start, end, n = 48) {
   return {
     prefix: content.slice(Math.max(0, start - n), start),
     suffix: content.slice(end, end + n),
