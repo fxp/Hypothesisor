@@ -52,5 +52,30 @@
   "options_btn_save":        { "message": "Save" },
   "options_saved":           { "message": "Saved" },
 
-  "required":  { "message": "*" }
+  "required":  { "message": "*" },
+
+  "warn_missing_both":   { "message": "Missing Hypothesis Token and BigModel API Key — open Settings to add them." },
+  "warn_missing_token":  { "message": "Hypothesis Token not set — open Settings." },
+  "warn_missing_key":    { "message": "BigModel API Key not set — open Settings." },
+  "warn_open_settings":  { "message": "Open Settings" },
+
+  "error_not_scriptable":   { "message": "This page type can't be read by extensions (chrome://, file://, Chrome Web Store, extension pages, etc.). Open a regular https:// page and try again." },
+  "error_extract_failed":   { "message": "Couldn't extract page text: $DETAIL$", "placeholders": { "detail": { "content": "$1" } } },
+
+  "error_network":          { "message": "Network error — check your internet connection, VPN, or firewall." },
+  "error_cors":             { "message": "Request blocked — if you're behind a proxy or VPN, try switching it off." },
+  "error_http_400":         { "message": "Bad request ($CTX$ HTTP 400). $DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "detail": { "content": "$2" } } },
+  "error_http_401":         { "message": "$CTX$ rejected the API key (HTTP 401). Check the key in Settings.", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_403":         { "message": "$CTX$ access denied (HTTP 403). Key may lack permission or quota is exhausted.", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_404":         { "message": "$CTX$ endpoint not found (HTTP 404).", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_429":         { "message": "$CTX$ rate limit hit (HTTP 429). Wait a moment and retry.", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_5xx":         { "message": "$CTX$ server error (HTTP $CODE$). Try again later. $DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+  "error_http_generic":     { "message": "$CTX$ HTTP $CODE$. $DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+
+  "error_llm_empty":        { "message": "BigModel returned an empty response — try again or change the style prompt." },
+  "error_llm_no_json":      { "message": "BigModel didn't return valid JSON — try again. If it keeps failing, make the custom style shorter." },
+  "error_llm_json_parse":   { "message": "BigModel output couldn't be parsed as JSON ($DETAIL$) — try again.", "placeholders": { "detail": { "content": "$1" } } },
+
+  "ctx_bigmodel":           { "message": "BigModel" },
+  "ctx_hypothesis":         { "message": "Hypothesis" }
 }

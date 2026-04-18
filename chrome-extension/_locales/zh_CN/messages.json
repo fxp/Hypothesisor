@@ -52,5 +52,30 @@
   "options_btn_save":        { "message": "保存" },
   "options_saved":           { "message": "已保存" },
 
-  "required":  { "message": "*" }
+  "required":  { "message": "*" },
+
+  "warn_missing_both":   { "message": "Hypothesis Token 和 BigModel API Key 都未配置，点右侧按钮去设置" },
+  "warn_missing_token":  { "message": "Hypothesis Token 未配置，点右侧按钮去设置" },
+  "warn_missing_key":    { "message": "BigModel API Key 未配置，点右侧按钮去设置" },
+  "warn_open_settings":  { "message": "去设置" },
+
+  "error_not_scriptable":   { "message": "这类页面（chrome://、file://、Chrome 商店、扩展自身页面等）扩展无权访问。请在普通 https:// 网页上试用。" },
+  "error_extract_failed":   { "message": "读取页面正文失败：$DETAIL$", "placeholders": { "detail": { "content": "$1" } } },
+
+  "error_network":          { "message": "网络错误——检查一下网络、代理或防火墙" },
+  "error_cors":             { "message": "请求被拦截——如果在用代理/VPN，试试切换或关闭" },
+  "error_http_400":         { "message": "$CTX$ 请求有误（HTTP 400）：$DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "detail": { "content": "$2" } } },
+  "error_http_401":         { "message": "$CTX$ 拒绝了 API Key（HTTP 401），请到设置里检查 Key 是否正确", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_403":         { "message": "$CTX$ 权限不足（HTTP 403）——Key 可能没有对应权限，或配额用完了", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_404":         { "message": "$CTX$ 接口不存在（HTTP 404）", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_429":         { "message": "$CTX$ 触发限流（HTTP 429），稍等片刻再试", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_5xx":         { "message": "$CTX$ 服务端异常（HTTP $CODE$），稍后再试。$DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+  "error_http_generic":     { "message": "$CTX$ HTTP $CODE$：$DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+
+  "error_llm_empty":        { "message": "BigModel 返回空响应，换个风格描述或稍后重试" },
+  "error_llm_no_json":      { "message": "BigModel 未返回合法 JSON，再试一次；如果反复失败，试着把自定义 style 写短一些" },
+  "error_llm_json_parse":   { "message": "BigModel 输出无法解析为 JSON（$DETAIL$），再试一次", "placeholders": { "detail": { "content": "$1" } } },
+
+  "ctx_bigmodel":           { "message": "BigModel" },
+  "ctx_hypothesis":         { "message": "Hypothesis" }
 }

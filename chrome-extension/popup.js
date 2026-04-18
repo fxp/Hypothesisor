@@ -25,9 +25,57 @@ async function init() {
       $("styleCustom").value = s.defaultStyle;
     }
   }
+  renderConfigWarning(s);
+}
+
+function renderConfigWarning(s) {
+  const banner = $("configWarn");
+  const msgEl = $("configWarnMsg");
+  if (!banner || !msgEl) return;
+  const noToken = !s.hypothesisToken;
+  const noKey = !s.bigmodelKey;
+  if (!noToken && !noKey) { banner.hidden = true; return; }
+  const key = noToken && noKey ? "warn_missing_both" : noToken ? "warn_missing_token" : "warn_missing_key";
+  msgEl.textContent = t(key);
+  banner.hidden = false;
+}
+
+// Translate an Error with a machine-readable `code` into a user-friendly localized string.
+function formatError(e) {
+  if (!e) return "";
+  const ctxLabel = e.ctx === "bigmodel" ? t("ctx_bigmodel") : e.ctx === "hypothesis" ? t("ctx_hypothesis") : "";
+  switch (e.code) {
+    case "MISSING_BIGMODEL_KEY":     return t("status_need_bigmodel");
+    case "MISSING_HYPOTHESIS_TOKEN": return t("status_need_token");
+    case "NOT_SCRIPTABLE":           return t("error_not_scriptable");
+    case "EXTRACT_FAILED":           return t("error_extract_failed", e.detail || e.message);
+    case "NETWORK":                  return t("error_network");
+    case "CORS":                     return t("error_cors");
+    case "LLM_EMPTY":                return t("error_llm_empty");
+    case "LLM_NO_JSON":              return t("error_llm_no_json");
+    case "LLM_JSON_PARSE":           return t("error_llm_json_parse", e.detail || "");
+    case "QUOTE_NOT_FOUND":          return t("ann_quote_missing");
+    case "HTTP_400":                 return t("error_http_400", ctxLabel, e.detail || "");
+    case "HTTP_401":                 return t("error_http_401", ctxLabel);
+    case "HTTP_403":                 return t("error_http_403", ctxLabel);
+    case "HTTP_404":                 return t("error_http_404", ctxLabel);
+    case "HTTP_429":                 return t("error_http_429", ctxLabel);
+    default:
+      if (typeof e.code === "string" && e.code.startsWith("HTTP_")) {
+        const code = String(e.status || e.code.replace("HTTP_", ""));
+        if (e.status >= 500) return t("error_http_5xx", ctxLabel, code, (e.detail || "").slice(0, 120));
+        return t("error_http_generic", ctxLabel, code, (e.detail || "").slice(0, 120));
+      }
+      return e.message || String(e);
+  }
 }
 
 $("openOptions").addEventListener("click", (e) => {
+  e.preventDefault();
+  chrome.runtime.openOptionsPage();
+});
+
+$("configWarnOpen").addEventListener("click", (e) => {
   e.preventDefault();
   chrome.runtime.openOptionsPage();
 });
@@ -120,13 +168,14 @@ $("generate").addEventListener("click", async () => {
     if (!state.content || state.content.length < 100) {
       throw new Error(t("status_short_content"));
     }
-    const { bigmodelKey, hypothesisToken } = await getSettings();
-    if (!bigmodelKey) {
-      setStatus(t("status_need_bigmodel"), "error");
-      return;
-    }
-    if (!hypothesisToken) {
-      setStatus(t("status_need_token"), "error");
+    const settings = await getSettings();
+    const { bigmodelKey, hypothesisToken } = settings;
+    renderConfigWarning(settings);
+    const missing = [];
+    if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
+    if (!hypothesisToken) missing.push(t("status_need_token"));
+    if (missing.length) {
+      setStatus(missing.join("  ·  "), "error");
       return;
     }
     setStatus(t("status_calling_llm", String(state.content.length)));
@@ -152,7 +201,7 @@ $("generate").addEventListener("click", async () => {
     setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
     render();
   } catch (e) {
-    setStatus(t("status_failed", e.message), "error");
+    setStatus(t("status_failed", formatError(e)), "error");
   } finally {
     $("generate").disabled = false;
   }
@@ -183,7 +232,7 @@ $("publishAll").addEventListener("click", async () => {
       a.selected = false;
       a.error = null;
     } catch (e) {
-      a.error = e.message;
+      a.error = formatError(e);
     }
     render();
   }

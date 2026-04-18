@@ -72,75 +72,112 @@ function buildSystemPrompt(mode, style, length) {
 // normalization, so quote offsets we compute match what the Hypothesis
 // client computes when anchoring.
 export async function extractTabText(tabId) {
-  const [{ result }] = await chrome.scripting.executeScript({
-    target: { tabId },
-    func: () => {
-      // Match Hypothesis client's text-range.ts: walk every Text node
-      // under the root with SHOW_TEXT and no acceptNode filter, so our
-      // offsets align byte-for-byte with what their anchoring sees.
-      function flatten(root) {
-        const it = root.ownerDocument.createNodeIterator(root, NodeFilter.SHOW_TEXT);
-        let out = "";
-        let n;
-        while ((n = it.nextNode())) out += n.data;
-        return out;
-      }
-      const article = document.querySelector("article, main, [role='main']");
-      const text = flatten(article || document.body);
-
-      // Resolve canonical URL the way the Hypothesis client does:
-      // prefer <link rel=canonical>, else og:url, else strip only the
-      // fragment from location.href. Do NOT drop query params — their
-      // client keeps them, and if we strip them our annotation's URI
-      // won't match the URI they query.
-      const canonicalLink = document.querySelector("link[rel=canonical]")?.href;
-      const ogUrl = document.querySelector("meta[property='og:url']")?.getAttribute("content");
-      let canonical = canonicalLink || ogUrl || "";
-      if (!canonical) {
-        const u = new URL(location.href);
-        u.hash = "";
-        canonical = u.toString();
-      }
-      return { text, url: canonical, title: document.title || "" };
-    },
-  });
+  let results;
+  try {
+    results = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => {
+        function flatten(root) {
+          const it = root.ownerDocument.createNodeIterator(root, NodeFilter.SHOW_TEXT);
+          let out = "";
+          let n;
+          while ((n = it.nextNode())) out += n.data;
+          return out;
+        }
+        const article = document.querySelector("article, main, [role='main']");
+        const text = flatten(article || document.body);
+        const canonicalLink = document.querySelector("link[rel=canonical]")?.href;
+        const ogUrl = document.querySelector("meta[property='og:url']")?.getAttribute("content");
+        let canonical = canonicalLink || ogUrl || "";
+        if (!canonical) {
+          const u = new URL(location.href);
+          u.hash = "";
+          canonical = u.toString();
+        }
+        return { text, url: canonical, title: document.title || "" };
+      },
+    });
+  } catch (e) {
+    // chrome:// / file:// / extension pages / Chrome Web Store etc. — executeScript refuses outright
+    const err = new Error("NOT_SCRIPTABLE");
+    err.code = "NOT_SCRIPTABLE";
+    err.detail = String(e?.message || e);
+    throw err;
+  }
+  const [{ result } = {}] = results || [];
   return result || { text: "", url: "", title: "" };
 }
 
 export async function callGLM({ content, url, mode, style, apiKey }) {
-  if (!apiKey) throw new Error("未配置 BigModel API Key，请在设置中填写");
+  if (!apiKey) { const e = new Error("MISSING_BIGMODEL_KEY"); e.code = "MISSING_BIGMODEL_KEY"; throw e; }
   const length = content.length;
   const { lo, hi } = computeDepth(length);
   const maxTokens = hi >= 25 ? 8192 : hi >= 16 ? 6144 : 4096;
   const system = buildSystemPrompt(mode, style, length);
   const truncated = length > 60000 ? content.slice(0, 60000) + "\n\n[内容已截断...]" : content;
 
-  const resp = await fetch(`${BIGMODEL_BASE_URL}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: BIGMODEL_MODEL,
-      max_tokens: maxTokens,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: `URL: ${url}\n\n文章内容：\n\n${truncated}` },
-      ],
-    }),
-  });
-  if (!resp.ok) throw new Error(`BigModel ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+  let resp;
+  try {
+    resp = await fetch(`${BIGMODEL_BASE_URL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: BIGMODEL_MODEL,
+        max_tokens: maxTokens,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: `URL: ${url}\n\n文章内容：\n\n${truncated}` },
+        ],
+      }),
+    });
+  } catch (e) {
+    throw networkError("bigmodel", e);
+  }
+  if (!resp.ok) throw await httpError("bigmodel", resp);
   const data = await resp.json();
   const text = data.choices?.[0]?.message?.content || "";
-  const parsed = parseLLMJson(text);
+  if (!text) { const e = new Error("LLM_EMPTY"); e.code = "LLM_EMPTY"; throw e; }
+  let parsed;
+  try {
+    parsed = parseLLMJson(text);
+  } catch (e) {
+    const err = new Error(e.code === "LLM_NO_JSON" ? "LLM_NO_JSON" : "LLM_JSON_PARSE");
+    err.code = err.message;
+    err.detail = e.message;
+    throw err;
+  }
   const list = Array.isArray(parsed) ? parsed : parsed.annotations || parsed.items || parsed.data || [];
   return list.map((a) => ({
     quote: a.quote || "",
     comment: a.comment || buildComment(a.headline, a.detail),
     tags: Array.isArray(a.tags) ? a.tags : [],
   }));
+}
+
+// Classify a fetch TypeError (thrown for DNS / offline / CORS / blocked by extension)
+function networkError(ctx, e) {
+  const msg = String(e?.message || e);
+  const err = new Error(/Failed to fetch|NetworkError|net::ERR/i.test(msg) ? "NETWORK" : "CORS");
+  err.code = err.message;
+  err.ctx = ctx;
+  err.detail = msg;
+  return err;
+}
+
+// Classify a non-OK HTTP response, reading the body once for detail
+async function httpError(ctx, resp) {
+  let body = "";
+  try { body = (await resp.text()).slice(0, 300); } catch (_) {}
+  const err = new Error(`HTTP_${resp.status}`);
+  err.code = `HTTP_${resp.status}`;
+  err.status = resp.status;
+  err.ctx = ctx;
+  err.detail = body;
+  return err;
 }
 
 function buildComment(headline, detail) {
@@ -153,16 +190,11 @@ function buildComment(headline, detail) {
 }
 
 function parseLLMJson(text) {
-  // Try direct first
   try { return JSON.parse(text); } catch (_) {}
-  // Extract first {...} or [...] block
   const block = text.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-  if (!block) throw new Error("LLM 未返回 JSON");
+  if (!block) { const e = new Error("no JSON block in response"); e.code = "LLM_NO_JSON"; throw e; }
   try { return JSON.parse(block[0]); } catch (_) {}
-  // Repair and retry
-  try { return JSON.parse(repairJSON(block[0])); } catch (e) {
-    throw new Error(`JSON 解析失败（已尝试修复）：${e.message}`);
-  }
+  try { return JSON.parse(repairJSON(block[0])); } catch (e) { throw e; }
 }
 
 // Repair common LLM JSON issues:
@@ -219,8 +251,9 @@ function getContext(content, start, end, n = 48) {
 }
 
 export async function postAnnotation({ url, quote, comment, tags, content, token, title }) {
+  if (!token) { const e = new Error("MISSING_HYPOTHESIS_TOKEN"); e.code = "MISSING_HYPOTHESIS_TOKEN"; throw e; }
   const loc = validateQuote(content, quote);
-  if (!loc.found) throw new Error("引用未在原文中找到");
+  if (!loc.found) { const e = new Error("QUOTE_NOT_FOUND"); e.code = "QUOTE_NOT_FOUND"; throw e; }
   const { prefix, suffix } = getContext(content, loc.start, loc.end);
   const payload = {
     uri: url,
@@ -242,15 +275,20 @@ export async function postAnnotation({ url, quote, comment, tags, content, token
     }],
     document: { title: [title || url] },
   };
-  const resp = await fetch("https://api.hypothes.is/api/annotations", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-  if (!resp.ok) throw new Error(`Hypothesis ${resp.status}: ${(await resp.text()).slice(0, 200)}`);
+  let resp;
+  try {
+    resp = await fetch("https://api.hypothes.is/api/annotations", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch (e) {
+    throw networkError("hypothesis", e);
+  }
+  if (!resp.ok) throw await httpError("hypothesis", resp);
   const data = await resp.json();
   return { id: data.id, url: `https://hypothes.is/a/${data.id}` };
 }
