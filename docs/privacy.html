@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hypothesisor · Privacy Policy</title>
+<style>
+  body { font: 16px/1.65 -apple-system, "Helvetica Neue", "PingFang SC", system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; color: #0f172a; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 20px; margin-top: 32px; }
+  code { background: #f1f5f9; padding: 1px 6px; border-radius: 4px; font-size: 14px; }
+  a { color: #2563EB; }
+  .meta { color: #64748b; font-size: 13.5px; }
+</style>
+</head>
+<body>
+<h1>Privacy Policy / 隐私政策</h1>
+<p class="meta">Last updated: 2026-04-18 · Hypothesisor v0.1.0</p>
+
+<h2>What we collect / 我们收集什么</h2>
+<p><strong>Nothing.</strong> Hypothesisor 本身不收集、不存储、不传输任何用户数据到我们自己的服务器。我们没有服务器。</p>
+
+<h2>What stays on your machine / 留在你本机的东西</h2>
+<ul>
+  <li>你在设置页填的 <strong>Hypothesis Token</strong> 与 <strong>BigModel API Key</strong>，存于 <code>chrome.storage.local</code>，仅用于扩展自身访问对应 API。永不外传。</li>
+  <li>你选择的默认 mode / style 偏好，同样存在 <code>chrome.storage.local</code>。</li>
+</ul>
+
+<h2>What we send out / 哪些数据会离开你的浏览器</h2>
+<ol>
+  <li>当前网页正文（通过 <code>chrome.scripting.executeScript</code> 抽取） + 你选择的 mode/style → <strong>BigModel API</strong>（<code>open.bigmodel.cn</code>），用于生成标注候选。</li>
+  <li>你勾选发布的标注（quote + comment + tags + 当前页 URL） → <strong>Hypothesis API</strong>（<code>api.hypothes.is</code>），用于发布到你的 Hypothesis 账户。</li>
+</ol>
+<p>这两个目的地受各自服务的隐私政策约束：</p>
+<ul>
+  <li><a href="https://www.zhipuai.cn/privacy" target="_blank">智谱 AI / BigModel 隐私政策</a></li>
+  <li><a href="https://web.hypothes.is/privacy/" target="_blank">Hypothesis Privacy Policy</a></li>
+</ul>
+
+<h2>Third parties / 第三方</h2>
+<p>除上述两个 API 外，扩展不向任何第三方（包括我们）发送数据，不嵌入跟踪脚本，不使用 cookie。</p>
+
+<h2>Permissions justification / 权限说明</h2>
+<ul>
+  <li><code>activeTab</code> + <code>scripting</code>：抓取你主动激活的页面正文，仅在你点扩展按钮时执行。</li>
+  <li><code>storage</code>：本地存 Token / API Key / 偏好。</li>
+  <li><code>host_permissions</code> 仅限 <code>open.bigmodel.cn</code> 与 <code>api.hypothes.is</code>，仅用于 API 调用。</li>
+</ul>
+
+<h2>Open source / 开源</h2>
+<p>代码完全开源在 <a href="https://github.com/fxp/Hypothesisor">github.com/fxp/Hypothesisor</a>，可自行审计。</p>
+
+<h2>Contact</h2>
+<p>有问题或建议，欢迎在 <a href="https://github.com/fxp/Hypothesisor/issues">GitHub Issues</a> 提出。</p>
+</body>
+</html>
