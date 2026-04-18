@@ -6,6 +6,8 @@ let state = { tab: null, content: "", annotations: [] };
 async function init() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   state.tab = tab;
+  state.canonicalUrl = tab?.url || "";
+  state.title = tab?.title || "";
   $("pageTitle").textContent = tab?.title || "（无标题）";
   $("pageUrl").textContent = tab?.url || "";
 
@@ -107,7 +109,10 @@ $("generate").addEventListener("click", async () => {
   $("generate").disabled = true;
   setStatus("抓取页面正文…");
   try {
-    state.content = await extractTabText(state.tab.id);
+    const extracted = await extractTabText(state.tab.id);
+    state.content = extracted.text || "";
+    state.canonicalUrl = extracted.url || state.tab.url;
+    state.title = extracted.title || state.tab.title || "";
     if (!state.content || state.content.length < 100) {
       throw new Error("页面正文过短或无法读取");
     }
@@ -123,7 +128,7 @@ $("generate").addEventListener("click", async () => {
     setStatus(`正文 ${state.content.length} 字符，调用 GLM 生成标注…`);
     const raw = await callGLM({
       content: state.content,
-      url: state.tab.url,
+      url: state.canonicalUrl,
       mode: $("mode").value,
       style: resolveStyle(),
       apiKey: bigmodelKey,
@@ -161,7 +166,8 @@ $("publishAll").addEventListener("click", async () => {
     setStatus(`发布中：「${a.quote.slice(0, 30)}…」`);
     try {
       const { url } = await postAnnotation({
-        url: state.tab.url,
+        url: state.canonicalUrl,
+        title: state.title,
         quote: a.quote,
         comment: a.comment,
         tags: a.tags,

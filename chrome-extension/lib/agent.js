@@ -67,16 +67,53 @@ function buildSystemPrompt(mode, style, length) {
   return base + "\n" + FORMAT_SUFFIX;
 }
 
+// Extract page text the same way Hypothesis anchors against it:
+// concatenate text-node textContent in document order, no whitespace
+// normalization, so quote offsets we compute match what the Hypothesis
+// client computes when anchoring.
 export async function extractTabText(tabId) {
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId },
     func: () => {
+      const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE", "IFRAME"]);
+      function flatten(root) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode(n) {
+            let p = n.parentElement;
+            while (p) {
+              if (SKIP_TAGS.has(p.tagName)) return NodeFilter.FILTER_REJECT;
+              p = p.parentElement;
+            }
+            return n.nodeValue && n.nodeValue.length ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+          },
+        });
+        let out = "";
+        let n;
+        while ((n = walker.nextNode())) out += n.nodeValue;
+        return out;
+      }
       const article = document.querySelector("article, main, [role='main']");
-      const root = article || document.body;
-      return (root.innerText || "").trim();
+      const text = flatten(article || document.body);
+
+      // Resolve canonical URL: prefer <link rel=canonical>, otherwise
+      // strip well-known tracking params from the current URL so it
+      // matches what the Hypothesis client uses when fetching annotations.
+      let canonical = document.querySelector("link[rel=canonical]")?.href || "";
+      if (!canonical) {
+        const u = new URL(location.href);
+        const drop = new Set([
+          "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+          "fbclid", "gclid", "mc_cid", "mc_eid", "ref", "ref_src", "ref_url",
+          "share", "spm",
+        ]);
+        for (const k of [...u.searchParams.keys()]) if (drop.has(k)) u.searchParams.delete(k);
+        u.hash = "";
+        canonical = u.toString();
+      }
+      return { text, url: canonical, title: document.title || "" };
     },
   });
-  return result || "";
+  return result || { text: "", url: "", title: "" };
 }
 
 export async function callGLM({ content, url, mode, style, apiKey }) {
@@ -164,27 +201,31 @@ function repairJSON(s) {
   return out.replace(/,\s*([\]\}])/g, "$1");
 }
 
+// Strict validation: only accept exact (or case-insensitive) matches.
+// No fuzzy slicing — if the quote isn't really in the page text, refusing
+// up front beats posting an annotation Hypothesis can never anchor.
 export function validateQuote(content, quote) {
   if (!quote) return { found: false };
   let pos = content.indexOf(quote);
   if (pos >= 0) return { found: true, start: pos, end: pos + quote.length, exact: quote };
   pos = content.toLowerCase().indexOf(quote.toLowerCase());
-  if (pos >= 0) return { found: true, start: pos, end: pos + quote.length, exact: content.slice(pos, pos + quote.length) };
-  const short = quote.slice(0, 30);
-  if (short.length >= 10) {
-    pos = content.indexOf(short);
-    if (pos >= 0) return { found: true, start: pos, end: pos + quote.length, exact: content.slice(pos, pos + quote.length) };
+  if (pos >= 0) {
+    const exact = content.slice(pos, pos + quote.length);
+    return { found: true, start: pos, end: pos + quote.length, exact };
   }
   return { found: false };
 }
 
+// Raw context — no whitespace normalization, so prefix/suffix match the
+// flat DOM text Hypothesis sees during anchoring.
 function getContext(content, start, end, n = 32) {
-  const prefix = content.slice(Math.max(0, start - n), start).replace(/\s+/g, " ").slice(-n);
-  const suffix = content.slice(end, end + n).replace(/\s+/g, " ").slice(0, n);
-  return { prefix, suffix };
+  return {
+    prefix: content.slice(Math.max(0, start - n), start),
+    suffix: content.slice(end, end + n),
+  };
 }
 
-export async function postAnnotation({ url, quote, comment, tags, content, token }) {
+export async function postAnnotation({ url, quote, comment, tags, content, token, title }) {
   const loc = validateQuote(content, quote);
   if (!loc.found) throw new Error("引用未在原文中找到");
   const { prefix, suffix } = getContext(content, loc.start, loc.end);
@@ -201,9 +242,12 @@ export async function postAnnotation({ url, quote, comment, tags, content, token
     },
     target: [{
       source: url,
-      selector: [{ type: "TextQuoteSelector", exact: loc.exact, prefix, suffix }],
+      selector: [
+        { type: "TextQuoteSelector", exact: loc.exact, prefix, suffix },
+        { type: "TextPositionSelector", start: loc.start, end: loc.end },
+      ],
     }],
-    document: { title: [url] },
+    document: { title: [title || url] },
   };
   const resp = await fetch("https://api.hypothes.is/api/annotations", {
     method: "POST",
