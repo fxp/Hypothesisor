@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="zh">
+<html lang="en" class="lang-en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Hypothesisor · 让 AI 为你读懂网页，一键标注到 Hypothesis</title>
-<meta name="description" content="Chrome 扩展，用 GLM 读当前网页、生成高质量 Hypothesis 标注。BYO key，无后端。" />
+<title>Hypothesisor · Read with AI · Annotate with Hypothesis</title>
+<meta name="description" content="Chrome extension that reads the current page with an LLM and posts high-quality annotations to Hypothesis. BYO key, client-side, open source." />
 <style>
   :root {
     --violet: #7C3AED;
@@ -27,7 +27,31 @@
   a:hover { text-decoration: underline; }
   .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
+  /* Bilingual toggle: hide the language not currently active. */
+  html.lang-en [lang="zh"] { display: none; }
+  html.lang-zh [lang="en"] { display: none; }
+
+  .lang-switch {
+    position: absolute; top: 18px; right: 24px;
+    display: inline-flex; gap: 0;
+    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px; padding: 3px;
+    font-size: 12.5px; font-weight: 600; backdrop-filter: blur(6px);
+  }
+  .lang-switch button {
+    appearance: none; background: transparent; border: none;
+    color: rgba(255,255,255,0.85); cursor: pointer;
+    padding: 4px 12px; border-radius: 999px; font: inherit;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lang-switch button:hover { color: white; }
+  html.lang-en .lang-switch button[data-lang="en"],
+  html.lang-zh .lang-switch button[data-lang="zh"] {
+    background: white; color: var(--violet);
+  }
+
   header {
+    position: relative;
     background: linear-gradient(135deg, var(--violet), var(--blue) 55%, var(--cyan));
     color: white;
     padding: 72px 0 88px;
@@ -136,6 +160,10 @@
 <body>
 
 <header>
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="zh">中文</button>
+  </div>
   <div class="container">
     <svg class="logo" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
       <rect width="128" height="128" rx="28" fill="#ffffff"/>
@@ -143,11 +171,20 @@
     </svg>
     <div class="hero">
       <h1>Hypothesisor</h1>
-      <p class="tagline">让 AI 为你读懂网页，一键标注到 Hypothesis。</p>
+      <p class="tagline">
+        <span lang="en">Read any webpage with AI. Annotate with Hypothesis in one click.</span>
+        <span lang="zh">让 AI 为你读懂网页，一键标注到 Hypothesis。</span>
+      </p>
       <div class="cta">
         <a class="btn primary" href="https://github.com/fxp/Hypothesisor">GitHub</a>
-        <a class="btn ghost" href="https://github.com/fxp/Hypothesisor/archive/refs/heads/main.zip">下载源码</a>
-        <a class="btn ghost" href="#install">安装指引</a>
+        <a class="btn ghost" href="https://github.com/fxp/Hypothesisor/archive/refs/heads/main.zip">
+          <span lang="en">Download source</span>
+          <span lang="zh">下载源码</span>
+        </a>
+        <a class="btn ghost" href="#install">
+          <span lang="en">Install guide</span>
+          <span lang="zh">安装指引</span>
+        </a>
       </div>
     </div>
   </div>
@@ -155,154 +192,267 @@
 
 <section>
   <div class="container">
-    <h2>看它怎么跑</h2>
+    <h2>
+      <span lang="en">See it in action</span>
+      <span lang="zh">看它怎么跑</span>
+    </h2>
     <div class="demo-wrap">
       <video src="demo.mp4" poster="demo-poster.jpg" controls preload="metadata" playsinline></video>
     </div>
     <p style="color: var(--mute); margin-top: 12px; font-size: 14px;">
-      约 47 秒 · 1440p · 演示：打开任意网页 → 点扩展 → 选风格 → 生成候选 → 勾选发布 → 在原页面查看叠加标注
+      <span lang="en">~47 sec · 1440p · open any page → click the extension → pick a style → generate → check the ones to keep → publish → reopen the page to see annotations overlaid.</span>
+      <span lang="zh">约 47 秒 · 1440p · 演示：打开任意网页 → 点扩展 → 选风格 → 生成候选 → 勾选发布 → 在原页面查看叠加标注</span>
     </p>
   </div>
 </section>
 
 <section>
   <div class="container">
-    <h2>真实案例 · a16z 长文一键标注</h2>
+    <h2>
+      <span lang="en">Real example · One-click annotation on a16z long-form</span>
+      <span lang="zh">真实案例 · a16z 长文一键标注</span>
+    </h2>
     <p class="case-meta">
-      原文 <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">Your Data Agents Need Context</a> · 31,063 字符 · GLM 生成 21 候选 · 18 条引用通过校验 · <strong>✅ 18/18 上线</strong> · 总耗时 ~30 秒。下面是其中 4 条对照（全部 18 条见 <a href="https://github.com/fxp/Hypothesisor/blob/main/store-assets/case-study-a16z.md">完整列表</a>）：
+      <span lang="en">
+        Source: <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">Your Data Agents Need Context</a> · 31,063 chars · GLM produced 21 candidates · 18 quotes validated · <strong>✅ 18/18 published</strong> · ~30 seconds end-to-end. Four pairings below (all 18 in the <a href="https://github.com/fxp/Hypothesisor/blob/main/store-assets/case-study-a16z.md">complete list</a>):
+      </span>
+      <span lang="zh">
+        原文 <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">Your Data Agents Need Context</a> · 31,063 字符 · GLM 生成 21 候选 · 18 条引用通过校验 · <strong>✅ 18/18 上线</strong> · 总耗时 ~30 秒。下面是其中 4 条对照（全部 18 条见 <a href="https://github.com/fxp/Hypothesisor/blob/main/store-assets/case-study-a16z.md">完整列表</a>）：
+      </span>
     </p>
 
     <div class="case-pair">
       <div class="case-source">
-        <div class="case-label">a16z 原文</div>
+        <div class="case-label">
+          <span lang="en">a16z source</span>
+          <span lang="zh">a16z 原文</span>
+        </div>
         <p class="case-quote">
           <span class="hl">Some of the most important context is implicit, conditional, and historically contingent, and only exists as tribal knowledge inside teams.</span>
         </p>
       </div>
       <div class="case-arrow">→</div>
       <div class="case-ann">
-        <div class="case-label">Hypothesisor 标注</div>
-        <p class="case-takeaway">隐性 context 不可被完全编码</p>
-        <p class="case-detail">最重要的业务上下文往往是隐性的、有条件的、历史依赖的，难以被完全捕捉和编码。这挑战了完全自动化的数据代理愿景，强调了人类参与在上下文构建中的不可替代性。</p>
+        <div class="case-label">
+          <span lang="en">Hypothesisor annotation</span>
+          <span lang="zh">Hypothesisor 标注</span>
+        </div>
+        <p class="case-takeaway">
+          <span lang="en">Implicit context can't be fully encoded</span>
+          <span lang="zh">隐性 context 不可被完全编码</span>
+        </p>
+        <p class="case-detail">
+          <span lang="en">The most important business context is implicit, conditional, and historically contingent — hard to fully capture or formalize. This pushes back on the fully-autonomous data-agent vision and underscores the irreplaceable role of humans in building context.</span>
+          <span lang="zh">最重要的业务上下文往往是隐性的、有条件的、历史依赖的，难以被完全捕捉和编码。这挑战了完全自动化的数据代理愿景，强调了人类参与在上下文构建中的不可替代性。</span>
+        </p>
         <div class="case-tags">
           <span class="case-tag">implicit-context</span>
           <span class="case-tag">human-input</span>
         </div>
-        <a class="case-link" href="https://hypothes.is/a/bdZPnDuwEfGpGa9xzvXIqQ" target="_blank">在 Hypothesis 查看 →</a>
+        <a class="case-link" href="https://hypothes.is/a/bdZPnDuwEfGpGa9xzvXIqQ" target="_blank">
+          <span lang="en">View on Hypothesis →</span>
+          <span lang="zh">在 Hypothesis 查看 →</span>
+        </a>
       </div>
     </div>
 
     <div class="case-pair">
       <div class="case-source">
-        <div class="case-label">a16z 原文</div>
+        <div class="case-label">
+          <span lang="en">a16z source</span>
+          <span lang="zh">a16z 原文</span>
+        </div>
         <p class="case-quote">
           <span class="hl">In this way the context layer can become a multi-dimensional corpus where code lives alongside natural language, capturing any context an agent might need.</span>
         </p>
       </div>
       <div class="case-arrow">→</div>
       <div class="case-ann">
-        <div class="case-label">Hypothesisor 标注</div>
-        <p class="case-takeaway">代码 + 自然语言双轨知识库</p>
-        <p class="case-detail">作者提出了一个创新性的概念：上下文层应成为多维度的知识库，将代码与自然语言融合。这一观点突破了传统数据管理的二元思维，为构建真正智能的数据代理提供了新思路。</p>
+        <div class="case-label">
+          <span lang="en">Hypothesisor annotation</span>
+          <span lang="zh">Hypothesisor 标注</span>
+        </div>
+        <p class="case-takeaway">
+          <span lang="en">Code + natural language as a dual-track corpus</span>
+          <span lang="zh">代码 + 自然语言双轨知识库</span>
+        </p>
+        <p class="case-detail">
+          <span lang="en">The author proposes that the context layer should become a multi-dimensional corpus, blending code with natural language. The framing breaks past the traditional binary in data management and points to a new direction for genuinely intelligent data agents.</span>
+          <span lang="zh">作者提出了一个创新性的概念：上下文层应成为多维度的知识库，将代码与自然语言融合。这一观点突破了传统数据管理的二元思维，为构建真正智能的数据代理提供了新思路。</span>
+        </p>
         <div class="case-tags">
           <span class="case-tag">multi-dimensional</span>
           <span class="case-tag">knowledge-corpus</span>
         </div>
-        <a class="case-link" href="https://hypothes.is/a/bsh8rjuwEfG-kQ_CG6tYkA" target="_blank">在 Hypothesis 查看 →</a>
+        <a class="case-link" href="https://hypothes.is/a/bsh8rjuwEfG-kQ_CG6tYkA" target="_blank">
+          <span lang="en">View on Hypothesis →</span>
+          <span lang="zh">在 Hypothesis 查看 →</span>
+        </a>
       </div>
     </div>
 
     <div class="case-pair">
       <div class="case-source">
-        <div class="case-label">a16z 原文</div>
+        <div class="case-label">
+          <span lang="en">a16z source</span>
+          <span lang="zh">a16z 原文</span>
+        </div>
         <p class="case-quote">
           <span class="hl">While model capabilities have improved dramatically for use cases like codegen and mathematical reasoning, they still lag behind on the data side (as evidenced through SQL benchmarks like Spider 2.0 and Bird Bench).</span>
         </p>
       </div>
       <div class="case-arrow">→</div>
       <div class="case-ann">
-        <div class="case-label">Hypothesisor 标注</div>
-        <p class="case-takeaway">代码强 ≠ 数据强（反共识）</p>
-        <p class="case-detail">尽管模型在代码生成和数学推理方面取得了显著进步，但在数据处理方面仍然落后。这挑战了模型能力全面提升的假设，暗示了数据推理可能需要特殊的处理方法。</p>
+        <div class="case-label">
+          <span lang="en">Hypothesisor annotation</span>
+          <span lang="zh">Hypothesisor 标注</span>
+        </div>
+        <p class="case-takeaway">
+          <span lang="en">Strong at code ≠ strong at data (counterintuitive)</span>
+          <span lang="zh">代码强 ≠ 数据强（反共识）</span>
+        </p>
+        <p class="case-detail">
+          <span lang="en">Despite dramatic gains on codegen and math, models still trail on data tasks. This challenges the "general capability uplift" assumption and suggests data reasoning may need its own approach.</span>
+          <span lang="zh">尽管模型在代码生成和数学推理方面取得了显著进步，但在数据处理方面仍然落后。这挑战了模型能力全面提升的假设，暗示了数据推理可能需要特殊的处理方法。</span>
+        </p>
         <div class="case-tags">
           <span class="case-tag">model-capabilities</span>
           <span class="case-tag">sql-benchmarks</span>
         </div>
-        <a class="case-link" href="https://hypothes.is/a/dzZrbDuwEfGRB0Nsy7A2Eg" target="_blank">在 Hypothesis 查看 →</a>
+        <a class="case-link" href="https://hypothes.is/a/dzZrbDuwEfGRB0Nsy7A2Eg" target="_blank">
+          <span lang="en">View on Hypothesis →</span>
+          <span lang="zh">在 Hypothesis 查看 →</span>
+        </a>
       </div>
     </div>
 
     <div class="case-pair">
       <div class="case-source">
-        <div class="case-label">a16z 原文</div>
+        <div class="case-label">
+          <span lang="en">a16z source</span>
+          <span lang="zh">a16z 原文</span>
+        </div>
         <p class="case-quote">
           <span class="hl">We are at an interesting point in time of market development, where the problem of a lack of context has become apparent, but we are still in the early innings of building solutions.</span>
         </p>
       </div>
       <div class="case-arrow">→</div>
       <div class="case-ann">
-        <div class="case-label">Hypothesisor 标注</div>
-        <p class="case-takeaway">问题已识别 · 方案仍早期</p>
-        <p class="case-detail">作者对市场发展阶段的分析提供了一个有洞察力的视角：问题已被识别，但解决方案仍处于早期阶段。这暗示了当前市场可能存在过度炒作与实际能力之间的差距，以及未来几年可能出现的实质性创新。</p>
+        <div class="case-label">
+          <span lang="en">Hypothesisor annotation</span>
+          <span lang="zh">Hypothesisor 标注</span>
+        </div>
+        <p class="case-takeaway">
+          <span lang="en">Problem identified · solutions still early</span>
+          <span lang="zh">问题已识别 · 方案仍早期</span>
+        </p>
+        <p class="case-detail">
+          <span lang="en">The author's read of the market: the problem is identified, but solutions are still early. Implies a current gap between hype and capability — and meaningful innovation in the years ahead.</span>
+          <span lang="zh">作者对市场发展阶段的分析提供了一个有洞察力的视角：问题已被识别，但解决方案仍处于早期阶段。这暗示了当前市场可能存在过度炒作与实际能力之间的差距，以及未来几年可能出现的实质性创新。</span>
+        </p>
         <div class="case-tags">
           <span class="case-tag">market-timing</span>
           <span class="case-tag">solution-maturity</span>
         </div>
-        <a class="case-link" href="https://hypothes.is/a/cK3MIjuwEfGKkKeAY7a-hQ" target="_blank">在 Hypothesis 查看 →</a>
+        <a class="case-link" href="https://hypothes.is/a/cK3MIjuwEfGKkKeAY7a-hQ" target="_blank">
+          <span lang="en">View on Hypothesis →</span>
+          <span lang="zh">在 Hypothesis 查看 →</span>
+        </a>
       </div>
     </div>
 
     <p style="color: var(--mute); margin-top: 18px; font-size: 14px;">
-      📌 装 <a href="https://web.hypothes.is/start/" target="_blank">Hypothesis 浏览器插件</a> 后访问
-      <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">a16z 原文</a>，全部 18 条中文洞察会直接叠在英文正文上。
+      <span lang="en">📌 Install the <a href="https://web.hypothes.is/start/" target="_blank">Hypothesis browser extension</a> and reopen the <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">a16z article</a> to see all 18 Chinese-language insights overlaid on the English original.</span>
+      <span lang="zh">📌 装 <a href="https://web.hypothes.is/start/" target="_blank">Hypothesis 浏览器插件</a> 后访问 <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">a16z 原文</a>，全部 18 条中文洞察会直接叠在英文正文上。</span>
     </p>
   </div>
 </section>
 
 <section>
   <div class="container">
-    <h2>为什么做这个</h2>
+    <h2>
+      <span lang="en">Why I built this</span>
+      <span lang="zh">为什么做这个</span>
+    </h2>
     <p style="color: var(--mute); max-width: 680px;">
-      在 <a href="https://web.hypothes.is/">Hypothesis</a> 上做标注是高质量阅读的放大器，但人工标注慢、容易放弃。
-      Hypothesisor 用 GLM 读完整页正文，按你选的「风格」（非共识观点、金句、批判视角、AI 洞察…）
-      一次生成 5-40 条有质量的候选标注，你勾选发布即可。长文会自动加深分析。
+      <span lang="en">Annotating on <a href="https://web.hypothes.is/">Hypothesis</a> amplifies high-quality reading, but the manual cost is high enough that most people give up. Hypothesisor reads the full page with GLM and, in the style you pick (non-consensus takes, gold sentences, critical reading, surprising facts…), drafts 5–40 quality candidates in one go. You check the ones you want and publish. Long pieces automatically get deeper coverage.</span>
+      <span lang="zh">在 <a href="https://web.hypothes.is/">Hypothesis</a> 上做标注是高质量阅读的放大器，但人工标注慢、容易放弃。Hypothesisor 用 GLM 读完整页正文，按你选的「风格」（非共识观点、金句、批判视角、AI 洞察…）一次生成 5-40 条有质量的候选标注，你勾选发布即可。长文会自动加深分析。</span>
     </p>
   </div>
 </section>
 
 <section>
   <div class="container">
-    <h2>核心能力</h2>
+    <h2>
+      <span lang="en">Core capabilities</span>
+      <span lang="zh">核心能力</span>
+    </h2>
     <div class="features">
       <div class="feat">
         <div class="tag">Depth-aware</div>
-        <h3>按长度自适应深度</h3>
-        <p>短文 3-5 条，长文 12-18 条，深度长文 18-28 条，超长篇章 25-40 条。覆盖各个章节。</p>
+        <h3>
+          <span lang="en">Depth scales with article length</span>
+          <span lang="zh">按长度自适应深度</span>
+        </h3>
+        <p>
+          <span lang="en">3-5 for shorts, 12-18 for long form, 18-28 for deep long form, 25-40 for chapter-length pieces. Coverage spans every section.</span>
+          <span lang="zh">短文 3-5 条，长文 12-18 条，深度长文 18-28 条，超长篇章 25-40 条。覆盖各个章节。</span>
+        </p>
       </div>
       <div class="feat">
         <div class="tag">6+1 styles</div>
-        <h3>7 种标注风格</h3>
-        <p>非共识观点 / 数据 / 行动 / 金句 / 批判性 / 令人惊讶的事实 / 任意自定义描述。</p>
+        <h3>
+          <span lang="en">7 annotation styles</span>
+          <span lang="zh">7 种标注风格</span>
+        </h3>
+        <p>
+          <span lang="en">Non-consensus / data / actionable / gold sentences / critique / surprising facts / any free-text custom prompt.</span>
+          <span lang="zh">非共识观点 / 数据 / 行动 / 金句 / 批判性 / 令人惊讶的事实 / 任意自定义描述。</span>
+        </p>
       </div>
       <div class="feat">
         <div class="tag">Client-side</div>
-        <h3>纯前端，无后端</h3>
-        <p>抓正文、调 GLM、POST Hypothesis 全在扩展里完成。Token 只存本地。</p>
+        <h3>
+          <span lang="en">Pure front-end, no backend</span>
+          <span lang="zh">纯前端，无后端</span>
+        </h3>
+        <p>
+          <span lang="en">Page extraction, GLM call, and Hypothesis POST all happen in the extension. Tokens stay on your machine.</span>
+          <span lang="zh">抓正文、调 GLM、POST Hypothesis 全在扩展里完成。Token 只存本地。</span>
+        </p>
       </div>
       <div class="feat">
         <div class="tag">Quote-verified</div>
-        <h3>引用原文逐字校验</h3>
-        <p>只有在当前页面正文中能逐字命中的引用才能发布，杜绝 AI "改编"原文。</p>
+        <h3>
+          <span lang="en">Word-for-word quote validation</span>
+          <span lang="zh">引用原文逐字校验</span>
+        </h3>
+        <p>
+          <span lang="en">Only quotes that match the live DOM byte-for-byte get published — no AI "creative editing" of the source.</span>
+          <span lang="zh">只有在当前页面正文中能逐字命中的引用才能发布，杜绝 AI "改编"原文。</span>
+        </p>
       </div>
       <div class="feat">
         <div class="tag">Markdown</div>
-        <h3>精炼两行排版</h3>
-        <p>每条标注统一「加粗点题 + 展开说明」结构，≤120 字，Hypothesis 原生渲染 Markdown。</p>
+        <h3>
+          <span lang="en">Concise two-line layout</span>
+          <span lang="zh">精炼两行排版</span>
+        </h3>
+        <p>
+          <span lang="en">Every annotation follows a "bold takeaway + explanation" structure, ≤120 chars. Renders natively in the Hypothesis UI.</span>
+          <span lang="zh">每条标注统一「加粗点题 + 展开说明」结构，≤120 字，Hypothesis 原生渲染 Markdown。</span>
+        </p>
       </div>
       <div class="feat">
         <div class="tag">BYO key</div>
-        <h3>你自己的 key</h3>
-        <p>配置一次 Hypothesis Token 和 BigModel API Key 就能用，没有中间商。</p>
+        <h3>
+          <span lang="en">Your own keys</span>
+          <span lang="zh">你自己的 key</span>
+        </h3>
+        <p>
+          <span lang="en">Configure your Hypothesis Token and BigModel API Key once and you're set. No middleman.</span>
+          <span lang="zh">配置一次 Hypothesis Token 和 BigModel API Key 就能用，没有中间商。</span>
+        </p>
       </div>
     </div>
   </div>
@@ -310,27 +460,54 @@
 
 <section id="install">
   <div class="container">
-    <h2>安装</h2>
+    <h2>
+      <span lang="en">Install</span>
+      <span lang="zh">安装</span>
+    </h2>
     <ol class="steps">
       <li>
-        <h3>下载源码</h3>
-        <p>克隆仓库或下载 ZIP：<code>git clone https://github.com/fxp/Hypothesisor.git</code></p>
+        <h3>
+          <span lang="en">Get the source</span>
+          <span lang="zh">下载源码</span>
+        </h3>
+        <p>
+          <span lang="en">Clone the repo or download the ZIP: <code>git clone https://github.com/fxp/Hypothesisor.git</code></span>
+          <span lang="zh">克隆仓库或下载 ZIP：<code>git clone https://github.com/fxp/Hypothesisor.git</code></span>
+        </p>
       </li>
       <li>
-        <h3>加载扩展</h3>
-        <p>Chrome 打开 <code>chrome://extensions</code> → 右上角开「开发者模式」→ 点「加载已解压的扩展程序」→ 选 <code>chrome-extension/</code> 目录。</p>
+        <h3>
+          <span lang="en">Load the extension</span>
+          <span lang="zh">加载扩展</span>
+        </h3>
+        <p>
+          <span lang="en">Open <code>chrome://extensions</code> in Chrome → toggle "Developer mode" in the top right → click "Load unpacked" → choose the <code>chrome-extension/</code> folder.</span>
+          <span lang="zh">Chrome 打开 <code>chrome://extensions</code> → 右上角开「开发者模式」→ 点「加载已解压的扩展程序」→ 选 <code>chrome-extension/</code> 目录。</span>
+        </p>
       </li>
       <li>
-        <h3>填 2 个 key</h3>
-        <p>点扩展图标 → 齿轮 ⚙ → 填入：</p>
+        <h3>
+          <span lang="en">Add 2 keys</span>
+          <span lang="zh">填 2 个 key</span>
+        </h3>
+        <p>
+          <span lang="en">Click the extension icon → ⚙ → fill in:</span>
+          <span lang="zh">点扩展图标 → 齿轮 ⚙ → 填入：</span>
+        </p>
         <ul>
-          <li><strong>Hypothesis Token</strong> ： <a href="https://hypothes.is/account/developer">hypothes.is/account/developer</a></li>
-          <li><strong>BigModel API Key</strong>：<a href="https://open.bigmodel.cn/usercenter/apikeys">open.bigmodel.cn/usercenter/apikeys</a></li>
+          <li><strong>Hypothesis Token</strong>: <a href="https://hypothes.is/account/developer">hypothes.is/account/developer</a></li>
+          <li><strong>BigModel API Key</strong>: <a href="https://open.bigmodel.cn/usercenter/apikeys">open.bigmodel.cn/usercenter/apikeys</a></li>
         </ul>
       </li>
       <li>
-        <h3>开始标注</h3>
-        <p>在任意网页点扩展图标 → 选模式/风格 → 「生成标注」→ 勾选想发布的条目 → 「发布选中」。装 <a href="https://web.hypothes.is/start/">Hypothesis 浏览器插件</a>后回到原页面即可看到叠加的标注。</p>
+        <h3>
+          <span lang="en">Annotate</span>
+          <span lang="zh">开始标注</span>
+        </h3>
+        <p>
+          <span lang="en">On any page click the extension icon → pick mode/style → "Annotate this page" → check the candidates you want → "Publish selected". Install the <a href="https://web.hypothes.is/start/">Hypothesis browser extension</a> and reopen the page to see the annotations overlaid.</span>
+          <span lang="zh">在任意网页点扩展图标 → 选模式/风格 → 「生成标注」→ 勾选想发布的条目 → 「发布选中」。装 <a href="https://web.hypothes.is/start/">Hypothesis 浏览器插件</a>后回到原页面即可看到叠加的标注。</span>
+        </p>
       </li>
     </ol>
   </div>
@@ -338,15 +515,57 @@
 
 <section>
   <div class="container">
-    <h2>深度档位</h2>
+    <h2>
+      <span lang="en">Depth tiers</span>
+      <span lang="zh">深度档位</span>
+    </h2>
     <table class="depth">
-      <thead><tr><th>正文长度</th><th>档位</th><th>标注条数</th><th>输出 token</th></tr></thead>
+      <thead>
+        <tr>
+          <th>
+            <span lang="en">Article length</span>
+            <span lang="zh">正文长度</span>
+          </th>
+          <th>
+            <span lang="en">Tier</span>
+            <span lang="zh">档位</span>
+          </th>
+          <th>
+            <span lang="en">Annotations</span>
+            <span lang="zh">标注条数</span>
+          </th>
+          <th>
+            <span lang="en">Output tokens</span>
+            <span lang="zh">输出 token</span>
+          </th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><td>&lt; 4k 字符</td><td>短文</td><td>3–5</td><td>4096</td></tr>
-        <tr><td>4k – 12k</td><td>中等</td><td>6–10</td><td>4096</td></tr>
-        <tr><td>12k – 30k</td><td>长文</td><td>12–18</td><td>6144</td></tr>
-        <tr><td>30k – 60k</td><td>深度长文</td><td>18–28</td><td>8192</td></tr>
-        <tr><td>&gt; 60k（截至 60k）</td><td>超长篇章</td><td>25–40</td><td>8192</td></tr>
+        <tr>
+          <td>&lt; 4k</td>
+          <td><span lang="en">Short</span><span lang="zh">短文</span></td>
+          <td>3–5</td><td>4096</td>
+        </tr>
+        <tr>
+          <td>4k – 12k</td>
+          <td><span lang="en">Medium</span><span lang="zh">中等</span></td>
+          <td>6–10</td><td>4096</td>
+        </tr>
+        <tr>
+          <td>12k – 30k</td>
+          <td><span lang="en">Long form</span><span lang="zh">长文</span></td>
+          <td>12–18</td><td>6144</td>
+        </tr>
+        <tr>
+          <td>30k – 60k</td>
+          <td><span lang="en">Deep long form</span><span lang="zh">深度长文</span></td>
+          <td>18–28</td><td>8192</td>
+        </tr>
+        <tr>
+          <td>&gt; 60k <span lang="en">(truncated to 60k)</span><span lang="zh">（截至 60k）</span></td>
+          <td><span lang="en">Chapter-length</span><span lang="zh">超长篇章</span></td>
+          <td>25–40</td><td>8192</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -354,8 +573,18 @@
 
 <section>
   <div class="container">
-    <h2>架构</h2>
-<pre>chrome-extension/
+    <h2>
+      <span lang="en">Architecture</span>
+      <span lang="zh">架构</span>
+    </h2>
+<pre lang="en">chrome-extension/
+├── manifest.json         # MV3 manifest
+├── popup.{html,css,js}   # main UI
+├── options.{html,js}     # settings
+├── lib/agent.js          # extract → GLM → validate → POST Hypothesis
+├── icons/icon.svg
+└── README.md</pre>
+<pre lang="zh">chrome-extension/
 ├── manifest.json         # MV3 声明
 ├── popup.{html,css,js}   # 主界面
 ├── options.{html,js}     # Token 设置
@@ -363,17 +592,48 @@
 ├── icons/icon.svg
 └── README.md</pre>
     <p style="color: var(--mute);">
-      抽文本：<code>chrome.scripting.executeScript</code> 读 <code>article / main / [role=main]</code> 的 <code>innerText</code>。
-      BigModel 与 Hypothesis 两家 API 均直连，无后端。存储用 <code>chrome.storage.local</code>。
+      <span lang="en">Page extraction: <code>chrome.scripting.executeScript</code> walks Text nodes under <code>article / main / [role=main]</code>, byte-aligned with the Hypothesis client's anchoring layer. BigModel and Hypothesis APIs both called directly — no backend. Storage in <code>chrome.storage.local</code>.</span>
+      <span lang="zh">抽文本：<code>chrome.scripting.executeScript</code> 读 <code>article / main / [role=main]</code> 的 <code>innerText</code>。BigModel 与 Hypothesis 两家 API 均直连，无后端。存储用 <code>chrome.storage.local</code>。</span>
     </p>
   </div>
 </section>
 
 <footer>
   <div class="container">
-    MIT License · 脱胎于 <a href="https://github.com/fxp/Hypothesisor/tree/main/chrome-extension">hypothesis-annotator</a> skill
+    <span lang="en">MIT License · evolved from the <a href="https://github.com/fxp/Hypothesisor/tree/main/chrome-extension">hypothesis-annotator</a> skill</span>
+    <span lang="zh">MIT License · 脱胎于 <a href="https://github.com/fxp/Hypothesisor/tree/main/chrome-extension">hypothesis-annotator</a> skill</span>
   </div>
 </footer>
+
+<script>
+  (function() {
+    const KEY = "hypothesisor.lang";
+    const TITLES = {
+      en: "Hypothesisor · Read with AI · Annotate with Hypothesis",
+      zh: "Hypothesisor · 让 AI 为你读懂网页，一键标注到 Hypothesis"
+    };
+    function detect() {
+      const stored = localStorage.getItem(KEY);
+      if (stored === "en" || stored === "zh") return stored;
+      const nav = (navigator.language || "en").toLowerCase();
+      return nav.startsWith("zh") ? "zh" : "en";
+    }
+    function apply(lang) {
+      document.documentElement.classList.remove("lang-en", "lang-zh");
+      document.documentElement.classList.add("lang-" + lang);
+      document.documentElement.setAttribute("lang", lang === "zh" ? "zh-CN" : "en");
+      document.title = TITLES[lang];
+    }
+    apply(detect());
+    document.querySelectorAll(".lang-switch button").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        const lang = btn.getAttribute("data-lang");
+        localStorage.setItem(KEY, lang);
+        apply(lang);
+      });
+    });
+  })();
+</script>
 
 </body>
 </html>
