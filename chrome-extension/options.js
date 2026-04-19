@@ -1,11 +1,26 @@
-import { applyI18n, t } from "./lib/i18n.js";
+import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
 
-applyI18n();
+await initI18n();
 
-// Render the BigModel hint (which contains an inline link) at runtime
-// so the URL stays clickable while the surrounding text is localized.
+function syncLangToggleLabel() {
+  document.getElementById("langToggle").textContent =
+    getCurrentLanguage() === "zh_CN" ? "EN" : "中";
+}
+syncLangToggleLabel();
+
+document.getElementById("langToggle").addEventListener("click", async () => {
+  const next = getCurrentLanguage() === "zh_CN" ? "en" : "zh_CN";
+  await setLanguage(next);
+  renderBigmodelHint();
+  syncLangToggleLabel();
+});
+
+// The BigModel hint contains an inline link, so it's built imperatively
+// (rather than via data-i18n) to keep the URL clickable while text localizes.
 const hintHost = document.getElementById("bigmodelHint");
-if (hintHost) {
+function renderBigmodelHint() {
+  if (!hintHost) return;
+  hintHost.textContent = "";
   const url = "https://open.bigmodel.cn/usercenter/apikeys";
   const tpl = t("options_hint_bigmodel", `__URL__`);
   const [pre, post = ""] = tpl.split("__URL__");
@@ -17,6 +32,7 @@ if (hintHost) {
   hintHost.appendChild(a);
   hintHost.append(post);
 }
+renderBigmodelHint();
 
 const FIELDS = ["hypothesisToken", "bigmodelKey", "defaultMode", "defaultStyle"];
 

@@ -36,13 +36,16 @@ h1::before {
   background-image: url("icons/icon-48.png");
   background-size: cover;
 }
-header a#openOptions {
+.header-tools { display: flex; align-items: center; gap: 4px; }
+header a#openOptions, header button.lang-toggle {
   text-decoration: none; color: var(--mute);
   width: 32px; height: 32px; border-radius: 8px;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 17px; transition: background 0.15s, color 0.15s;
+  background: transparent; border: none; cursor: pointer; font-family: inherit;
 }
-header a#openOptions:hover { background: var(--bg-soft); color: var(--ink); }
+header button.lang-toggle { font-size: 13px; font-weight: 600; padding: 0; }
+header a#openOptions:hover, header button.lang-toggle:hover { background: var(--bg-soft); color: var(--ink); }
 
 /* ── target (page title + url) ─────────────────────────────── */
 .target { padding: 12px 20px; background: var(--bg-soft); }

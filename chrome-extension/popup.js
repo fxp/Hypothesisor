@@ -1,7 +1,8 @@
 import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
-import { applyI18n, t } from "./lib/i18n.js";
+import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
 
-applyI18n();
+await initI18n();
+syncLangToggleLabel();
 
 const $ = (id) => document.getElementById(id);
 let state = { tab: null, content: "", annotations: [] };
@@ -75,6 +76,20 @@ function formatError(e) {
 $("openOptions").addEventListener("click", (e) => {
   e.preventDefault();
   chrome.runtime.openOptionsPage();
+});
+
+function syncLangToggleLabel() {
+  // Button shows the language you'd switch TO, not the current one.
+  $("langToggle").textContent = getCurrentLanguage() === "zh_CN" ? "EN" : "中";
+}
+
+$("langToggle").addEventListener("click", async () => {
+  const next = getCurrentLanguage() === "zh_CN" ? "en" : "zh_CN";
+  await setLanguage(next);
+  syncLangToggleLabel();
+  // Re-render dynamic content that doesn't carry data-i18n attributes.
+  if (state.tab) $("pageTitle").textContent = state.tab.title || t("page_no_title");
+  if (state.annotations.length) render();
 });
 
 $("styleChips").addEventListener("click", (e) => {
