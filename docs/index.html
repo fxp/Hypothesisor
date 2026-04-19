@@ -75,6 +75,57 @@
   .demo-wrap { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(37, 99, 235, 0.35); background: #0f172a; }
   .demo-wrap video { display: block; width: 100%; height: auto; }
 
+  /* Case-study side-by-side */
+  .case-meta { color: var(--mute); margin: -8px 0 28px; font-size: 14.5px; }
+  .case-meta strong { color: #15803d; font-weight: 600; }
+  .case-pair {
+    display: grid; grid-template-columns: 1fr 36px 1fr; gap: 18px;
+    align-items: stretch; margin-bottom: 24px;
+  }
+  .case-source, .case-ann {
+    border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px;
+    background: white; display: flex; flex-direction: column;
+  }
+  .case-source { background: #fafafa; }
+  .case-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+    color: var(--mute); margin-bottom: 10px;
+  }
+  .case-source .case-label::before { content: "📰 "; }
+  .case-ann .case-label::before { content: "✨ "; color: #2563EB; }
+  .case-quote {
+    font: 15px/1.65 Georgia, "Times New Roman", "Songti SC", serif;
+    color: #1e293b; margin: 0;
+  }
+  .case-quote .hl {
+    background: #fef3c7; padding: 2px 4px; border-radius: 3px;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.04);
+  }
+  .case-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: #cbd5e1; font-size: 24px; user-select: none;
+  }
+  .case-takeaway {
+    font-size: 15.5px; font-weight: 700; color: #0f172a;
+    margin: 0 0 8px; letter-spacing: -0.1px;
+  }
+  .case-detail { color: #334155; font-size: 14px; margin: 0 0 12px; line-height: 1.7; }
+  .case-tags { margin: auto 0 10px; }
+  .case-tag {
+    display: inline-block; background: #eef2ff; color: #4338ca;
+    padding: 2px 9px; border-radius: 999px; font-size: 11.5px;
+    font-weight: 500; margin-right: 4px;
+  }
+  .case-link {
+    font-size: 12.5px; font-weight: 600; color: #2563EB;
+    text-decoration: none; align-self: flex-start;
+  }
+  .case-link:hover { text-decoration: underline; }
+  @media (max-width: 760px) {
+    .case-pair { grid-template-columns: 1fr; gap: 10px; }
+    .case-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
   table.depth { width: 100%; border-collapse: collapse; font-size: 14.5px; }
   table.depth th, table.depth td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
   table.depth th { background: #f8fafc; font-weight: 600; }
@@ -117,13 +168,93 @@
 <section>
   <div class="container">
     <h2>真实案例 · a16z 长文一键标注</h2>
-    <a href="https://a16z.com/your-data-agents-need-context/" target="_blank" style="display:block; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px -10px rgba(15,23,42,0.18); border: 1px solid var(--line);">
-      <img src="case-a16z.png" alt="Case study: 18/18 annotations on a16z's Your Data Agents Need Context" style="display:block; width:100%; height:auto;" />
-    </a>
-    <p style="color: var(--mute); margin-top: 14px;">
-      原文 31,063 字符 · GLM 生成 21 候选 · 18 条引用通过校验 · ✅ <strong>18/18 全部上线</strong> · 总耗时 ~30 秒。
-      装 <a href="https://web.hypothes.is/start/" target="_blank">Hypothesis 浏览器插件</a> 后访问
-      <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">a16z 原文</a>，18 条中文洞察直接叠在英文正文上。
+    <p class="case-meta">
+      原文 <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">Your Data Agents Need Context</a> · 31,063 字符 · GLM 生成 21 候选 · 18 条引用通过校验 · <strong>✅ 18/18 上线</strong> · 总耗时 ~30 秒。下面是其中 4 条对照（全部 18 条见 <a href="https://github.com/fxp/Hypothesisor/blob/main/store-assets/case-study-a16z.md">完整列表</a>）：
+    </p>
+
+    <div class="case-pair">
+      <div class="case-source">
+        <div class="case-label">a16z 原文</div>
+        <p class="case-quote">
+          <span class="hl">Some of the most important context is implicit, conditional, and historically contingent, and only exists as tribal knowledge inside teams.</span>
+        </p>
+      </div>
+      <div class="case-arrow">→</div>
+      <div class="case-ann">
+        <div class="case-label">Hypothesisor 标注</div>
+        <p class="case-takeaway">隐性 context 不可被完全编码</p>
+        <p class="case-detail">最重要的业务上下文往往是隐性的、有条件的、历史依赖的，难以被完全捕捉和编码。这挑战了完全自动化的数据代理愿景，强调了人类参与在上下文构建中的不可替代性。</p>
+        <div class="case-tags">
+          <span class="case-tag">implicit-context</span>
+          <span class="case-tag">human-input</span>
+        </div>
+        <a class="case-link" href="https://hypothes.is/a/bdZPnDuwEfGpGa9xzvXIqQ" target="_blank">在 Hypothesis 查看 →</a>
+      </div>
+    </div>
+
+    <div class="case-pair">
+      <div class="case-source">
+        <div class="case-label">a16z 原文</div>
+        <p class="case-quote">
+          <span class="hl">In this way the context layer can become a multi-dimensional corpus where code lives alongside natural language, capturing any context an agent might need.</span>
+        </p>
+      </div>
+      <div class="case-arrow">→</div>
+      <div class="case-ann">
+        <div class="case-label">Hypothesisor 标注</div>
+        <p class="case-takeaway">代码 + 自然语言双轨知识库</p>
+        <p class="case-detail">作者提出了一个创新性的概念：上下文层应成为多维度的知识库，将代码与自然语言融合。这一观点突破了传统数据管理的二元思维，为构建真正智能的数据代理提供了新思路。</p>
+        <div class="case-tags">
+          <span class="case-tag">multi-dimensional</span>
+          <span class="case-tag">knowledge-corpus</span>
+        </div>
+        <a class="case-link" href="https://hypothes.is/a/bsh8rjuwEfG-kQ_CG6tYkA" target="_blank">在 Hypothesis 查看 →</a>
+      </div>
+    </div>
+
+    <div class="case-pair">
+      <div class="case-source">
+        <div class="case-label">a16z 原文</div>
+        <p class="case-quote">
+          <span class="hl">While model capabilities have improved dramatically for use cases like codegen and mathematical reasoning, they still lag behind on the data side (as evidenced through SQL benchmarks like Spider 2.0 and Bird Bench).</span>
+        </p>
+      </div>
+      <div class="case-arrow">→</div>
+      <div class="case-ann">
+        <div class="case-label">Hypothesisor 标注</div>
+        <p class="case-takeaway">代码强 ≠ 数据强（反共识）</p>
+        <p class="case-detail">尽管模型在代码生成和数学推理方面取得了显著进步，但在数据处理方面仍然落后。这挑战了模型能力全面提升的假设，暗示了数据推理可能需要特殊的处理方法。</p>
+        <div class="case-tags">
+          <span class="case-tag">model-capabilities</span>
+          <span class="case-tag">sql-benchmarks</span>
+        </div>
+        <a class="case-link" href="https://hypothes.is/a/dzZrbDuwEfGRB0Nsy7A2Eg" target="_blank">在 Hypothesis 查看 →</a>
+      </div>
+    </div>
+
+    <div class="case-pair">
+      <div class="case-source">
+        <div class="case-label">a16z 原文</div>
+        <p class="case-quote">
+          <span class="hl">We are at an interesting point in time of market development, where the problem of a lack of context has become apparent, but we are still in the early innings of building solutions.</span>
+        </p>
+      </div>
+      <div class="case-arrow">→</div>
+      <div class="case-ann">
+        <div class="case-label">Hypothesisor 标注</div>
+        <p class="case-takeaway">问题已识别 · 方案仍早期</p>
+        <p class="case-detail">作者对市场发展阶段的分析提供了一个有洞察力的视角：问题已被识别，但解决方案仍处于早期阶段。这暗示了当前市场可能存在过度炒作与实际能力之间的差距，以及未来几年可能出现的实质性创新。</p>
+        <div class="case-tags">
+          <span class="case-tag">market-timing</span>
+          <span class="case-tag">solution-maturity</span>
+        </div>
+        <a class="case-link" href="https://hypothes.is/a/cK3MIjuwEfGKkKeAY7a-hQ" target="_blank">在 Hypothesis 查看 →</a>
+      </div>
+    </div>
+
+    <p style="color: var(--mute); margin-top: 18px; font-size: 14px;">
+      📌 装 <a href="https://web.hypothes.is/start/" target="_blank">Hypothesis 浏览器插件</a> 后访问
+      <a href="https://a16z.com/your-data-agents-need-context/" target="_blank">a16z 原文</a>，全部 18 条中文洞察会直接叠在英文正文上。
     </p>
   </div>
 </section>
