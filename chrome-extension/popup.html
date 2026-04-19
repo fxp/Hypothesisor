@@ -16,39 +16,38 @@
     <div id="pageUrl" class="url muted"></div>
   </section>
 
-  <div id="configWarn" class="config-warn" hidden>
-    <span id="configWarnMsg"></span>
-    <a id="configWarnOpen" href="#" data-i18n="warn_open_settings">Open Settings</a>
-  </div>
-
-  <section class="controls">
-    <label><span data-i18n="popup_label_mode">Mode</span>
-      <select id="mode">
-        <option value="general"  data-i18n="mode_general">general</option>
-        <option value="academic" data-i18n="mode_academic">academic</option>
-        <option value="news"     data-i18n="mode_news">news</option>
-        <option value="tech"     data-i18n="mode_tech">tech</option>
-      </select>
-    </label>
-    <label><span data-i18n="popup_label_style">Style</span>
-      <select id="style">
-        <option value=""                data-i18n="popup_style_default">Default</option>
-        <option value="non-consensus"   data-i18n="style_non_consensus">Non-consensus takes</option>
-        <option value="data"            data-i18n="style_data">Concrete data</option>
-        <option value="actionable"      data-i18n="style_actionable">Actionable advice</option>
-        <option value="gold-sentences"  data-i18n="style_gold_sentences">Gold sentences</option>
-        <option value="critique"        data-i18n="style_critique">Critical reading</option>
-        <option value="surprise"        data-i18n="style_surprise">Surprising facts</option>
-        <option value="__custom__"      data-i18n="popup_style_custom">Custom…</option>
-      </select>
-    </label>
+  <section class="style-section">
+    <div class="section-label" data-i18n="popup_label_style">Style</div>
+    <div class="style-chips" id="styleChips" role="radiogroup">
+      <button type="button" class="chip" data-style=""               data-i18n="popup_style_default">🎯 Default</button>
+      <button type="button" class="chip" data-style="non-consensus"  data-i18n="style_non_consensus">🤔 Non-consensus</button>
+      <button type="button" class="chip" data-style="data"           data-i18n="style_data">📊 Data</button>
+      <button type="button" class="chip" data-style="actionable"     data-i18n="style_actionable">⚡ Actionable</button>
+      <button type="button" class="chip" data-style="gold-sentences" data-i18n="style_gold_sentences">💎 Gold sentences</button>
+      <button type="button" class="chip" data-style="critique"       data-i18n="style_critique">🔍 Critique</button>
+      <button type="button" class="chip" data-style="surprise"       data-i18n="style_surprise">🤯 Surprising</button>
+      <button type="button" class="chip" data-style="__custom__"     data-i18n="popup_style_custom">✏️ Custom</button>
+    </div>
     <input id="styleCustom" type="text" data-i18n-placeholder="popup_style_placeholder" placeholder="Describe your annotation preference" hidden />
-    <button id="generate" class="primary" data-i18n="popup_btn_generate">Generate annotations</button>
   </section>
+
+  <div class="action-row">
+    <button id="generate" class="primary action" data-i18n="popup_btn_generate">✨ Annotate this page</button>
+  </div>
 
   <div id="status" class="status"></div>
 
   <section id="results" class="results"></section>
+
+  <div class="mode-row">
+    <label class="mode-label" data-i18n="popup_label_mode">Mode</label>
+    <select id="mode">
+      <option value="general"  data-i18n="mode_general">General</option>
+      <option value="academic" data-i18n="mode_academic">Academic</option>
+      <option value="news"     data-i18n="mode_news">News</option>
+      <option value="tech"     data-i18n="mode_tech">Tech</option>
+    </select>
+  </div>
 
   <footer>
     <button id="publishAll" data-i18n="popup_btn_publish" disabled>Publish selected</button>

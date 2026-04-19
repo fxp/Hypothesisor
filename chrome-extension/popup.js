@@ -11,33 +11,35 @@ async function init() {
   state.tab = tab;
   state.canonicalUrl = tab?.url || "";
   state.title = tab?.title || "";
+  state.style = "";
   $("pageTitle").textContent = tab?.title || t("page_no_title");
   $("pageUrl").textContent = tab?.url || "";
 
   const s = await getSettings();
   $("mode").value = s.defaultMode;
   if (s.defaultStyle) {
-    if ($("style").querySelector(`option[value="${s.defaultStyle}"]`)) {
-      $("style").value = s.defaultStyle;
-    } else {
-      $("style").value = "__custom__";
-      $("styleCustom").hidden = false;
+    const preset = $("styleChips").querySelector(`.chip[data-style="${cssEscape(s.defaultStyle)}"]`);
+    if (preset) selectChip(s.defaultStyle);
+    else {
+      selectChip("__custom__");
       $("styleCustom").value = s.defaultStyle;
     }
+  } else {
+    selectChip("");
   }
-  renderConfigWarning(s);
 }
 
-function renderConfigWarning(s) {
-  const banner = $("configWarn");
-  const msgEl = $("configWarnMsg");
-  if (!banner || !msgEl) return;
-  const noToken = !s.hypothesisToken;
-  const noKey = !s.bigmodelKey;
-  if (!noToken && !noKey) { banner.hidden = true; return; }
-  const key = noToken && noKey ? "warn_missing_both" : noToken ? "warn_missing_token" : "warn_missing_key";
-  msgEl.textContent = t(key);
-  banner.hidden = false;
+function cssEscape(s) {
+  return String(s).replace(/["\\]/g, "\\$&");
+}
+
+function selectChip(value) {
+  state.style = value;
+  for (const c of $("styleChips").querySelectorAll(".chip")) {
+    c.classList.toggle("active", c.dataset.style === value);
+  }
+  $("styleCustom").hidden = value !== "__custom__";
+  if (value === "__custom__") $("styleCustom").focus();
 }
 
 // Translate an Error with a machine-readable `code` into a user-friendly localized string.
@@ -75,13 +77,9 @@ $("openOptions").addEventListener("click", (e) => {
   chrome.runtime.openOptionsPage();
 });
 
-$("configWarnOpen").addEventListener("click", (e) => {
-  e.preventDefault();
-  chrome.runtime.openOptionsPage();
-});
-
-$("style").addEventListener("change", () => {
-  $("styleCustom").hidden = $("style").value !== "__custom__";
+$("styleChips").addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (chip) selectChip(chip.dataset.style);
 });
 
 function setStatus(text, kind = "") {
@@ -91,9 +89,8 @@ function setStatus(text, kind = "") {
 }
 
 function resolveStyle() {
-  const v = $("style").value;
-  if (v === "__custom__") return $("styleCustom").value.trim() || null;
-  return v || null;
+  if (state.style === "__custom__") return $("styleCustom").value.trim() || null;
+  return state.style || null;
 }
 
 function render() {
@@ -170,7 +167,6 @@ $("generate").addEventListener("click", async () => {
     }
     const settings = await getSettings();
     const { bigmodelKey, hypothesisToken } = settings;
-    renderConfigWarning(settings);
     const missing = [];
     if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
     if (!hypothesisToken) missing.push(t("status_need_token"));
