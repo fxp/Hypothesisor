@@ -1,0 +1,81 @@
+{
+  "extName":         { "message": "Hypothesisor", "description": "Extension name" },
+  "extDesc":         { "message": "Read the current page with an LLM and post high-quality annotations to Hypothesis in one click. BYO key, client-side, open source.", "description": "Extension description" },
+
+  "popup_settings_title":  { "message": "Settings" },
+  "popup_label_mode":      { "message": "Mode" },
+  "popup_label_style":     { "message": "Style" },
+  "popup_style_placeholder": { "message": "Describe your annotation preference" },
+  "popup_btn_generate":    { "message": "✨ Annotate this page" },
+  "popup_btn_publish":     { "message": "Publish selected" },
+
+  "mode_general":   { "message": "General" },
+  "mode_academic":  { "message": "Academic" },
+  "mode_news":      { "message": "News" },
+  "mode_tech":      { "message": "Tech" },
+
+  "popup_style_default":   { "message": "🎯 Default" },
+  "popup_style_custom":    { "message": "✏️ Custom" },
+  "style_non_consensus":  { "message": "🤔 Non-consensus" },
+  "style_data":           { "message": "📊 Data" },
+  "style_actionable":     { "message": "⚡ Actionable" },
+  "style_gold_sentences": { "message": "💎 Gold sentences" },
+  "style_critique":       { "message": "🔍 Critique" },
+  "style_surprise":       { "message": "🤯 Surprising" },
+
+  "status_fetching":      { "message": "Fetching page text…" },
+  "status_need_bigmodel": { "message": "Please configure your BigModel API key in Settings." },
+  "status_need_token":    { "message": "Please configure your Hypothesis Token in Settings." },
+  "status_need_token_publish": { "message": "Please configure your Hypothesis Token first." },
+  "status_calling_llm":   { "message": "$CHARS$ chars of text — calling GLM…", "placeholders": { "chars": { "content": "$1" } } },
+  "status_generated":     { "message": "Generated $TOTAL$ candidates, $VALID$ with valid quotes.", "placeholders": { "total": { "content": "$1" }, "valid": { "content": "$2" } } },
+  "status_publishing":    { "message": "Publishing: \u00ab$QUOTE$\u00bb…", "placeholders": { "quote": { "content": "$1" } } },
+  "status_done":          { "message": "Done. Published $N$ annotations.", "placeholders": { "n": { "content": "$1" } } },
+  "status_failed":        { "message": "Failed: $ERR$", "placeholders": { "err": { "content": "$1" } } },
+  "status_short_content": { "message": "Page text is too short or unreadable." },
+
+  "counts_summary":       { "message": "$SEL$ selected · $POSTED$ published · $TOTAL$ generated", "placeholders": { "sel": { "content": "$1" }, "posted": { "content": "$2" }, "total": { "content": "$3" } } },
+
+  "ann_quote_missing":    { "message": "Quote not found in page text — skipped." },
+
+  "page_no_title":        { "message": "(no title)" },
+
+  "options_h1":              { "message": "Hypothesisor Settings" },
+  "options_label_token":     { "message": "Hypothesis Token" },
+  "options_hint_token":      { "message": "Generate one at " },
+  "options_label_bigmodel":  { "message": "BigModel API Key" },
+  "options_hint_bigmodel":   { "message": "Get one at $URL$. Uses the glm-4-plus model by default.", "placeholders": { "url": { "content": "$1" } } },
+  "options_label_mode":      { "message": "Default mode" },
+  "options_label_style":     { "message": "Default style" },
+  "options_hint_style":      { "message": "Preset key (non-consensus / data / actionable / gold-sentences / critique / surprise) or any custom description. Leave empty to use the mode default." },
+  "options_style_placeholder": { "message": "e.g. insightful or surprising claims" },
+  "options_btn_save":        { "message": "Save" },
+  "options_saved":           { "message": "Saved" },
+
+  "required":  { "message": "*" },
+
+  "warn_missing_both":   { "message": "Missing Hypothesis Token and BigModel API Key — open Settings to add them." },
+  "warn_missing_token":  { "message": "Hypothesis Token not set — open Settings." },
+  "warn_missing_key":    { "message": "BigModel API Key not set — open Settings." },
+  "warn_open_settings":  { "message": "Open Settings" },
+
+  "error_not_scriptable":   { "message": "This page type can't be read by extensions (chrome://, file://, Chrome Web Store, extension pages, etc.). Open a regular https:// page and try again." },
+  "error_extract_failed":   { "message": "Couldn't extract page text: $DETAIL$", "placeholders": { "detail": { "content": "$1" } } },
+
+  "error_network":          { "message": "Network error — check your internet connection, VPN, or firewall." },
+  "error_cors":             { "message": "Request blocked — if you're behind a proxy or VPN, try switching it off." },
+  "error_http_400":         { "message": "Bad request ($CTX$ HTTP 400). $DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "detail": { "content": "$2" } } },
+  "error_http_401":         { "message": "$CTX$ rejected the API key (HTTP 401). Check the key in Settings.", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_403":         { "message": "$CTX$ access denied (HTTP 403). Key may lack permission or quota is exhausted.", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_404":         { "message": "$CTX$ endpoint not found (HTTP 404).", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_429":         { "message": "$CTX$ rate limit hit (HTTP 429). Wait a moment and retry.", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_5xx":         { "message": "$CTX$ server error (HTTP $CODE$). Try again later. $DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+  "error_http_generic":     { "message": "$CTX$ HTTP $CODE$. $DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+
+  "error_llm_empty":        { "message": "BigModel returned an empty response — try again or change the style prompt." },
+  "error_llm_no_json":      { "message": "BigModel didn't return valid JSON — try again. If it keeps failing, make the custom style shorter." },
+  "error_llm_json_parse":   { "message": "BigModel output couldn't be parsed as JSON ($DETAIL$) — try again.", "placeholders": { "detail": { "content": "$1" } } },
+
+  "ctx_bigmodel":           { "message": "BigModel" },
+  "ctx_hypothesis":         { "message": "Hypothesis" }
+}

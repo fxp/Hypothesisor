@@ -19,15 +19,28 @@ function pickFromBrowser() {
 }
 
 export async function initI18n() {
-  const stored = (await chrome.storage.local.get(STORAGE_KEY))[STORAGE_KEY];
-  const lang = SUPPORTED.includes(stored) ? stored : pickFromBrowser();
-  await setLanguage(lang, /* persist */ false);
+  try {
+    const stored = (await chrome.storage.local.get(STORAGE_KEY))[STORAGE_KEY];
+    const lang = SUPPORTED.includes(stored) ? stored : pickFromBrowser();
+    await setLanguage(lang, /* persist */ false);
+  } catch (e) {
+    console.error("[Hypothesisor i18n] init failed:", e);
+    // Fallback: leave messages empty so t(key) returns the key itself.
+    // Extension remains usable with English-ish labels from the HTML.
+    messages = {};
+    currentLang = "en";
+    applyI18n();
+  }
 }
 
 export async function setLanguage(lang, persist = true) {
   if (!SUPPORTED.includes(lang)) lang = "en";
-  const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
+  // _locales/ is a Chrome-reserved directory — read-only to the extension
+  // and may not be fetchable at runtime. Mirror the bundles under locales/
+  // (non-underscore) so fetch() works reliably from popup + options pages.
+  const url = chrome.runtime.getURL(`locales/${lang}.json`);
   const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Failed to load locale ${lang}: HTTP ${resp.status}`);
   messages = await resp.json();
   currentLang = lang;
   if (persist) await chrome.storage.local.set({ [STORAGE_KEY]: lang });

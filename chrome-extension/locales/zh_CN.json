@@ -1,0 +1,81 @@
+{
+  "extName":         { "message": "Hypothesisor" },
+  "extDesc":         { "message": "用 GLM 读懂当前网页，一键在 Hypothesis 上生成高质量标注。BYO key，纯前端，开源。" },
+
+  "popup_settings_title":  { "message": "设置" },
+  "popup_label_mode":      { "message": "模式" },
+  "popup_label_style":     { "message": "风格" },
+  "popup_style_placeholder": { "message": "描述你的标注偏好" },
+  "popup_btn_generate":    { "message": "✨ 标注当前页面" },
+  "popup_btn_publish":     { "message": "发布选中" },
+
+  "mode_general":   { "message": "通用" },
+  "mode_academic":  { "message": "学术" },
+  "mode_news":      { "message": "新闻" },
+  "mode_tech":      { "message": "技术" },
+
+  "popup_style_default":  { "message": "🎯 默认" },
+  "popup_style_custom":   { "message": "✏️ 自定义" },
+  "style_non_consensus":  { "message": "🤔 非共识" },
+  "style_data":           { "message": "📊 数据" },
+  "style_actionable":     { "message": "⚡ 可执行" },
+  "style_gold_sentences": { "message": "💎 金句" },
+  "style_critique":       { "message": "🔍 批判" },
+  "style_surprise":       { "message": "🤯 惊喜事实" },
+
+  "status_fetching":      { "message": "抓取页面正文…" },
+  "status_need_bigmodel": { "message": "请先在设置中填入 BigModel API Key" },
+  "status_need_token":    { "message": "请先在设置中填入 Hypothesis Token" },
+  "status_need_token_publish": { "message": "请先在设置中配置 Hypothesis Token" },
+  "status_calling_llm":   { "message": "正文 $CHARS$ 字符，调用 GLM 生成标注…", "placeholders": { "chars": { "content": "$1" } } },
+  "status_generated":     { "message": "生成 $TOTAL$ 条，$VALID$ 条引用有效", "placeholders": { "total": { "content": "$1" }, "valid": { "content": "$2" } } },
+  "status_publishing":    { "message": "发布中：「$QUOTE$」…", "placeholders": { "quote": { "content": "$1" } } },
+  "status_done":          { "message": "完成：已发布 $N$ 条", "placeholders": { "n": { "content": "$1" } } },
+  "status_failed":        { "message": "失败：$ERR$", "placeholders": { "err": { "content": "$1" } } },
+  "status_short_content": { "message": "页面正文过短或无法读取" },
+
+  "counts_summary":       { "message": "$SEL$ 选中 · $POSTED$ 已发布 · $TOTAL$ 生成", "placeholders": { "sel": { "content": "$1" }, "posted": { "content": "$2" }, "total": { "content": "$3" } } },
+
+  "ann_quote_missing":    { "message": "引用未在当前页面正文中找到，已跳过" },
+
+  "page_no_title":        { "message": "（无标题）" },
+
+  "options_h1":              { "message": "Hypothesisor 设置" },
+  "options_label_token":     { "message": "Hypothesis Token" },
+  "options_hint_token":      { "message": "到 " },
+  "options_label_bigmodel":  { "message": "BigModel API Key" },
+  "options_hint_bigmodel":   { "message": "到 $URL$ 申请。默认使用 glm-4-plus 模型。", "placeholders": { "url": { "content": "$1" } } },
+  "options_label_mode":      { "message": "默认模式" },
+  "options_label_style":     { "message": "默认风格" },
+  "options_hint_style":      { "message": "预置 key（non-consensus / data / actionable / gold-sentences / critique / surprise）或任意自定义描述；留空用 mode 默认。" },
+  "options_style_placeholder": { "message": "例如：具有洞察的观点或者令人惊讶的事实" },
+  "options_btn_save":        { "message": "保存" },
+  "options_saved":           { "message": "已保存" },
+
+  "required":  { "message": "*" },
+
+  "warn_missing_both":   { "message": "Hypothesis Token 和 BigModel API Key 都未配置，点右侧按钮去设置" },
+  "warn_missing_token":  { "message": "Hypothesis Token 未配置，点右侧按钮去设置" },
+  "warn_missing_key":    { "message": "BigModel API Key 未配置，点右侧按钮去设置" },
+  "warn_open_settings":  { "message": "去设置" },
+
+  "error_not_scriptable":   { "message": "这类页面（chrome://、file://、Chrome 商店、扩展自身页面等）扩展无权访问。请在普通 https:// 网页上试用。" },
+  "error_extract_failed":   { "message": "读取页面正文失败：$DETAIL$", "placeholders": { "detail": { "content": "$1" } } },
+
+  "error_network":          { "message": "网络错误——检查一下网络、代理或防火墙" },
+  "error_cors":             { "message": "请求被拦截——如果在用代理/VPN，试试切换或关闭" },
+  "error_http_400":         { "message": "$CTX$ 请求有误（HTTP 400）：$DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "detail": { "content": "$2" } } },
+  "error_http_401":         { "message": "$CTX$ 拒绝了 API Key（HTTP 401），请到设置里检查 Key 是否正确", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_403":         { "message": "$CTX$ 权限不足（HTTP 403）——Key 可能没有对应权限，或配额用完了", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_404":         { "message": "$CTX$ 接口不存在（HTTP 404）", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_429":         { "message": "$CTX$ 触发限流（HTTP 429），稍等片刻再试", "placeholders": { "ctx": { "content": "$1" } } },
+  "error_http_5xx":         { "message": "$CTX$ 服务端异常（HTTP $CODE$），稍后再试。$DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+  "error_http_generic":     { "message": "$CTX$ HTTP $CODE$：$DETAIL$", "placeholders": { "ctx": { "content": "$1" }, "code": { "content": "$2" }, "detail": { "content": "$3" } } },
+
+  "error_llm_empty":        { "message": "BigModel 返回空响应，换个风格描述或稍后重试" },
+  "error_llm_no_json":      { "message": "BigModel 未返回合法 JSON，再试一次；如果反复失败，试着把自定义 style 写短一些" },
+  "error_llm_json_parse":   { "message": "BigModel 输出无法解析为 JSON（$DETAIL$），再试一次", "placeholders": { "detail": { "content": "$1" } } },
+
+  "ctx_bigmodel":           { "message": "BigModel" },
+  "ctx_hypothesis":         { "message": "Hypothesis" }
+}
