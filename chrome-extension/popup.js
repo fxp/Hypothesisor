@@ -1,11 +1,21 @@
 import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
 
-await initI18n();
-syncLangToggleLabel();
-
+// $ and syncLangToggleLabel must be defined BEFORE top-level await so
+// the label helper can access them when init resumes. const in TDZ
+// before its textual line → referencing $ from syncLangToggleLabel
+// would throw a ReferenceError and abort the whole module, preventing
+// every event listener below from attaching.
 const $ = (id) => document.getElementById(id);
 let state = { tab: null, content: "", annotations: [] };
+
+function syncLangToggleLabel() {
+  // Button shows the language you'd switch TO, not the current one.
+  $("langToggle").textContent = getCurrentLanguage() === "zh_CN" ? "EN" : "中";
+}
+
+await initI18n();
+syncLangToggleLabel();
 
 async function init() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -77,11 +87,6 @@ $("openOptions").addEventListener("click", (e) => {
   e.preventDefault();
   chrome.runtime.openOptionsPage();
 });
-
-function syncLangToggleLabel() {
-  // Button shows the language you'd switch TO, not the current one.
-  $("langToggle").textContent = getCurrentLanguage() === "zh_CN" ? "EN" : "中";
-}
 
 $("langToggle").addEventListener("click", async () => {
   const next = getCurrentLanguage() === "zh_CN" ? "en" : "zh_CN";
