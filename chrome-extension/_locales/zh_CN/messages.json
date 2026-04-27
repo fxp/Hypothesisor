@@ -285,5 +285,19 @@
   },
   "ctx_hypothesis": {
     "message": "Hypothesis"
+  },
+  "success_published_title": {
+    "message": "已发布 $N$ 条标注",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "success_published_body": {
+    "message": "装上 Hypothesis 浏览器插件后回到原页面，标注会直接叠加显示"
+  },
+  "success_view_on_page": {
+    "message": "打开原页面 →"
   }
 }

@@ -23,11 +23,12 @@ async function init() {
   state.canonicalUrl = tab?.url || "";
   state.title = tab?.title || "";
   state.style = "";
+  state.mode = "general";
   $("pageTitle").textContent = tab?.title || t("page_no_title");
   $("pageUrl").textContent = tab?.url || "";
 
   const s = await getSettings();
-  $("mode").value = s.defaultMode;
+  selectMode(s.defaultMode || "general");
   if (s.defaultStyle) {
     const preset = $("styleChips").querySelector(`.chip[data-style="${cssEscape(s.defaultStyle)}"]`);
     if (preset) selectChip(s.defaultStyle);
@@ -37,6 +38,13 @@ async function init() {
     }
   } else {
     selectChip("");
+  }
+}
+
+function selectMode(value) {
+  state.mode = value;
+  for (const p of $("modePills").querySelectorAll(".pill")) {
+    p.classList.toggle("active", p.dataset.mode === value);
   }
 }
 
@@ -101,6 +109,21 @@ $("styleChips").addEventListener("click", (e) => {
   const chip = e.target.closest(".chip");
   if (chip) selectChip(chip.dataset.style);
 });
+
+$("modePills").addEventListener("click", (e) => {
+  const pill = e.target.closest(".pill");
+  if (pill) selectMode(pill.dataset.mode);
+});
+
+$("successToastClose").addEventListener("click", () => hideSuccessToast());
+
+function showSuccessToast(count) {
+  $("successToastTitle").textContent = t("success_published_title", String(count));
+  $("successToastBody").textContent = t("success_published_body");
+  $("successToastLink").href = state.canonicalUrl || state.tab?.url || "#";
+  $("successToast").hidden = false;
+}
+function hideSuccessToast() { $("successToast").hidden = true; }
 
 function setStatus(text, kind = "") {
   const el = $("status");
@@ -175,6 +198,7 @@ function updatePublishButton() {
 
 $("generate").addEventListener("click", async () => {
   if (!state.tab) return;
+  hideSuccessToast();
   $("generate").disabled = true;
   setStatus(t("status_fetching"));
   try {
@@ -198,7 +222,7 @@ $("generate").addEventListener("click", async () => {
     const raw = await callGLM({
       content: state.content,
       url: state.canonicalUrl,
-      mode: $("mode").value,
+      mode: state.mode,
       style: resolveStyle(),
       apiKey: bigmodelKey,
     });
@@ -254,6 +278,7 @@ $("publishAll").addEventListener("click", async () => {
   }
   const ok = state.annotations.filter((a) => a.posted).length;
   setStatus(t("status_done", String(ok)), "success");
+  if (ok > 0) showSuccessToast(ok);
 });
 
 init();

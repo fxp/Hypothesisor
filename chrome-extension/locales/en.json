@@ -287,5 +287,19 @@
   },
   "ctx_hypothesis": {
     "message": "Hypothesis"
+  },
+  "success_published_title": {
+    "message": "$N$ annotation published.",
+    "placeholders": {
+      "n": {
+        "content": "$1"
+      }
+    }
+  },
+  "success_published_body": {
+    "message": "Open the page with the Hypothesis browser extension to see them inline."
+  },
+  "success_view_on_page": {
+    "message": "Open the page →"
   }
 }
