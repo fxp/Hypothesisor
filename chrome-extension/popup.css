@@ -126,7 +126,11 @@ button.primary.action:active:not(:disabled) { transform: translateY(1px); }
 button.primary.action:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* ── success toast (post-publish) ──────────────────────────── */
-.success-toast {
+/* Only style when visible — bare class selector with display:flex
+   would override the [hidden] attribute and leak an empty toast on
+   popup open. */
+.success-toast[hidden] { display: none; }
+.success-toast:not([hidden]) {
   display: flex; align-items: center; gap: 12px;
   margin: 10px 20px 0; padding: 12px 14px;
   background: var(--ok-bg); border: 1px solid var(--ok-border);
