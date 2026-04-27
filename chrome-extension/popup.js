@@ -1,5 +1,6 @@
 import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
+import { generateReformat, saveReformat, loadAll as loadAllReformats, newId } from "./lib/reformat.js";
 
 // $ and syncLangToggleLabel must be defined BEFORE top-level await so
 // the label helper can access them when init resumes. const in TDZ
@@ -7,7 +8,7 @@ import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i
 // would throw a ReferenceError and abort the whole module, preventing
 // every event listener below from attaching.
 const $ = (id) => document.getElementById(id);
-let state = { tab: null, content: "", annotations: [] };
+let state = { tab: null, content: "", annotations: [], task: "annotate", format: "tldr" };
 
 function syncLangToggleLabel() {
   // Button shows the language you'd switch TO, not the current one.
@@ -39,6 +40,67 @@ async function init() {
   } else {
     selectChip("");
   }
+  selectFormat("tldr");
+  await refreshReformatRecent();
+}
+
+function selectTask(task) {
+  state.task = task;
+  for (const tab of document.querySelectorAll(".task-tab")) {
+    const on = tab.dataset.task === task;
+    tab.classList.toggle("active", on);
+    tab.setAttribute("aria-selected", on ? "true" : "false");
+  }
+  $("styleRow").hidden = task !== "annotate";
+  $("formatRow").hidden = task !== "reformat";
+  $("publishAll").hidden = task !== "annotate";
+  $("counts").hidden = task !== "annotate";
+  // Swap primary button label.
+  $("generate").textContent = t(task === "annotate" ? "popup_btn_generate" : "popup_btn_reformat");
+  // Recent list only relevant for reformat.
+  refreshReformatRecent();
+}
+
+function selectFormat(value) {
+  state.format = value;
+  for (const c of $("formatChips").querySelectorAll(".chip")) {
+    c.classList.toggle("active", c.dataset.format === value);
+  }
+  $("formatCustom").hidden = value !== "custom";
+  if (value === "custom") $("formatCustom").focus();
+}
+
+async function refreshReformatRecent() {
+  if (state.task !== "reformat") {
+    $("reformatRecent").hidden = true;
+    return;
+  }
+  const recent = await loadAllReformats();
+  const list = recent.slice(0, 5);
+  $("reformatRecent").hidden = list.length === 0;
+  const host = $("reformatRecentList");
+  host.innerHTML = "";
+  for (const r of list) {
+    const item = document.createElement("div");
+    item.className = "reformat-recent-item";
+    item.innerHTML = `
+      <span class="ri-format">${escape(r.format.toUpperCase())}</span>
+      <span class="ri-title">${escape(r.title || r.sourceTitle || r.sourceUrl)}</span>
+      <span class="ri-time">${fmtRelativeMin(r.createdAt)}</span>
+    `;
+    item.addEventListener("click", () => {
+      chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${r.id}`) });
+    });
+    host.appendChild(item);
+  }
+}
+
+function fmtRelativeMin(ts) {
+  const sec = Math.round((Date.now() - ts) / 1000);
+  if (sec < 60) return "now";
+  if (sec < 3600) return Math.round(sec / 60) + "m";
+  if (sec < 86400) return Math.round(sec / 3600) + "h";
+  return Math.round(sec / 86400) + "d";
 }
 
 function selectMode(value) {
@@ -103,6 +165,8 @@ $("langToggle").addEventListener("click", async () => {
   // Re-render dynamic content that doesn't carry data-i18n attributes.
   if (state.tab) $("pageTitle").textContent = state.tab.title || t("page_no_title");
   if (state.annotations.length) render();
+  // Re-sync labels that selectTask overrides (primary button) + refresh recent list.
+  selectTask(state.task);
 });
 
 $("styleChips").addEventListener("click", (e) => {
@@ -113,6 +177,15 @@ $("styleChips").addEventListener("click", (e) => {
 $("modePills").addEventListener("click", (e) => {
   const pill = e.target.closest(".pill");
   if (pill) selectMode(pill.dataset.mode);
+});
+
+document.querySelectorAll(".task-tab").forEach((tab) => {
+  tab.addEventListener("click", () => selectTask(tab.dataset.task));
+});
+
+$("formatChips").addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (chip) selectFormat(chip.dataset.format);
 });
 
 $("successToastClose").addEventListener("click", () => hideSuccessToast());
@@ -211,35 +284,52 @@ $("generate").addEventListener("click", async () => {
     }
     const settings = await getSettings();
     const { bigmodelKey, hypothesisToken } = settings;
-    const missing = [];
-    if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
-    if (!hypothesisToken) missing.push(t("status_need_token"));
-    if (missing.length) {
-      setStatus(missing.join("  ·  "), "error");
-      return;
-    }
-    setStatus(t("status_calling_llm", String(state.content.length)));
-    const raw = await callGLM({
-      content: state.content,
-      url: state.canonicalUrl,
-      mode: state.mode,
-      style: resolveStyle(),
-      apiKey: bigmodelKey,
-    });
-    state.annotations = raw.map((a) => {
-      const q = (a.quote || "").trim();
-      const ok = validateQuote(state.content, q).found;
-      return {
-        quote: q,
-        comment: (a.comment || "").trim(),
-        tags: Array.isArray(a.tags) ? a.tags : [],
-        selected: ok,
-        invalid: !ok,
+
+    if (state.task === "annotate") {
+      const missing = [];
+      if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
+      if (!hypothesisToken) missing.push(t("status_need_token"));
+      if (missing.length) { setStatus(missing.join("  ·  "), "error"); return; }
+      setStatus(t("status_calling_llm", String(state.content.length)));
+      const raw = await callGLM({
+        content: state.content, url: state.canonicalUrl,
+        mode: state.mode, style: resolveStyle(), apiKey: bigmodelKey,
+      });
+      state.annotations = raw.map((a) => {
+        const q = (a.quote || "").trim();
+        const ok = validateQuote(state.content, q).found;
+        return {
+          quote: q, comment: (a.comment || "").trim(),
+          tags: Array.isArray(a.tags) ? a.tags : [],
+          selected: ok, invalid: !ok,
+        };
+      });
+      const valid = state.annotations.filter((a) => !a.invalid).length;
+      setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
+      render();
+    } else {
+      // Reformat path (L3) — only needs BigModel, not Hypothesis token.
+      if (!bigmodelKey) { setStatus(t("status_need_bigmodel"), "error"); return; }
+      setStatus(t("status_reformat_calling", String(state.content.length)));
+      const customPrompt = state.format === "custom" ? $("formatCustom").value.trim() : null;
+      if (state.format === "custom" && !customPrompt) {
+        setStatus(t("status_format_need_prompt"), "error"); return;
+      }
+      const result = await generateReformat({
+        content: state.content, url: state.canonicalUrl, title: state.title,
+        format: state.format, customPrompt, apiKey: bigmodelKey,
+      });
+      const reformat = {
+        id: newId(), createdAt: Date.now(),
+        sourceUrl: state.canonicalUrl, sourceTitle: state.title,
+        format: state.format, customPrompt: customPrompt || undefined,
+        title: result.title, blocks: result.blocks,
       };
-    });
-    const valid = state.annotations.filter((a) => !a.invalid).length;
-    setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
-    render();
+      await saveReformat(reformat);
+      setStatus(t("status_reformat_done"), "success");
+      chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${reformat.id}`) });
+      await refreshReformatRecent();
+    }
   } catch (e) {
     setStatus(t("status_failed", formatError(e)), "error");
   } finally {

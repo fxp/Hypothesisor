@@ -19,6 +19,19 @@
     <div id="pageUrl" class="url muted"></div>
   </section>
 
+  <div class="task-tabs" role="tablist">
+    <button type="button" class="task-tab active" data-task="annotate" role="tab" aria-selected="true">
+      <span class="task-tab-icon">✨</span>
+      <span class="task-tab-label" data-i18n="task_annotate">Annotate</span>
+      <span class="task-tab-sub" data-i18n="task_annotate_sub">L2 · highlights</span>
+    </button>
+    <button type="button" class="task-tab" data-task="reformat" role="tab" aria-selected="false">
+      <span class="task-tab-icon">🪄</span>
+      <span class="task-tab-label" data-i18n="task_reformat">Reformat</span>
+      <span class="task-tab-sub" data-i18n="task_reformat_sub">L3 · new shape</span>
+    </button>
+  </div>
+
   <div id="successToast" class="success-toast" hidden>
     <div class="success-toast-text">
       <strong id="successToastTitle"></strong>
@@ -39,7 +52,7 @@
       </div>
     </div>
 
-    <div class="control-row">
+    <div class="control-row" id="styleRow">
       <div class="control-label" data-i18n="popup_label_style">Style</div>
       <div class="style-chips" id="styleChips" role="radiogroup">
         <button type="button" class="chip" data-style=""               data-i18n="popup_style_default">🎯 Default</button>
@@ -53,6 +66,18 @@
       </div>
       <input id="styleCustom" type="text" data-i18n-placeholder="popup_style_placeholder" placeholder="Describe your annotation preference" hidden />
     </div>
+
+    <div class="control-row" id="formatRow" hidden>
+      <div class="control-label" data-i18n="popup_label_format">Format</div>
+      <div class="style-chips" id="formatChips" role="radiogroup">
+        <button type="button" class="chip" data-format="tldr"      data-i18n="format_tldr">📝 TL;DR</button>
+        <button type="button" class="chip" data-format="qa"        data-i18n="format_qa">💬 Q&amp;A</button>
+        <button type="button" class="chip" data-format="cards"     data-i18n="format_cards">🃏 Cards</button>
+        <button type="button" class="chip" data-format="checklist" data-i18n="format_checklist">✅ Checklist</button>
+        <button type="button" class="chip" data-format="custom"    data-i18n="format_custom">✏️ Custom</button>
+      </div>
+      <input id="formatCustom" type="text" data-i18n-placeholder="popup_format_placeholder" placeholder="e.g. a meeting agenda" hidden />
+    </div>
   </section>
 
   <div class="action-row">
@@ -62,6 +87,10 @@
   <div id="status" class="status"></div>
 
   <section id="results" class="results"></section>
+  <section id="reformatRecent" class="reformat-recent" hidden>
+    <div class="reformat-recent-label" data-i18n="reformat_recent">Recent reformats</div>
+    <div id="reformatRecentList" class="reformat-recent-list"></div>
+  </section>
 
   <footer>
     <button id="publishAll" data-i18n="popup_btn_publish" disabled>Publish selected</button>

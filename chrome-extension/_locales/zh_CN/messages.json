@@ -299,5 +299,76 @@
   },
   "success_view_on_page": {
     "message": "打开原页面 →"
+  },
+  "task_annotate": {
+    "message": "标注"
+  },
+  "task_annotate_sub": {
+    "message": "L2 · 划重点"
+  },
+  "task_reformat": {
+    "message": "重塑"
+  },
+  "task_reformat_sub": {
+    "message": "L3 · 换形态"
+  },
+  "popup_label_format": {
+    "message": "形态"
+  },
+  "format_tldr": {
+    "message": "📝 摘要"
+  },
+  "format_qa": {
+    "message": "💬 问答"
+  },
+  "format_cards": {
+    "message": "🃏 卡片"
+  },
+  "format_checklist": {
+    "message": "✅ 行动清单"
+  },
+  "format_custom": {
+    "message": "✏️ 自定义"
+  },
+  "popup_format_placeholder": {
+    "message": "例如：会议议程、单页备忘录"
+  },
+  "popup_btn_reformat": {
+    "message": "🪄 重塑当前页面"
+  },
+  "status_reformat_calling": {
+    "message": "正文 $CHARS$ 字符，正在生成新形态…",
+    "placeholders": {
+      "chars": {
+        "content": "$1"
+      }
+    }
+  },
+  "status_reformat_done": {
+    "message": "完成。已在新标签页打开重塑结果。"
+  },
+  "status_format_need_prompt": {
+    "message": "请先在输入框里描述你想要的形态"
+  },
+  "reformat_recent": {
+    "message": "最近的重塑"
+  },
+  "output_open_source": {
+    "message": "打开原文"
+  },
+  "output_regenerate": {
+    "message": "重新生成"
+  },
+  "output_loading": {
+    "message": "加载中…"
+  },
+  "output_not_found": {
+    "message": "找不到该重塑结果。"
+  },
+  "output_footer": {
+    "message": "由 Hypothesisor 生成 · L3 生成式 App 层"
+  },
+  "just_now": {
+    "message": "刚刚"
   }
 }

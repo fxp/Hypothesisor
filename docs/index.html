@@ -99,6 +99,39 @@
   .demo-wrap { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(37, 99, 235, 0.35); background: #0f172a; }
   .demo-wrap video { display: block; width: 100%; height: auto; }
 
+  /* L3 evolution callout */
+  .l3-callout {
+    background: linear-gradient(135deg, #faf5ff 0%, #eff6ff 100%);
+    border: 1px solid #ddd6fe; border-radius: 14px;
+    padding: 28px 30px; margin: 0 0 8px;
+    position: relative; overflow: hidden;
+  }
+  .l3-callout::before {
+    content: "v0.2.0"; position: absolute; top: 14px; right: 18px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    color: #7c3aed; background: rgba(124, 58, 237, 0.1);
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .l3-callout h2 { margin: 0 0 8px; font-size: 22px; }
+  .l3-callout > p { color: var(--mute); margin: 0 0 18px; max-width: 560px; }
+  .l3-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .l3-cell {
+    background: white; border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .l3-cell h3 {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    color: var(--mute); margin: 0 0 6px;
+  }
+  .l3-cell .l3-label { font-size: 14.5px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .l3-cell .l3-desc { font-size: 13px; color: var(--mute); line-height: 1.5; margin: 0; }
+  .l3-cell.active {
+    border-color: #7c3aed; background: white;
+    box-shadow: 0 8px 24px -10px rgba(124,58,237,0.25);
+  }
+  .l3-cell.active h3 { color: #7c3aed; }
+  @media (max-width: 760px) { .l3-grid { grid-template-columns: 1fr; } }
+
   /* Case-study side-by-side */
   .case-meta { color: var(--mute); margin: -8px 0 28px; font-size: 14.5px; }
   .case-meta strong { color: #15803d; font-weight: 600; }
@@ -189,6 +222,47 @@
     </div>
   </div>
 </header>
+
+<section>
+  <div class="container">
+    <div class="l3-callout">
+      <h2>
+        <span lang="en">From annotation to generative app</span>
+        <span lang="zh">从「划重点」到「重塑形态」</span>
+      </h2>
+      <p>
+        <span lang="en">Three layers of how AI mediates webpages. Hypothesisor began at L2; v0.2.0 starts shipping L3.</span>
+        <span lang="zh">AI 介入网页的三个层级。Hypothesisor 起步于 L2；v0.2.0 开始迈向 L3。</span>
+      </p>
+      <div class="l3-grid">
+        <div class="l3-cell">
+          <h3>L1</h3>
+          <div class="l3-label"><span lang="en">Raw web</span><span lang="zh">原始网页</span></div>
+          <p class="l3-desc">
+            <span lang="en">The page as the publisher shipped it.</span>
+            <span lang="zh">作者发布时的样子，浏览器原生呈现。</span>
+          </p>
+        </div>
+        <div class="l3-cell">
+          <h3>L2</h3>
+          <div class="l3-label"><span lang="en">Annotation overlay</span><span lang="zh">标注叠加层</span></div>
+          <p class="l3-desc">
+            <span lang="en">Original text + AI highlights & comments laid on top. Reading is amplified.</span>
+            <span lang="zh">原文 + AI 高亮和洞察叠在上面，阅读被放大。</span>
+          </p>
+        </div>
+        <div class="l3-cell active">
+          <h3>L3</h3>
+          <div class="l3-label"><span lang="en">Generative app</span><span lang="zh">生成式 App</span></div>
+          <p class="l3-desc">
+            <span lang="en">AI reshapes the page into a form you'd rather use — TL;DR, Q&A, cards, custom layouts.</span>
+            <span lang="zh">AI 把网页重塑成你想要的形态——摘要、问答、卡片、自定义模板。</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section>
   <div class="container">
