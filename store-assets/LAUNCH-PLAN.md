@@ -4,7 +4,7 @@
 
 | 阶段 | 时间 | 动作 |
 |------|------|------|
-| **W-1** | T-7 → T-3 | 1) CWS 提交审核（用 v0.1.4 ZIP）<br>2) 落地页定稿（含 a16z 案例 section）<br>3) demo 视频复检 |
+| **W-1** | T-7 → T-3 | 1) CWS 提交审核（用 v0.1.8 ZIP）<br>2) 落地页定稿（含 a16z 案例 section）<br>3) demo 视频复检 |
 | **CWS 通过 → 开放下载** | T-0 | 1) 朋友圈首发<br>2) 关键 AI/产品群分享<br>3) GitHub repo 加 Web Store badge |
 | **首日 +1** | T+1 | 1) 小红书图文版<br>2) Twitter / X 英文版<br>3) Hypothesis 社区论坛分享 |
 | **第一周复盘** | T+7 | 看安装数 / 留存（CWS 控制台）→ 决定是否做 PH / HN 启动 |
@@ -16,7 +16,7 @@
 
 | 素材 | 路径 | 用途 |
 |------|------|------|
-| 扩展 ZIP | `hypothesisor-v0.1.4.zip` | CWS 上传 |
+| 扩展 ZIP | `hypothesisor-v0.1.8.zip` (~30 KB) | CWS 上传 |
 | 落地页 | `docs/index.html` → fxp.github.io/Hypothesisor | 首推链接 |
 | 隐私政策 | `docs/privacy.html` | CWS 必填 |
 | Logo | `chrome-extension/icons/icon-128.png` | 各处头像 |
@@ -145,7 +145,7 @@ GitHub Insights：
 ## 提交 / 发布检查表
 
 提交 CWS 前：
-- [ ] 装本地 v0.1.4 打开任意 https 网页测试一遍完整流程
+- [ ] 装本地 v0.1.8 打开任意 https 网页测试一遍完整流程
 - [ ] 隐私政策 URL 可访问：https://fxp.github.io/Hypothesisor/privacy.html
 - [ ] CHEATSHEET.md 所有字段已对齐
 - [ ] 截图无敏感数据（已用 a16z 公开文章渲染）

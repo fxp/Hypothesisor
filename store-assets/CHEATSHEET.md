@@ -17,7 +17,7 @@
 
 ## ① Package 标签
 
-**上传文件：** `hypothesisor-v0.1.0.zip`（仓库根目录，约 16 KB）
+**上传文件：** `hypothesisor-v0.1.8.zip`（仓库根目录，约 30 KB · 含 _locales / locales 双份 + i18n / 错误处理 / 案例素材）
 
 ---
 
@@ -189,7 +189,7 @@ https://fxp.github.io/Hypothesisor/privacy.html
 ## 提交前最后核对清单
 
 - [ ] 已在 https://chrome.google.com/webstore/devconsole 注册并付 $5
-- [ ] `hypothesisor-v0.1.0.zip` 在仓库根目录可用
+- [ ] `hypothesisor-v0.1.8.zip` 在仓库根目录可用
 - [ ] https://fxp.github.io/Hypothesisor/ 可访问（落地页）
 - [ ] https://fxp.github.io/Hypothesisor/privacy.html 可访问（隐私政策）
 - [ ] 5 张图素材在 `store-assets/` 全部就位

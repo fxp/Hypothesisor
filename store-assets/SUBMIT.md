@@ -9,7 +9,7 @@
 
 ### 2. 上传 ZIP
 - 控制台点 "Add new item"
-- 上传：`hypothesisor-v0.1.0.zip`（在仓库根目录，约 16KB）
+- 上传：`hypothesisor-v0.1.8.zip`（在仓库根目录，约 30KB）
 
 ### 3. 填写 Store Listing
 （所有文案见 `store-assets/listing.md`，可以直接复制粘贴）
@@ -51,7 +51,7 @@
 
 ## 一切就绪的清单
 
-- [x] `hypothesisor-v0.1.0.zip` — 仓库根目录
+- [x] `hypothesisor-v0.1.8.zip` — 仓库根目录
 - [x] `store-assets/promo-tile-440x280.png`
 - [x] `store-assets/marquee-1400x560.png`
 - [x] `store-assets/screenshot-1.png` ~ `screenshot-3.png`
