@@ -2,8 +2,8 @@
 // Take page text + a format preset, return a structured block list the
 // output page renders as a brand-styled standalone view.
 
-const BIGMODEL_BASE_URL = "https://open.bigmodel.cn/api/paas/v4";
-const BIGMODEL_MODEL = "glm-4-plus";
+const DEFAULT_BASE_URL = "https://open.bigmodel.cn/api/paas/v4";
+const DEFAULT_MODEL = "glm-4-plus";
 
 const FORMAT_INSTRUCTIONS = {
   tldr: `输出一个 TL;DR 总览：
@@ -59,17 +59,19 @@ function buildPrompt(format, customPrompt) {
   return `${intro}\n\n${formatBlock}\n\n${SCHEMA_RULES}`;
 }
 
-export async function generateReformat({ content, url, title, format, customPrompt, apiKey }) {
+export async function generateReformat({ content, url, title, format, customPrompt, apiKey, baseUrl, model }) {
   if (!apiKey) { const e = new Error("MISSING_BIGMODEL_KEY"); e.code = "MISSING_BIGMODEL_KEY"; throw e; }
   const truncated = content.length > 60000 ? content.slice(0, 60000) + "\n\n[内容已截断…]" : content;
   const system = buildPrompt(format, customPrompt);
+  const base = ((baseUrl && baseUrl.trim()) || DEFAULT_BASE_URL).replace(/\/+$/, "");
+  const modelName = (model && model.trim()) || DEFAULT_MODEL;
   let resp;
   try {
-    resp = await fetch(`${BIGMODEL_BASE_URL}/chat/completions`, {
+    resp = await fetch(`${base}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: BIGMODEL_MODEL,
+        model: modelName,
         max_tokens: 6144,
         response_format: { type: "json_object" },
         messages: [

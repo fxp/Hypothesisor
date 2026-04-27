@@ -108,6 +108,18 @@
     </label>
 
     <label>
+      <span class="label-text" data-i18n="options_label_endpoint">LLM endpoint (advanced)</span>
+      <small data-i18n="options_hint_endpoint">OpenAI-compatible base URL. Leave empty for BigModel default. Use this to point at DeepSeek, Moonshot, SiliconFlow, Ollama, etc.</small>
+      <input id="bigmodelBaseUrl" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4" autocomplete="off" />
+    </label>
+
+    <label>
+      <span class="label-text" data-i18n="options_label_model">Model</span>
+      <small data-i18n="options_hint_model">e.g. glm-4-plus (default) · glm-4-flash (fast/cheap) · deepseek-chat · moonshot-v1-8k</small>
+      <input id="bigmodelModel" type="text" placeholder="glm-4-plus" autocomplete="off" />
+    </label>
+
+    <label>
       <span class="label-text" data-i18n="options_label_mode">Default mode</span>
       <select id="defaultMode">
         <option value="general"  data-i18n="mode_general">general</option>

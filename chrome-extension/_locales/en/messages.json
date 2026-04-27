@@ -372,5 +372,17 @@
   },
   "just_now": {
     "message": "just now"
+  },
+  "options_label_endpoint": {
+    "message": "LLM endpoint (advanced)"
+  },
+  "options_hint_endpoint": {
+    "message": "OpenAI-compatible base URL. Leave empty for BigModel default. Use this to point at DeepSeek, Moonshot, SiliconFlow, Ollama, etc."
+  },
+  "options_label_model": {
+    "message": "Model"
+  },
+  "options_hint_model": {
+    "message": "e.g. glm-4-plus (default) · glm-4-flash (fast/cheap) · deepseek-chat · moonshot-v1-8k"
   }
 }

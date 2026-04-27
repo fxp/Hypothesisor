@@ -283,7 +283,7 @@ $("generate").addEventListener("click", async () => {
       throw new Error(t("status_short_content"));
     }
     const settings = await getSettings();
-    const { bigmodelKey, hypothesisToken } = settings;
+    const { bigmodelKey, bigmodelBaseUrl, bigmodelModel, hypothesisToken } = settings;
 
     if (state.task === "annotate") {
       const missing = [];
@@ -294,6 +294,7 @@ $("generate").addEventListener("click", async () => {
       const raw = await callGLM({
         content: state.content, url: state.canonicalUrl,
         mode: state.mode, style: resolveStyle(), apiKey: bigmodelKey,
+        baseUrl: bigmodelBaseUrl, model: bigmodelModel,
       });
       state.annotations = raw.map((a) => {
         const q = (a.quote || "").trim();
@@ -318,6 +319,7 @@ $("generate").addEventListener("click", async () => {
       const result = await generateReformat({
         content: state.content, url: state.canonicalUrl, title: state.title,
         format: state.format, customPrompt, apiKey: bigmodelKey,
+        baseUrl: bigmodelBaseUrl, model: bigmodelModel,
       });
       const reformat = {
         id: newId(), createdAt: Date.now(),

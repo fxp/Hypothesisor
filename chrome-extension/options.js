@@ -34,12 +34,14 @@ function renderBigmodelHint() {
 }
 renderBigmodelHint();
 
-const FIELDS = ["hypothesisToken", "bigmodelKey", "defaultMode", "defaultStyle"];
+const FIELDS = ["hypothesisToken", "bigmodelKey", "bigmodelBaseUrl", "bigmodelModel", "defaultMode", "defaultStyle"];
 
 async function load() {
   const s = await chrome.storage.local.get({
     hypothesisToken: "",
     bigmodelKey: "",
+    bigmodelBaseUrl: "",
+    bigmodelModel: "",
     defaultMode: "general",
     defaultStyle: "",
   });

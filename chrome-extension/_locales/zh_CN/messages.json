@@ -370,5 +370,17 @@
   },
   "just_now": {
     "message": "刚刚"
+  },
+  "options_label_endpoint": {
+    "message": "LLM 接口地址（进阶）"
+  },
+  "options_hint_endpoint": {
+    "message": "OpenAI 兼容的 base URL。留空使用 BigModel 默认。可改成 DeepSeek / Moonshot / SiliconFlow / Ollama 本地等任意 OpenAI 兼容服务。"
+  },
+  "options_label_model": {
+    "message": "模型"
+  },
+  "options_hint_model": {
+    "message": "例如 glm-4-plus（默认）· glm-4-flash（快速便宜）· deepseek-chat · moonshot-v1-8k"
   }
 }

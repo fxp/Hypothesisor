@@ -3,6 +3,15 @@
 const BIGMODEL_BASE_URL = "https://open.bigmodel.cn/api/paas/v4";
 const BIGMODEL_MODEL = "glm-4-plus";
 
+// Read user-configured endpoint + model. Empty/missing → defaults.
+function resolveEndpoint(baseUrl, model) {
+  const url = (baseUrl && baseUrl.trim()) || BIGMODEL_BASE_URL;
+  return {
+    base: url.replace(/\/+$/, ""),
+    model: (model && model.trim()) || BIGMODEL_MODEL,
+  };
+}
+
 const ANNOTATION_PROMPTS = {
   academic: "你是一个学术论文分析助手。请阅读以下论文/文章内容，生成有价值的 Hypothesis 标注。\n\n每条标注应聚焦于：\n- 核心贡献或创新点\n- 关键实验结果或数据\n- 方法论的局限性\n- 重要的相关工作引用\n- 值得深入思考的声明",
   news: "你是一个新闻分析助手。请阅读以下新闻文章，生成 Hypothesis 标注。\n\n每条标注应聚焦于：\n- 需要核查的事实声明\n- 重要的数据或统计数字\n- 可能带有偏见的表述\n- 值得深入了解的背景\n- 文章的核心论点",
@@ -108,7 +117,7 @@ export async function extractTabText(tabId) {
   return result || { text: "", url: "", title: "" };
 }
 
-export async function callGLM({ content, url, mode, style, apiKey }) {
+export async function callGLM({ content, url, mode, style, apiKey, baseUrl, model }) {
   if (!apiKey) { const e = new Error("MISSING_BIGMODEL_KEY"); e.code = "MISSING_BIGMODEL_KEY"; throw e; }
   const length = content.length;
   const { lo, hi } = computeDepth(length);
@@ -116,16 +125,17 @@ export async function callGLM({ content, url, mode, style, apiKey }) {
   const system = buildSystemPrompt(mode, style, length);
   const truncated = length > 60000 ? content.slice(0, 60000) + "\n\n[内容已截断...]" : content;
 
+  const endpoint = resolveEndpoint(baseUrl, model);
   let resp;
   try {
-    resp = await fetch(`${BIGMODEL_BASE_URL}/chat/completions`, {
+    resp = await fetch(`${endpoint.base}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: BIGMODEL_MODEL,
+        model: endpoint.model,
         max_tokens: maxTokens,
         response_format: { type: "json_object" },
         messages: [
@@ -297,6 +307,8 @@ export async function getSettings() {
   return await chrome.storage.local.get({
     hypothesisToken: "",
     bigmodelKey: "",
+    bigmodelBaseUrl: "",
+    bigmodelModel: "",
     defaultMode: "general",
     defaultStyle: "",
   });
