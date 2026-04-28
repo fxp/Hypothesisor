@@ -345,7 +345,7 @@
     }
   },
   "status_reformat_done": {
-    "message": "完成。已在新标签页打开重塑结果。"
+    "message": "完成。已在当前页面渲染生成的 app。"
   },
   "status_format_need_prompt": {
     "message": "请先在输入框里描述你想要的形态"
@@ -382,5 +382,14 @@
   },
   "options_hint_model": {
     "message": "例如 glm-4-plus（默认）· glm-4-flash（快速便宜）· deepseek-chat · moonshot-v1-8k"
+  },
+  "output_open_in_tab": {
+    "message": "在新标签页打开"
+  },
+  "overlay_close": {
+    "message": "关闭（Esc）"
+  },
+  "status_reformat_done_tab": {
+    "message": "完成。已在新标签页打开。"
   }
 }

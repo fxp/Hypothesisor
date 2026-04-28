@@ -347,7 +347,7 @@
     }
   },
   "status_reformat_done": {
-    "message": "Done. Opened the reformatted view in a new tab."
+    "message": "Done. Showing the generated app on this page."
   },
   "status_format_need_prompt": {
     "message": "Describe the format you want in the input box first."
@@ -384,5 +384,14 @@
   },
   "options_hint_model": {
     "message": "e.g. glm-4-plus (default) · glm-4-flash (fast/cheap) · deepseek-chat · moonshot-v1-8k"
+  },
+  "output_open_in_tab": {
+    "message": "Open in new tab"
+  },
+  "overlay_close": {
+    "message": "Close (Esc)"
+  },
+  "status_reformat_done_tab": {
+    "message": "Done. Opened in a new tab."
   }
 }

@@ -1,6 +1,7 @@
 import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
-import { generateReformat, saveReformat, loadAll as loadAllReformats, newId } from "./lib/reformat.js";
+import { generateReformat, saveReformat, loadAll as loadAllReformats, newId, buildIframeSrcdoc } from "./lib/reformat.js";
+import { showInPageOverlay } from "./lib/overlay.js";
 
 // $ and syncLangToggleLabel must be defined BEFORE top-level await so
 // the label helper can access them when init resumes. const in TDZ
@@ -325,11 +326,26 @@ $("generate").addEventListener("click", async () => {
         id: newId(), createdAt: Date.now(),
         sourceUrl: state.canonicalUrl, sourceTitle: state.title,
         format: state.format, customPrompt: customPrompt || undefined,
-        title: result.title, blocks: result.blocks,
+        title: result.title, summary: result.summary,
+        appType: result.appType, html: result.html,
       };
       await saveReformat(reformat);
-      setStatus(t("status_reformat_done"), "success");
-      chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${reformat.id}`) });
+      // Render the generated Web App as a Shadow-DOM overlay on top of
+      // the current page. Falls back to opening output.html in a new
+      // tab if injection fails (e.g. on chrome:// pages).
+      try {
+        const srcdoc = buildIframeSrcdoc(reformat);
+        await showInPageOverlay(state.tab.id, reformat, srcdoc, {
+          openInTab: t("output_open_in_tab"),
+          close: t("overlay_close"),
+        });
+        setStatus(t("status_reformat_done"), "success");
+        window.close();  // close popup so user sees the overlay
+      } catch (e) {
+        // Page can't host overlays — fall back to opening in a new tab.
+        chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${reformat.id}`) });
+        setStatus(t("status_reformat_done_tab"), "success");
+      }
       await refreshReformatRecent();
     }
   } catch (e) {
