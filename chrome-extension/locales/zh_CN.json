@@ -273,7 +273,7 @@
     "message": "BigModel 未返回合法 JSON，再试一次；如果反复失败，试着把自定义 style 写短一些"
   },
   "error_llm_json_parse": {
-    "message": "BigModel 输出无法解析为 JSON（$DETAIL$），再试一次",
+    "message": "BigModel 输出无法解析为 JSON（$DETAIL$）—— 多半是输出长度超限，换简单点的形态或更短的文章再试。",
     "placeholders": {
       "detail": {
         "content": "$1"
@@ -391,5 +391,8 @@
   },
   "status_reformat_done_tab": {
     "message": "完成。已在新标签页打开。"
+  },
+  "status_reformat_truncated": {
+    "message": "完成。模型输出被截断 —— 已尽力渲染部分 app，若效果不全请换简单点的形态再试。"
   }
 }

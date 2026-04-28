@@ -89,7 +89,10 @@ export async function generateReformat({ content, url, title, format, customProm
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
       body: JSON.stringify({
         model: modelName,
-        max_tokens: 8192,
+        // Web App html easily exceeds 8K tokens; bump to a safer ceiling.
+        // Most modern OpenAI-compat APIs accept 16K output. If the model
+        // doesn't, BigModel returns 400 and we'll surface a clean error.
+        max_tokens: 16384,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
@@ -108,19 +111,109 @@ export async function generateReformat({ content, url, title, format, customProm
     throw err;
   }
   const data = await resp.json();
-  const text = data.choices?.[0]?.message?.content || "";
+  const choice = data.choices?.[0];
+  const text = choice?.message?.content || "";
+  const finishReason = choice?.finish_reason || "";
   if (!text) { const e = new Error("LLM_EMPTY"); e.code = "LLM_EMPTY"; throw e; }
-  let parsed;
-  try { parsed = JSON.parse(text); }
-  catch (e) {
-    const err = new Error("LLM_JSON_PARSE"); err.code = "LLM_JSON_PARSE"; err.detail = e.message; throw err;
+
+  // The html field is the last + longest field. If finish_reason is
+  // "length" the response was cut mid-string and JSON.parse will
+  // reject. tolerantParseAppJson can usually recover the truncated
+  // app — just close the unterminated string + braces and treat the
+  // partial HTML as best-effort (the iframe will still render
+  // whatever DOM is salvageable).
+  const parsed = tolerantParseAppJson(text);
+  if (!parsed) {
+    const err = new Error("LLM_JSON_PARSE");
+    err.code = "LLM_JSON_PARSE";
+    err.detail = finishReason === "length"
+      ? "Output exceeded max_tokens; try a simpler format or shorter article."
+      : "Unrecoverable JSON shape from the model.";
+    throw err;
   }
   return {
     appType: parsed.appType || "freeform",
     title: parsed.title || title || "(untitled)",
     summary: parsed.summary || "",
     html: typeof parsed.html === "string" ? parsed.html : "",
+    truncated: finishReason === "length" || parsed._recovered === true,
   };
+}
+
+// Salvage a model response that was truncated mid-string.
+// Strategy:
+//   1. Try strict JSON.parse — covers the happy path.
+//   2. Walk the text as a JSON tokenizer: if we end while still inside
+//      a string literal, close the string + any open arrays/objects,
+//      then re-parse.
+//   3. If even that fails, regex-extract appType / title / summary /
+//      html as a last resort and synthesize an object.
+function tolerantParseAppJson(text) {
+  // Strip the model's optional ```json ... ``` fences.
+  const stripped = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
+  try { return JSON.parse(stripped); } catch (_) {}
+
+  // Try closing unterminated string + structure.
+  const closed = autoCloseJson(stripped);
+  if (closed !== stripped) {
+    try { const obj = JSON.parse(closed); obj._recovered = true; return obj; } catch (_) {}
+  }
+
+  // Last-ditch field extraction.
+  const grab = (key) => {
+    const re = new RegExp(`"${key}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`, "i");
+    const m = stripped.match(re);
+    return m ? unescapeJsonString(m[1]) : "";
+  };
+  const appType = grab("appType");
+  const title = grab("title");
+  const summary = grab("summary");
+  // For html, take everything after the last `"html"\s*:\s*"` until end
+  // of string (best effort — html is the last + longest field).
+  let html = "";
+  const htmlOpen = stripped.match(/"html"\s*:\s*"/);
+  if (htmlOpen) {
+    const start = htmlOpen.index + htmlOpen[0].length;
+    let buf = stripped.slice(start);
+    // Cut at the last unescaped " followed by optional whitespace + }
+    const closeMatch = buf.match(/(?:[^\\]|^)"\s*[,}]?\s*$/);
+    if (closeMatch) buf = buf.slice(0, closeMatch.index + 1);
+    // Drop a trailing closing quote/brace if present.
+    buf = buf.replace(/"\s*[,}]?\s*$/, "");
+    html = unescapeJsonString(buf);
+  }
+  if (html || appType || title) {
+    return { appType, title, summary, html, _recovered: true };
+  }
+  return null;
+}
+
+function unescapeJsonString(s) {
+  return String(s)
+    .replace(/\\n/g, "\n").replace(/\\r/g, "\r").replace(/\\t/g, "\t")
+    .replace(/\\"/g, '"').replace(/\\\\/g, "\\")
+    .replace(/\\u([0-9a-f]{4})/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
+}
+
+// Close any open string + arrays + objects so the result parses.
+function autoCloseJson(s) {
+  let inStr = false, esc = false;
+  const stack = [];
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (esc) { esc = false; continue; }
+    if (c === "\\") { esc = true; continue; }
+    if (inStr) { if (c === '"') inStr = false; continue; }
+    if (c === '"') { inStr = true; continue; }
+    if (c === "{" || c === "[") stack.push(c === "{" ? "}" : "]");
+    else if (c === "}" || c === "]") stack.pop();
+  }
+  let tail = "";
+  if (inStr) tail += '"';
+  // Drop a trailing comma that would precede our auto-closed brace.
+  let body = s.replace(/,\s*$/, "");
+  while (stack.length) tail += stack.pop();
+  return body + tail;
 }
 
 // ─── Render the iframe srcdoc that hosts the generated app ──────────

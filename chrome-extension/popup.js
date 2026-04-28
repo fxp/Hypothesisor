@@ -339,7 +339,7 @@ $("generate").addEventListener("click", async () => {
           openInTab: t("output_open_in_tab"),
           close: t("overlay_close"),
         });
-        setStatus(t("status_reformat_done"), "success");
+        setStatus(result.truncated ? t("status_reformat_truncated") : t("status_reformat_done"), "success");
         window.close();  // close popup so user sees the overlay
       } catch (e) {
         // Page can't host overlays — fall back to opening in a new tab.

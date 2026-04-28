@@ -275,7 +275,7 @@
     "message": "BigModel didn't return valid JSON — try again. If it keeps failing, make the custom style shorter."
   },
   "error_llm_json_parse": {
-    "message": "BigModel output couldn't be parsed as JSON ($DETAIL$) — try again.",
+    "message": "BigModel output couldn't be parsed as JSON ($DETAIL$) — likely hit max_tokens. Try a simpler format or shorter article.",
     "placeholders": {
       "detail": {
         "content": "$1"
@@ -393,5 +393,8 @@
   },
   "status_reformat_done_tab": {
     "message": "Done. Opened in a new tab."
+  },
+  "status_reformat_truncated": {
+    "message": "Done. Output was truncated mid-stream — rendering partial app (try a simpler format if it looks broken)."
   }
 }
