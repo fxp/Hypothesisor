@@ -284,76 +284,101 @@ $("generate").addEventListener("click", async () => {
       throw new Error(t("status_short_content"));
     }
     const settings = await getSettings();
-    const { bigmodelKey, bigmodelBaseUrl, bigmodelModel, hypothesisToken } = settings;
+    const { bigmodelKey, hypothesisToken } = settings;
 
+    // Pre-flight: check key availability before queuing work in bg.
     if (state.task === "annotate") {
       const missing = [];
       if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
       if (!hypothesisToken) missing.push(t("status_need_token"));
       if (missing.length) { setStatus(missing.join("  ·  "), "error"); return; }
-      setStatus(t("status_calling_llm", String(state.content.length)));
-      const raw = await callGLM({
-        content: state.content, url: state.canonicalUrl,
-        mode: state.mode, style: resolveStyle(), apiKey: bigmodelKey,
-        baseUrl: bigmodelBaseUrl, model: bigmodelModel,
-      });
-      state.annotations = raw.map((a) => {
-        const q = (a.quote || "").trim();
-        const ok = validateQuote(state.content, q).found;
-        return {
-          quote: q, comment: (a.comment || "").trim(),
-          tags: Array.isArray(a.tags) ? a.tags : [],
-          selected: ok, invalid: !ok,
-        };
-      });
-      const valid = state.annotations.filter((a) => !a.invalid).length;
-      setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
-      render();
     } else {
-      // Reformat path (L3) — only needs BigModel, not Hypothesis token.
       if (!bigmodelKey) { setStatus(t("status_need_bigmodel"), "error"); return; }
-      setStatus(t("status_reformat_calling", String(state.content.length)));
-      const customPrompt = state.format === "custom" ? $("formatCustom").value.trim() : null;
+    }
+
+    let customPrompt = null;
+    if (state.task === "reformat") {
+      customPrompt = state.format === "custom" ? $("formatCustom").value.trim() : null;
       if (state.format === "custom" && !customPrompt) {
         setStatus(t("status_format_need_prompt"), "error"); return;
       }
-      const result = await generateReformat({
-        content: state.content, url: state.canonicalUrl, title: state.title,
-        format: state.format, customPrompt, apiKey: bigmodelKey,
-        baseUrl: bigmodelBaseUrl, model: bigmodelModel,
-      });
-      const reformat = {
-        id: newId(), createdAt: Date.now(),
-        sourceUrl: state.canonicalUrl, sourceTitle: state.title,
-        format: state.format, customPrompt: customPrompt || undefined,
-        title: result.title, summary: result.summary,
-        appType: result.appType, html: result.html,
-      };
-      await saveReformat(reformat);
-      // Render the generated Web App as a Shadow-DOM overlay on top of
-      // the current page. Falls back to opening output.html in a new
-      // tab if injection fails (e.g. on chrome:// pages).
-      try {
-        const srcdoc = buildIframeSrcdoc(reformat);
-        await showInPageOverlay(state.tab.id, reformat, srcdoc, {
-          openInTab: t("output_open_in_tab"),
-          close: t("overlay_close"),
-        });
-        setStatus(result.truncated ? t("status_reformat_truncated") : t("status_reformat_done"), "success");
-        window.close();  // close popup so user sees the overlay
-      } catch (e) {
-        // Page can't host overlays — fall back to opening in a new tab.
-        chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${reformat.id}`) });
-        setStatus(t("status_reformat_done_tab"), "success");
-      }
-      await refreshReformatRecent();
     }
+
+    // Hand off to the service worker. It runs the LLM call detached
+    // from the popup, persists status to chrome.storage, and fires a
+    // notification when done — so the user can close the popup and
+    // come back via the toast in the OS notification center.
+    const spec = {
+      type: state.task,
+      tabId: state.tab.id,
+      canonicalUrl: state.canonicalUrl,
+      title: state.title,
+      content: state.content,
+      mode: state.mode,
+      style: resolveStyle(),
+      format: state.format,
+      customPrompt,
+    };
+    const { jobId, error } = await chrome.runtime.sendMessage({ type: "startJob", spec });
+    if (error) throw new Error(error);
+    state.activeJobId = jobId;
+    setStatus(state.task === "annotate"
+      ? t("status_calling_llm", String(state.content.length))
+      : t("status_reformat_calling", String(state.content.length)));
   } catch (e) {
     setStatus(t("status_failed", formatError(e)), "error");
   } finally {
     $("generate").disabled = false;
   }
 });
+
+// React to live job state changes — popup updates progress, then either
+// renders annotations inline (annotate done) or triggers the in-page
+// overlay (reformat done) and closes itself.
+chrome.storage.onChanged.addListener(async (changes, area) => {
+  if (area !== "local" || !changes.jobs) return;
+  const job = (changes.jobs.newValue || []).find((j) => j.id === state.activeJobId);
+  if (!job) return;
+  await onJobUpdate(job);
+});
+
+async function onJobUpdate(job) {
+  if (job.status === "running" || job.status === "validating" || job.status === "pending") {
+    setStatus(job.statusText || "Working…");
+    return;
+  }
+  if (job.status === "error") {
+    setStatus(t("status_failed", job.statusText || "error"), "error");
+    return;
+  }
+  // status === "done"
+  if (job.type === "annotate") {
+    state.annotations = (job.annotations || []).map((a) => ({ ...a }));
+    const valid = state.annotations.filter((a) => !a.invalid).length;
+    setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
+    render();
+  } else {
+    // Reformat — try to overlay on the source tab first; fall back to
+    // opening output.html in a new tab if injection isn't allowed.
+    try {
+      const { loadReformat, buildIframeSrcdoc } = await import("./lib/reformat.js");
+      const reformat = await loadReformat(job.reformatId);
+      if (reformat && state.tab) {
+        await showInPageOverlay(state.tab.id, reformat, buildIframeSrcdoc(reformat), {
+          openInTab: t("output_open_in_tab"),
+          close: t("overlay_close"),
+        });
+        setStatus(job.truncated ? t("status_reformat_truncated") : t("status_reformat_done"), "success");
+        window.close();
+        return;
+      }
+    } catch (_) {
+      chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
+    }
+    setStatus(job.truncated ? t("status_reformat_truncated") : t("status_reformat_done_tab"), "success");
+    refreshReformatRecent();
+  }
+}
 
 $("publishAll").addEventListener("click", async () => {
   const { hypothesisToken } = await getSettings();

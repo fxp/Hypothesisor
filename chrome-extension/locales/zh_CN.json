@@ -394,5 +394,14 @@
   },
   "status_reformat_truncated": {
     "message": "完成。模型输出被截断 —— 已尽力渲染部分 app，若效果不全请换简单点的形态再试。"
+  },
+  "review_select_all": {
+    "message": "全选"
+  },
+  "review_select_none": {
+    "message": "清空"
+  },
+  "review_not_found": {
+    "message": "找不到该任务。"
   }
 }

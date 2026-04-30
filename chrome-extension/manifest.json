@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extName__",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "__MSG_extDesc__",
   "default_locale": "en",
   "action": {
@@ -15,8 +15,8 @@
     }
   },
   "options_page": "options.html",
-  "background": { "service_worker": "background.js" },
-  "permissions": ["activeTab", "scripting", "storage"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "permissions": ["activeTab", "scripting", "storage", "notifications", "tabs"],
   "host_permissions": [
     "https://api.hypothes.is/*",
     "https://*/*",

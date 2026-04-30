@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Review annotations · Hypothesisor</title>
+<link rel="stylesheet" href="output.css" />
+<style>
+  .review-container { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .review-meta { color: var(--mute); font-size: 14px; margin: 0 0 8px; }
+  .review-actions { display: flex; gap: 12px; margin: 18px 0 26px; align-items: center; }
+  .btn-primary {
+    padding: 11px 22px; font-size: 15px; font-weight: 600;
+    background: var(--brand); color: white; border: none; border-radius: 8px;
+    cursor: pointer; box-shadow: 0 1px 3px rgba(37,99,235,0.25);
+    transition: background 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover:not(:disabled) { background: #1d4fc4; box-shadow: 0 6px 16px rgba(37,99,235,0.35); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-ghost {
+    padding: 11px 18px; background: white; border: 1px solid var(--line);
+    border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 14px;
+    color: var(--ink-2);
+  }
+  .btn-ghost:hover { background: var(--bg-soft); }
+  .counts { color: var(--mute); font-size: 13.5px; margin-left: auto; }
+
+  .ann {
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 12px; background: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .ann:hover { border-color: #cbd5e1; }
+  .ann.posted { background: #ecfdf5; border-color: #a7f3d0; }
+  .ann.invalid { opacity: 0.55; background: var(--bg-soft); }
+  .ann .row { display: flex; gap: 10px; align-items: flex-start; }
+  .ann input[type=checkbox] { margin-top: 4px; cursor: pointer; }
+  .ann .quote {
+    font: 14px/1.55 Georgia, serif; color: #1e293b;
+    background: #fef9c3; padding: 4px 8px; border-radius: 4px;
+    display: inline; box-decoration-break: clone;
+  }
+  .ann .comment { color: var(--ink-2); margin: 8px 0 6px; font-size: 14px; line-height: 1.6; }
+  .ann .comment p { margin: 0 0 4px; }
+  .ann .comment strong { font-weight: 700; color: var(--ink); }
+  .ann .tags { font-size: 11.5px; color: var(--mute); }
+  .ann .tag { display: inline-block; background: #eef2ff; color: #4338ca;
+    padding: 2px 8px; border-radius: 999px; margin-right: 4px; font-weight: 500; }
+  .ann .meta { font-size: 12.5px; color: var(--mute); margin-top: 6px; }
+  .ann .meta a { color: var(--ok); }
+  .empty { color: var(--mute); padding: 80px 20px; text-align: center; }
+  .status { padding: 10px 0; font-size: 13px; min-height: 20px; }
+  .status.error { color: #BD1C2B; }
+  .status.success { color: var(--ok); }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#"><span class="brand-chip">h.</span><span class="brand-name">Hypothesisor</span></a>
+      <div class="topbar-meta" id="topbarMeta"></div>
+      <div class="topbar-actions">
+        <a id="openSource" class="action-link" target="_blank" rel="noopener" data-i18n="output_open_source">Open original</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="review-container">
+    <h1 id="reviewTitle"></h1>
+    <p id="reviewMeta" class="review-meta"></p>
+    <div class="review-actions">
+      <button id="publishBtn" class="btn-primary" disabled data-i18n="popup_btn_publish">Publish selected</button>
+      <button id="selectAll" class="btn-ghost" data-i18n="review_select_all">Select all</button>
+      <button id="selectNone" class="btn-ghost" data-i18n="review_select_none">Clear</button>
+      <span id="counts" class="counts"></span>
+    </div>
+    <div id="status" class="status"></div>
+    <div id="list"></div>
+    <div id="empty" class="empty" hidden data-i18n="review_not_found">Job not found.</div>
+  </main>
+
+  <script type="module" src="review.js"></script>
+</body>
+</html>

@@ -396,5 +396,14 @@
   },
   "status_reformat_truncated": {
     "message": "Done. Output was truncated mid-stream — rendering partial app (try a simpler format if it looks broken)."
+  },
+  "review_select_all": {
+    "message": "Select all"
+  },
+  "review_select_none": {
+    "message": "Clear"
+  },
+  "review_not_found": {
+    "message": "Job not found."
   }
 }
