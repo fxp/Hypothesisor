@@ -403,5 +403,33 @@
   },
   "review_not_found": {
     "message": "找不到该任务。"
+  },
+  "jobs_recent": {
+    "message": "任务"
+  },
+  "jobs_subtitle_annotate_done": {
+    "message": "$VALID$/$TOTAL$ 条候选 · 点击审核",
+    "placeholders": {
+      "valid": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "jobs_subtitle_annotate_posted": {
+    "message": "$POSTED$/$VALID$ 已发布 · 点击审核",
+    "placeholders": {
+      "posted": {
+        "content": "$1"
+      },
+      "valid": {
+        "content": "$2"
+      }
+    }
+  },
+  "jobs_subtitle_reformat_done": {
+    "message": "Web App 已就绪 · 点击打开"
   }
 }

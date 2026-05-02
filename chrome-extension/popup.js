@@ -1,7 +1,8 @@
 import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
-import { generateReformat, saveReformat, loadAll as loadAllReformats, newId, buildIframeSrcdoc } from "./lib/reformat.js";
+import { generateReformat, saveReformat, loadAll as loadAllReformats, loadReformat, newId, buildIframeSrcdoc } from "./lib/reformat.js";
 import { showInPageOverlay } from "./lib/overlay.js";
+import { loadAllJobs } from "./lib/jobs.js";
 
 // $ and syncLangToggleLabel must be defined BEFORE top-level await so
 // the label helper can access them when init resumes. const in TDZ
@@ -42,7 +43,7 @@ async function init() {
     selectChip("");
   }
   selectFormat("tldr");
-  await refreshReformatRecent();
+  await refreshJobs();
 }
 
 function selectTask(task) {
@@ -59,7 +60,7 @@ function selectTask(task) {
   // Swap primary button label.
   $("generate").textContent = t(task === "annotate" ? "popup_btn_generate" : "popup_btn_reformat");
   // Recent list only relevant for reformat.
-  refreshReformatRecent();
+  refreshJobs();
 }
 
 function selectFormat(value) {
@@ -71,28 +72,103 @@ function selectFormat(value) {
   if (value === "custom") $("formatCustom").focus();
 }
 
-async function refreshReformatRecent() {
-  if (state.task !== "reformat") {
-    $("reformatRecent").hidden = true;
+async function refreshJobs() {
+  // Show running + recent jobs across both annotate + reformat. Active
+  // first (so the user immediately sees what's still cooking), then
+  // recently-finished, capped at 8.
+  const all = await loadAllJobs();
+  const sorted = all.slice().sort((a, b) => {
+    const aActive = isActive(a) ? 0 : 1;
+    const bActive = isActive(b) ? 0 : 1;
+    if (aActive !== bActive) return aActive - bActive;
+    return (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0);
+  });
+  const list = sorted.slice(0, 8);
+  $("jobsPanel").hidden = list.length === 0;
+  const host = $("jobsList");
+  host.innerHTML = "";
+  for (const job of list) {
+    host.appendChild(renderJobItem(job));
+  }
+}
+
+function isActive(job) {
+  return job.status === "pending" || job.status === "running" || job.status === "validating";
+}
+
+function renderJobItem(job) {
+  const item = document.createElement("div");
+  const statusClass = job.status === "error" ? "error" : isActive(job) ? "running" : "";
+  const actionable = job.status === "done" || job.status === "error";
+  item.className = `job-item ${job.type} ${statusClass} ${actionable ? "actionable" : ""}`.trim();
+
+  const icon = job.type === "annotate" ? "✨" : "🪄";
+  const badge = job.type === "annotate" ? "L2" : "L3";
+  const title = job.sourceTitle || job.reformatTitle || job.sourceHostname || "(untitled)";
+  const subtitle = subtitleFor(job);
+  const time = fmtRelativeMin(job.updatedAt || job.createdAt || Date.now());
+
+  item.innerHTML = `
+    <span class="ji-icon">${escape(icon)}</span>
+    <span class="ji-badge">${badge}</span>
+    <span class="ji-body">
+      <span class="ji-title"></span>
+      <span class="ji-status"></span>
+    </span>
+    <span class="ji-time">${escape(time)}</span>
+  `;
+  item.querySelector(".ji-title").textContent = title;
+  item.querySelector(".ji-status").textContent = subtitle;
+
+  if (isActive(job)) {
+    const sp = document.createElement("span");
+    sp.className = "ji-spinner";
+    item.insertBefore(sp, item.querySelector(".ji-time"));
+  }
+
+  if (actionable) {
+    item.addEventListener("click", () => openJob(job));
+  }
+  return item;
+}
+
+function subtitleFor(job) {
+  if (job.status === "error") return job.statusText || "error";
+  if (isActive(job)) return job.statusText || "Working…";
+  if (job.type === "annotate") {
+    const total = (job.annotations || []).length;
+    const valid = (job.annotations || []).filter((a) => !a.invalid).length;
+    const posted = (job.annotations || []).filter((a) => a.posted).length;
+    const summary = posted > 0
+      ? t("jobs_subtitle_annotate_posted", String(posted), String(valid))
+      : t("jobs_subtitle_annotate_done", String(valid), String(total));
+    return summary;
+  }
+  // reformat done
+  return job.reformatAppType
+    ? `${String(job.reformatAppType).toUpperCase()} · ${t("jobs_subtitle_reformat_done")}`
+    : t("jobs_subtitle_reformat_done");
+}
+
+async function openJob(job) {
+  if (job.type === "annotate") {
+    chrome.tabs.create({ url: chrome.runtime.getURL(`review.html?job=${encodeURIComponent(job.id)}`) });
     return;
   }
-  const recent = await loadAllReformats();
-  const list = recent.slice(0, 5);
-  $("reformatRecent").hidden = list.length === 0;
-  const host = $("reformatRecentList");
-  host.innerHTML = "";
-  for (const r of list) {
-    const item = document.createElement("div");
-    item.className = "reformat-recent-item";
-    item.innerHTML = `
-      <span class="ri-format">${escape(r.format.toUpperCase())}</span>
-      <span class="ri-title">${escape(r.title || r.sourceTitle || r.sourceUrl)}</span>
-      <span class="ri-time">${fmtRelativeMin(r.createdAt)}</span>
-    `;
-    item.addEventListener("click", () => {
-      chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${r.id}`) });
-    });
-    host.appendChild(item);
+  // reformat — try overlay on current tab, else open output.html
+  if (job.reformatId) {
+    try {
+      const r = await loadReformat(job.reformatId);
+      if (r && state.tab) {
+        await showInPageOverlay(state.tab.id, r, buildIframeSrcdoc(r), {
+          openInTab: t("output_open_in_tab"),
+          close: t("overlay_close"),
+        });
+        window.close();
+        return;
+      }
+    } catch (_) {}
+    chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
   }
 }
 
@@ -337,6 +413,11 @@ $("generate").addEventListener("click", async () => {
 // overlay (reformat done) and closes itself.
 chrome.storage.onChanged.addListener(async (changes, area) => {
   if (area !== "local" || !changes.jobs) return;
+  // Always re-render the visible jobs panel — every job's status / count
+  // updates show up live, not just the one this popup just submitted.
+  refreshJobs();
+  // Plus drive the inline annotate-results / reformat-overlay flow when
+  // the popup happens to be the one that submitted the active job.
   const job = (changes.jobs.newValue || []).find((j) => j.id === state.activeJobId);
   if (!job) return;
   await onJobUpdate(job);
@@ -376,7 +457,7 @@ async function onJobUpdate(job) {
       chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
     }
     setStatus(job.truncated ? t("status_reformat_truncated") : t("status_reformat_done_tab"), "success");
-    refreshReformatRecent();
+    refreshJobs();
   }
 }
 

@@ -405,5 +405,33 @@
   },
   "review_not_found": {
     "message": "Job not found."
+  },
+  "jobs_recent": {
+    "message": "Jobs"
+  },
+  "jobs_subtitle_annotate_done": {
+    "message": "$VALID$/$TOTAL$ candidates · click to review",
+    "placeholders": {
+      "valid": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "jobs_subtitle_annotate_posted": {
+    "message": "$POSTED$/$VALID$ posted · click to review",
+    "placeholders": {
+      "posted": {
+        "content": "$1"
+      },
+      "valid": {
+        "content": "$2"
+      }
+    }
+  },
+  "jobs_subtitle_reformat_done": {
+    "message": "Web App ready · click to open"
   }
 }

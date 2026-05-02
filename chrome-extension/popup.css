@@ -68,30 +68,53 @@ header a#openOptions:hover, header button.lang-toggle:hover { background: var(--
 .task-tab.active .task-tab-label { color: var(--brand); }
 .task-tab-sub { font-size: 11px; color: var(--mute); }
 
-/* ── recent reformats list ─────────────────────────────────── */
-.reformat-recent { padding: 0 20px 12px; }
-.reformat-recent-label {
+/* ── jobs panel (running + recent annotate/reformat jobs) ──── */
+.jobs-panel { padding: 0 20px 12px; }
+.jobs-panel-label {
   font-size: 10.5px; font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.5px; color: var(--mute); margin-bottom: 8px;
 }
-.reformat-recent-list { display: flex; flex-direction: column; gap: 6px; }
-.reformat-recent-item {
+.jobs-list { display: flex; flex-direction: column; gap: 6px; }
+.job-item {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; background: white;
+  padding: 9px 12px; background: white;
   border: 1px solid var(--line); border-radius: var(--radius-sm);
-  cursor: pointer; transition: border-color 0.12s, background 0.12s;
+  transition: border-color 0.12s, background 0.12s;
+  position: relative;
 }
-.reformat-recent-item:hover { border-color: #cbd5e1; background: var(--bg-soft); }
-.reformat-recent-item .ri-format {
-  font-size: 11px; font-weight: 700; color: var(--brand);
-  background: rgba(37,99,235,0.08); padding: 3px 7px; border-radius: 4px;
-  flex-shrink: 0;
+.job-item.actionable { cursor: pointer; }
+.job-item.actionable:hover { border-color: #cbd5e1; background: var(--bg-soft); }
+.job-item.running { border-left: 3px solid var(--brand); }
+.job-item.error   { border-left: 3px solid var(--err); background: #fef2f2; }
+.job-item .ji-icon {
+  flex-shrink: 0; font-size: 14px; line-height: 1;
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
 }
-.reformat-recent-item .ri-title {
-  flex: 1; min-width: 0; font-size: 13px; color: var(--ink);
+.job-item .ji-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.job-item .ji-title {
+  font-size: 12.5px; color: var(--ink); font-weight: 500;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.reformat-recent-item .ri-time { font-size: 11px; color: var(--mute); flex-shrink: 0; }
+.job-item .ji-status {
+  font-size: 11px; color: var(--mute);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.job-item.error .ji-status { color: var(--err); }
+.job-item .ji-badge {
+  flex-shrink: 0; font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px;
+  padding: 2px 7px; border-radius: 4px;
+  text-transform: uppercase;
+}
+.job-item.annotate .ji-badge { background: rgba(124, 58, 237, 0.1); color: #7c3aed; }
+.job-item.reformat .ji-badge { background: rgba(37, 99, 235, 0.1); color: var(--brand); }
+.job-item .ji-time { flex-shrink: 0; font-size: 10.5px; color: var(--mute); margin-left: 4px; }
+.job-item .ji-spinner {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid var(--line); border-top-color: var(--brand);
+  animation: ji-spin 0.8s linear infinite;
+}
+@keyframes ji-spin { to { transform: rotate(360deg); } }
 
 /* ── target (page title + url) ─────────────────────────────── */
 .target { padding: 12px 20px; background: var(--bg-soft); }
