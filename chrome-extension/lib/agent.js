@@ -42,10 +42,13 @@ const FORMAT_SUFFIX = `
 - 允许用 "A → B" 表达因果或对比，不用长句堆叠
 - 不要复述引用，要加增量信息（数字、对比、隐含假设、延伸思考）
 
-【quote 规范】
-1. 必须是原文逐字引用，不可改动
-2. 原文是英文则引用英文；中文则引中文
-3. 不要引用标题、URL、导航元数据
+【quote 规范 —— 极其严格】
+1. **逐字引用**：必须是原文一段连续字符的精确复制。不要改一个字、不要省略中间内容、不要拼接两处不连续的句子。
+2. **保留所有 Markdown 标记**：你看到的正文是 Markdown 渲染的，含 \\*\\*粗体\\*\\*、\\[文本\\](url) 链接、行内代码等。如果你要引用的句子里有这些标记，**原样保留**，不要"清理"它们。
+3. **保留原始引号字符**：如果原文是 ’（智能单引号）/ “”（智能双引号）/ —（em dash），就用这些字符，不要换成 ASCII '/" /-。
+4. 原文是英文则引用英文；中文则引中文。
+5. 不要引用标题、URL、导航元数据。
+6. **如果你想表达的论点在原文里没有连续的对应句子**，就**不要发明一个 quote**——重新选一个真的能逐字找到的句子。
 
 【JSON 硬约束】
 - 只输出 JSON 对象本体，不要代码块、不要解释文字
@@ -234,9 +237,18 @@ function repairJSON(s) {
   return out.replace(/,\s*([\]\}])/g, "$1");
 }
 
-// Strict validation: only accept exact (or case-insensitive) matches.
-// No fuzzy slicing — if the quote isn't really in the page text, refusing
-// up front beats posting an annotation Hypothesis can never anchor.
+// Quote validation — three-stage match, all of which return positions
+// in the ORIGINAL content (so the `exact` field we send to Hypothesis
+// is byte-aligned with what the client anchors against).
+//
+//   1. Exact: indexOf with the LLM's quote verbatim.
+//   2. Case-insensitive: same, ignoring case (English titles).
+//   3. Normalized: strip Markdown decorations + smart quotes + dashes
+//      from both sides, indexOf, then recover the original substring
+//      via an index map. This catches the LLM "helpfully" cleaning the
+//      Jina markdown source (it drops **bold**, [text](url), curly
+//      quotes, em dashes, NBSP) without claiming a quote that isn't
+//      really in the page.
 export function validateQuote(content, quote) {
   if (!quote) return { found: false };
   let pos = content.indexOf(quote);
@@ -246,7 +258,100 @@ export function validateQuote(content, quote) {
     const exact = content.slice(pos, pos + quote.length);
     return { found: true, start: pos, end: pos + quote.length, exact };
   }
-  return { found: false };
+  return validateQuoteNormalized(content, quote);
+}
+
+// Build (normalized text, indexMap) where indexMap[i] is the position
+// in the original content corresponding to the i-th char of the
+// normalized text. Drops markdown link syntax `[text](url)` (keeps
+// `text`), image syntax `![alt](url)` (keeps `alt`), bold/italic/code
+// markers, and folds smart quotes / dashes / NBSP / multi-spaces.
+function buildNormalized(content) {
+  const out = [];
+  const map = [];
+  let i = 0;
+  const n = content.length;
+  while (i < n) {
+    const c = content[i];
+    // Markdown image: ![alt](url)
+    if (c === "!" && content[i + 1] === "[") {
+      const close = content.indexOf("](", i + 2);
+      const end = close >= 0 ? content.indexOf(")", close + 2) : -1;
+      if (close >= 0 && end >= 0) {
+        // Drop the image entirely — alt text is rarely quoted.
+        i = end + 1;
+        continue;
+      }
+    }
+    // Markdown link: [text](url) → keep text mapped to the [ region
+    if (c === "[") {
+      const close = content.indexOf("](", i + 1);
+      const end = close >= 0 ? content.indexOf(")", close + 2) : -1;
+      if (close >= 0 && end >= 0) {
+        const inner = content.slice(i + 1, close);
+        for (let k = 0; k < inner.length; k++) {
+          out.push(normChar(inner[k]));
+          map.push(i + 1 + k);
+        }
+        i = end + 1;
+        continue;
+      }
+    }
+    // Strip emphasis / code markers (** * __ _ `)
+    if (c === "*" || c === "_" || c === "`") {
+      i++;
+      continue;
+    }
+    out.push(normChar(c));
+    map.push(i);
+    i++;
+  }
+  // Final pass: collapse runs of whitespace to a single space, keeping
+  // the first whitespace's source index (good enough for anchoring).
+  const collapsed = [];
+  const collapsedMap = [];
+  let prevWs = false;
+  for (let k = 0; k < out.length; k++) {
+    const c = out[k];
+    const isWs = /\s/.test(c);
+    if (isWs && prevWs) continue;
+    collapsed.push(isWs ? " " : c);
+    collapsedMap.push(map[k]);
+    prevWs = isWs;
+  }
+  return { text: collapsed.join(""), map: collapsedMap };
+}
+
+function normChar(c) {
+  const code = c.charCodeAt(0);
+  // Smart quotes → ASCII
+  if (code === 0x2018 || code === 0x2019 || code === 0x201A || code === 0x201B) return "'";
+  if (code === 0x201C || code === 0x201D || code === 0x201E || code === 0x201F) return '"';
+  // Dashes → hyphen
+  if (code === 0x2013 || code === 0x2014 || code === 0x2212) return "-";
+  // NBSP → space
+  if (code === 0x00A0 || code === 0x202F || code === 0x2009) return " ";
+  return c;
+}
+
+function normalizeFlat(s) {
+  return buildNormalized(s).text;
+}
+
+function validateQuoteNormalized(content, quote) {
+  const { text: nContent, map } = buildNormalized(content);
+  const nQuoteFull = normalizeFlat(quote).trim();
+  if (!nQuoteFull) return { found: false };
+  let pos = nContent.indexOf(nQuoteFull);
+  if (pos < 0) pos = nContent.toLowerCase().indexOf(nQuoteFull.toLowerCase());
+  if (pos < 0) return { found: false };
+  // Recover original-text bounds via the index map. End at the source
+  // index of the last matched char, plus one to be exclusive.
+  const start = map[pos];
+  const lastIdx = pos + nQuoteFull.length - 1;
+  const end = (map[lastIdx] ?? map[map.length - 1]) + 1;
+  if (start == null || end == null || end <= start) return { found: false };
+  return { found: true, start, end, exact: content.slice(start, end) };
 }
 
 // Raw context — no whitespace normalization, so prefix/suffix match the
