@@ -13,10 +13,20 @@
 export const CATALOG_ID = "https://a2ui.org/specification/v0_10/basic_catalog.json";
 export const PROTOCOL_VERSION = "v0.10";
 
+// Basic catalog (v0.10) we implement + Hypothesisor's extended set.
+// Extended components live under our own catalogId namespace
+// (https://hypothesisor.fxp.dev/catalog/v0.4/extended). They cover the
+// rich-content cases the basic catalog doesn't: stat tiles, charts,
+// comparison tables, timelines — the things that actually show off
+// what A2UI buys you over markdown.
 const SUPPORTED = new Set([
+  // basic catalog v0.10
   "Text", "Column", "Row", "Card", "List", "Divider",
-  "Button", "TextField", "CheckBox",
-  "Icon", "Image",
+  "Button", "TextField", "CheckBox", "ChoicePicker", "Slider",
+  "Tabs", "Icon", "Image",
+  // Hypothesisor extended
+  "StatTile", "KeyValue", "Highlight", "ProgressBar",
+  "BarChart", "LineChart", "Timeline", "ComparisonTable",
 ]);
 
 // ─── State container ────────────────────────────────────────────────
@@ -256,6 +266,261 @@ export class A2uiSurface {
         el.loading = "lazy";
         return el;
       }
+
+      case "ChoicePicker": {
+        const wrap = document.createElement("div");
+        wrap.className = "a2ui-choice" + (spec.variant === "mutuallyExclusive" ? " a2ui-choice--single" : " a2ui-choice--multi");
+        const cur = r(spec.value);
+        const isSel = (v) => spec.variant === "mutuallyExclusive" ? cur === v : Array.isArray(cur) && cur.includes(v);
+        for (const opt of spec.options || []) {
+          const ch = document.createElement("button");
+          ch.type = "button";
+          ch.className = "a2ui-choice-chip" + (isSel(opt.value) ? " active" : "");
+          ch.textContent = opt.label || opt.value;
+          ch.addEventListener("click", () => {
+            if (!spec.value || !spec.value.path) return;
+            if (spec.variant === "mutuallyExclusive") {
+              this._setByPath(spec.value.path, opt.value);
+            } else {
+              const arr = Array.isArray(cur) ? cur.slice() : [];
+              const i = arr.indexOf(opt.value);
+              if (i >= 0) arr.splice(i, 1); else arr.push(opt.value);
+              this._setByPath(spec.value.path, arr);
+            }
+            this._reactiveRender();
+            if (spec.action) this._fireAction(spec, "change", opt.value);
+          });
+          wrap.appendChild(ch);
+        }
+        return wrap;
+      }
+
+      case "Slider": {
+        const wrap = document.createElement("label");
+        wrap.className = "a2ui-slider";
+        if (spec.label) {
+          const lab = document.createElement("span");
+          lab.className = "a2ui-slider-label";
+          const cur = r(spec.value);
+          lab.textContent = `${r(spec.label)}: ${cur ?? spec.min ?? 0}`;
+          wrap.appendChild(lab);
+        }
+        const inp = document.createElement("input");
+        inp.type = "range";
+        inp.min = String(spec.min ?? 0);
+        inp.max = String(spec.max ?? 100);
+        inp.step = String(spec.step ?? 1);
+        inp.value = String(r(spec.value) ?? spec.min ?? 0);
+        inp.addEventListener("input", () => {
+          if (spec.value && spec.value.path) {
+            this._setByPath(spec.value.path, Number(inp.value));
+            this._reactiveRender();
+          }
+          if (spec.action) this._fireAction(spec, "change", Number(inp.value));
+        });
+        wrap.appendChild(inp);
+        return wrap;
+      }
+
+      case "Tabs": {
+        const wrap = document.createElement("div");
+        wrap.className = "a2ui-tabs";
+        const tabs = spec.tabs || [];
+        const activePath = spec.value && spec.value.path;
+        let active = (activePath ? r(spec.value) : null) ?? (tabs[0] && tabs[0].id);
+        const bar = document.createElement("div");
+        bar.className = "a2ui-tabs-bar";
+        const pane = document.createElement("div");
+        pane.className = "a2ui-tabs-pane";
+        for (const tab of tabs) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "a2ui-tab" + (tab.id === active ? " active" : "");
+          btn.textContent = tab.label || tab.id;
+          btn.addEventListener("click", () => {
+            if (activePath) { this._setByPath(activePath, tab.id); this._reactiveRender(); }
+          });
+          bar.appendChild(btn);
+        }
+        const activeTab = tabs.find((t) => t.id === active) || tabs[0];
+        if (activeTab && activeTab.contentId) {
+          const c = this._renderById(activeTab.contentId);
+          if (c) pane.appendChild(c);
+        }
+        wrap.appendChild(bar);
+        wrap.appendChild(pane);
+        return wrap;
+      }
+
+      // ─── Hypothesisor extended catalog ──────────────────────────
+
+      case "StatTile": {
+        const el = document.createElement("div");
+        el.className = "a2ui-stat" + (spec.accent ? ` a2ui-stat--${spec.accent}` : "");
+        const label = String(r(spec.label) ?? "");
+        const value = String(r(spec.value) ?? "");
+        const unit = String(r(spec.unit) ?? "");
+        const delta = spec.delta != null ? String(r(spec.delta)) : null;
+        const dir = spec.deltaDirection;
+        el.innerHTML = `
+          <div class="a2ui-stat-label"></div>
+          <div class="a2ui-stat-value-row">
+            <span class="a2ui-stat-value"></span>
+            ${unit ? `<span class="a2ui-stat-unit"></span>` : ""}
+          </div>
+          ${delta != null ? `<div class="a2ui-stat-delta a2ui-stat-delta--${dir || "neutral"}"></div>` : ""}
+        `;
+        el.querySelector(".a2ui-stat-label").textContent = label;
+        el.querySelector(".a2ui-stat-value").textContent = value;
+        if (unit) el.querySelector(".a2ui-stat-unit").textContent = unit;
+        if (delta != null) {
+          const arrow = dir === "up" ? "▲" : dir === "down" ? "▼" : "→";
+          el.querySelector(".a2ui-stat-delta").textContent = `${arrow} ${delta}`;
+        }
+        return el;
+      }
+
+      case "KeyValue": {
+        const el = document.createElement("dl");
+        el.className = "a2ui-kv";
+        const items = r(spec.items) || [];
+        for (const it of items) {
+          const dt = document.createElement("dt");
+          dt.textContent = String(it.key ?? it.label ?? "");
+          const dd = document.createElement("dd");
+          dd.textContent = String(it.value ?? "");
+          el.appendChild(dt);
+          el.appendChild(dd);
+        }
+        return el;
+      }
+
+      case "Highlight": {
+        const el = document.createElement("blockquote");
+        el.className = "a2ui-highlight" + (spec.accent ? ` a2ui-highlight--${spec.accent}` : "");
+        const text = document.createElement("p");
+        text.className = "a2ui-highlight-text";
+        text.innerHTML = renderInlineMarkdown(String(r(spec.text) ?? ""));
+        el.appendChild(text);
+        if (spec.source) {
+          const src = document.createElement("cite");
+          src.className = "a2ui-highlight-source";
+          src.textContent = "— " + String(r(spec.source));
+          el.appendChild(src);
+        }
+        return el;
+      }
+
+      case "ProgressBar": {
+        const wrap = document.createElement("div");
+        wrap.className = "a2ui-progress";
+        if (spec.label) {
+          const lab = document.createElement("div");
+          lab.className = "a2ui-progress-label";
+          lab.textContent = String(r(spec.label));
+          wrap.appendChild(lab);
+        }
+        const max = Number(r(spec.max) ?? 100);
+        const val = Math.max(0, Math.min(max, Number(r(spec.value) ?? 0)));
+        const pct = max > 0 ? (val / max) * 100 : 0;
+        const track = document.createElement("div");
+        track.className = "a2ui-progress-track";
+        const bar = document.createElement("div");
+        bar.className = "a2ui-progress-fill";
+        bar.style.width = pct.toFixed(1) + "%";
+        track.appendChild(bar);
+        wrap.appendChild(track);
+        if (spec.showValue !== false) {
+          const v = document.createElement("div");
+          v.className = "a2ui-progress-value";
+          v.textContent = `${val} / ${max}`;
+          wrap.appendChild(v);
+        }
+        return wrap;
+      }
+
+      case "BarChart": {
+        const data = r(spec.data) || [];
+        return renderBarChart(data, {
+          xLabel: r(spec.xLabel),
+          yLabel: r(spec.yLabel),
+          height: Number(spec.height) || 220,
+          colorAccent: spec.colorAccent,
+        });
+      }
+
+      case "LineChart": {
+        const data = r(spec.data) || [];
+        return renderLineChart(data, {
+          xLabel: r(spec.xLabel),
+          yLabel: r(spec.yLabel),
+          height: Number(spec.height) || 220,
+        });
+      }
+
+      case "Timeline": {
+        const wrap = document.createElement("ol");
+        wrap.className = "a2ui-timeline";
+        const items = r(spec.items) || [];
+        for (const it of items) {
+          const li = document.createElement("li");
+          li.className = "a2ui-timeline-item";
+          li.innerHTML = `
+            <span class="a2ui-timeline-dot"></span>
+            <div class="a2ui-timeline-body">
+              <div class="a2ui-timeline-when"></div>
+              <div class="a2ui-timeline-title"></div>
+              <div class="a2ui-timeline-detail"></div>
+            </div>`;
+          li.querySelector(".a2ui-timeline-when").textContent = String(it.when ?? "");
+          li.querySelector(".a2ui-timeline-title").textContent = String(it.title ?? "");
+          li.querySelector(".a2ui-timeline-detail").innerHTML = renderInlineMarkdown(String(it.detail ?? ""));
+          wrap.appendChild(li);
+        }
+        return wrap;
+      }
+
+      case "ComparisonTable": {
+        const cols = spec.columns || [];
+        const rows = r(spec.rows) || [];
+        const tbl = document.createElement("table");
+        tbl.className = "a2ui-cmp";
+        const thead = document.createElement("thead");
+        const trH = document.createElement("tr");
+        for (const c of cols) {
+          const th = document.createElement("th");
+          th.textContent = String(c.label ?? c.key ?? "");
+          if (c.accent) th.classList.add("a2ui-cmp-accent");
+          trH.appendChild(th);
+        }
+        thead.appendChild(trH);
+        tbl.appendChild(thead);
+        const tbody = document.createElement("tbody");
+        for (const row of rows) {
+          const tr = document.createElement("tr");
+          for (const c of cols) {
+            const td = document.createElement("td");
+            const v = row[c.key];
+            if (v && typeof v === "object" && (v.value !== undefined || v.note !== undefined)) {
+              td.innerHTML = `
+                <div class="a2ui-cmp-cell-value"></div>
+                ${v.note ? `<div class="a2ui-cmp-cell-note"></div>` : ""}
+              `;
+              td.querySelector(".a2ui-cmp-cell-value").textContent = String(v.value ?? "");
+              if (v.note) td.querySelector(".a2ui-cmp-cell-note").textContent = String(v.note);
+              if (v.accent) td.classList.add("a2ui-cmp-accent");
+            } else {
+              td.textContent = String(v ?? "");
+            }
+            if (c.accent) td.classList.add("a2ui-cmp-accent");
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+        }
+        tbl.appendChild(tbody);
+        return tbl;
+      }
+
       default:
         return placeholder(`unsupported: ${spec.component}`);
     }
@@ -319,6 +584,93 @@ function mapIcon(name) {
     chevron_down: "▾", chevron_up: "▴",
   };
   return m[name] || "";
+}
+
+// ─── SVG chart renderers (extended catalog) ─────────────────────────
+
+function renderBarChart(data, opts) {
+  const arr = Array.isArray(data) ? data.filter((d) => d && d.label != null) : [];
+  const w = 600, h = opts.height || 220, padL = 56, padR = 16, padT = 10, padB = 36;
+  const chartW = w - padL - padR;
+  const chartH = h - padT - padB;
+  const max = Math.max(1, ...arr.map((d) => Number(d.value) || 0));
+  const barW = arr.length ? Math.max(8, chartW / arr.length - 8) : 0;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "a2ui-chart a2ui-chart--bar");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  svg.style.width = "100%";
+  svg.style.height = h + "px";
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + chartH - (chartH * i) / 4;
+    const v = (max * i) / 4;
+    svg.appendChild(mkSvg("line", { x1: padL, x2: padL + chartW, y1: y, y2: y, class: "a2ui-chart-grid" }));
+    svg.appendChild(mkSvg("text", { x: padL - 8, y: y + 4, "text-anchor": "end", class: "a2ui-chart-tick" }, fmtTick(v)));
+  }
+  arr.forEach((d, i) => {
+    const x = padL + i * (chartW / arr.length) + (chartW / arr.length - barW) / 2;
+    const v = Number(d.value) || 0;
+    const bh = (v / max) * chartH;
+    const y = padT + chartH - bh;
+    svg.appendChild(mkSvg("rect", { x, y, width: barW, height: bh, rx: 4, class: "a2ui-chart-bar" }));
+    svg.appendChild(mkSvg("text", { x: x + barW / 2, y: padT + chartH + 18, "text-anchor": "middle", class: "a2ui-chart-xlabel" }, String(d.label)));
+    svg.appendChild(mkSvg("text", { x: x + barW / 2, y: y - 5, "text-anchor": "middle", class: "a2ui-chart-value" }, fmtTick(v)));
+  });
+  return svg;
+}
+
+function renderLineChart(data, opts) {
+  const arr = Array.isArray(data) ? data.filter((d) => d && d.label != null) : [];
+  const w = 600, h = opts.height || 220, padL = 56, padR = 16, padT = 10, padB = 36;
+  const chartW = w - padL - padR;
+  const chartH = h - padT - padB;
+  const max = Math.max(1, ...arr.map((d) => Number(d.value) || 0));
+  const min = Math.min(0, ...arr.map((d) => Number(d.value) || 0));
+  const range = max - min || 1;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "a2ui-chart a2ui-chart--line");
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.style.width = "100%";
+  svg.style.height = h + "px";
+  for (let i = 0; i <= 4; i++) {
+    const y = padT + chartH - (chartH * i) / 4;
+    const v = min + (range * i) / 4;
+    svg.appendChild(mkSvg("line", { x1: padL, x2: padL + chartW, y1: y, y2: y, class: "a2ui-chart-grid" }));
+    svg.appendChild(mkSvg("text", { x: padL - 8, y: y + 4, "text-anchor": "end", class: "a2ui-chart-tick" }, fmtTick(v)));
+  }
+  if (arr.length > 1) {
+    const pts = arr.map((d, i) => {
+      const x = padL + (i / (arr.length - 1)) * chartW;
+      const v = Number(d.value) || 0;
+      const y = padT + chartH - ((v - min) / range) * chartH;
+      return [x, y];
+    });
+    const path = pts.map((p, i) => (i === 0 ? "M" : "L") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+    const area = `${path} L ${pts[pts.length-1][0].toFixed(1)} ${(padT + chartH).toFixed(1)} L ${pts[0][0].toFixed(1)} ${(padT + chartH).toFixed(1)} Z`;
+    svg.appendChild(mkSvg("path", { d: area, class: "a2ui-chart-area" }));
+    svg.appendChild(mkSvg("path", { d: path, class: "a2ui-chart-line" }));
+    pts.forEach(([x, y], i) => {
+      svg.appendChild(mkSvg("circle", { cx: x, cy: y, r: 3.5, class: "a2ui-chart-dot" }));
+      svg.appendChild(mkSvg("text", { x, y: padT + chartH + 18, "text-anchor": "middle", class: "a2ui-chart-xlabel" }, String(arr[i].label)));
+    });
+  }
+  return svg;
+}
+
+function mkSvg(tag, attrs, text) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+  if (text != null) el.textContent = String(text);
+  return el;
+}
+
+function fmtTick(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "";
+  if (Math.abs(n) >= 1e9) return (n / 1e9).toFixed(1) + "B";
+  if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(1) + "M";
+  if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(1) + "k";
+  return n % 1 === 0 ? String(n) : n.toFixed(1);
 }
 
 // Inline-only markdown subset: **bold**, *italic*, `code`. Intentionally
@@ -484,6 +836,187 @@ export const DEFAULT_STYLESHEET = `
     font-size: 0.92em; background: var(--a2ui-color-secondary);
     padding: 1px 5px; border-radius: 4px;
   }
+
+  /* ─── ChoicePicker ───────────────────────────────────────── */
+  .a2ui-choice { display: flex; flex-wrap: wrap; gap: 6px; }
+  .a2ui-choice-chip {
+    font: inherit; font-size: 12.5px; font-weight: 500;
+    padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    background: var(--a2ui-color-surface);
+    color: var(--a2ui-color-on-secondary);
+    border: var(--a2ui-border-width) solid var(--a2ui-color-border);
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+  }
+  .a2ui-choice-chip:hover { background: var(--a2ui-color-secondary); border-color: var(--a2ui-color-border-strong); }
+  .a2ui-choice-chip.active {
+    background: var(--a2ui-color-primary); color: var(--a2ui-color-on-primary);
+    border-color: var(--a2ui-color-primary);
+  }
+
+  /* ─── Slider ─────────────────────────────────────────────── */
+  .a2ui-slider { display: flex; flex-direction: column; gap: var(--a2ui-spacing-xs); }
+  .a2ui-slider-label {
+    font-size: var(--a2ui-font-size-xs); font-weight: 600;
+    color: var(--a2ui-color-mute); letter-spacing: 0.2px;
+  }
+  .a2ui-slider input[type=range] {
+    width: 100%; accent-color: var(--a2ui-color-primary);
+  }
+
+  /* ─── Tabs ───────────────────────────────────────────────── */
+  .a2ui-tabs { display: flex; flex-direction: column; gap: var(--a2ui-spacing-m); }
+  .a2ui-tabs-bar {
+    display: flex; gap: 4px; border-bottom: var(--a2ui-border-width) solid var(--a2ui-color-border);
+  }
+  .a2ui-tab {
+    font: inherit; font-size: 13.5px; font-weight: 500;
+    padding: 9px 14px; border: none; border-bottom: 2px solid transparent;
+    background: transparent; color: var(--a2ui-color-mute);
+    cursor: pointer; margin-bottom: -1px;
+    transition: color 0.12s, border-color 0.12s;
+  }
+  .a2ui-tab:hover { color: var(--a2ui-color-on-surface); }
+  .a2ui-tab.active {
+    color: var(--a2ui-color-primary);
+    border-bottom-color: var(--a2ui-color-primary);
+    font-weight: 600;
+  }
+  .a2ui-tabs-pane { padding: 4px 0; }
+
+  /* ─── StatTile ───────────────────────────────────────────── */
+  .a2ui-stat {
+    background: var(--a2ui-color-surface);
+    border: var(--a2ui-border-width) solid var(--a2ui-color-border);
+    border-radius: var(--a2ui-card-border-radius);
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 4px;
+    min-width: 0;
+  }
+  .a2ui-stat--brand { border-color: var(--a2ui-color-primary); background: color-mix(in srgb, var(--a2ui-color-primary) 4%, transparent); }
+  .a2ui-stat--good  { border-color: #15803d; background: rgba(21, 128, 61, 0.05); }
+  .a2ui-stat--warn  { border-color: #b45309; background: rgba(217, 119, 6, 0.05); }
+  .a2ui-stat--bad   { border-color: #BD1C2B; background: rgba(189, 28, 43, 0.05); }
+  .a2ui-stat-label {
+    font-size: var(--a2ui-font-size-xs); font-weight: 600;
+    color: var(--a2ui-color-mute); text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .a2ui-stat-value-row { display: flex; align-items: baseline; gap: 6px; }
+  .a2ui-stat-value {
+    font-size: 26px; font-weight: 700; color: var(--a2ui-color-on-surface);
+    letter-spacing: -0.4px; line-height: 1.1;
+  }
+  .a2ui-stat-unit { font-size: 13px; color: var(--a2ui-color-mute); font-weight: 500; }
+  .a2ui-stat-delta { font-size: 12px; font-weight: 600; }
+  .a2ui-stat-delta--up      { color: #15803d; }
+  .a2ui-stat-delta--down    { color: #BD1C2B; }
+  .a2ui-stat-delta--neutral { color: var(--a2ui-color-mute); }
+
+  /* ─── KeyValue ───────────────────────────────────────────── */
+  .a2ui-kv {
+    display: grid; grid-template-columns: max-content 1fr;
+    column-gap: 16px; row-gap: 8px;
+    margin: 0; padding: 12px 14px;
+    background: var(--a2ui-color-secondary); border-radius: var(--a2ui-border-radius);
+  }
+  .a2ui-kv dt {
+    font-size: 12.5px; font-weight: 600; color: var(--a2ui-color-mute);
+    align-self: start; padding-top: 1px;
+  }
+  .a2ui-kv dd {
+    margin: 0; font-size: 14px; color: var(--a2ui-color-on-surface);
+  }
+
+  /* ─── Highlight ──────────────────────────────────────────── */
+  .a2ui-highlight {
+    margin: 0; padding: 14px 18px;
+    border-left: 3px solid var(--a2ui-color-primary);
+    background: var(--a2ui-color-highlight);
+    border-radius: 0 8px 8px 0;
+  }
+  .a2ui-highlight--brand { border-left-color: var(--a2ui-color-primary); background: color-mix(in srgb, var(--a2ui-color-primary) 8%, white); }
+  .a2ui-highlight--warn  { border-left-color: #b45309; background: #fef3c7; }
+  .a2ui-highlight-text   { font: 15px/1.55 Georgia, "Times New Roman", "Songti SC", serif; color: var(--a2ui-color-on-surface); margin: 0 0 6px; }
+  .a2ui-highlight-source { font-size: 12.5px; color: var(--a2ui-color-mute); font-style: normal; }
+
+  /* ─── ProgressBar ────────────────────────────────────────── */
+  .a2ui-progress { display: flex; flex-direction: column; gap: 4px; }
+  .a2ui-progress-label { font-size: var(--a2ui-font-size-xs); font-weight: 600; color: var(--a2ui-color-mute); }
+  .a2ui-progress-track {
+    height: 8px; border-radius: 999px; overflow: hidden;
+    background: var(--a2ui-color-secondary);
+  }
+  .a2ui-progress-fill {
+    height: 100%; border-radius: 999px;
+    background: var(--a2ui-color-primary);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .a2ui-progress-value { font-size: 11.5px; color: var(--a2ui-color-mute); align-self: flex-end; }
+
+  /* ─── Charts (BarChart / LineChart) ──────────────────────── */
+  .a2ui-chart      { display: block; }
+  .a2ui-chart-grid { stroke: var(--a2ui-color-border); stroke-width: 1; opacity: 0.6; }
+  .a2ui-chart-tick { fill: var(--a2ui-color-mute); font-size: 11px; font-family: var(--a2ui-font-family); }
+  .a2ui-chart-bar  { fill: var(--a2ui-color-primary); opacity: 0.85; }
+  .a2ui-chart-bar:hover { opacity: 1; }
+  .a2ui-chart-value{ fill: var(--a2ui-color-on-surface); font-size: 11px; font-weight: 600; font-family: var(--a2ui-font-family); }
+  .a2ui-chart-xlabel { fill: var(--a2ui-color-mute); font-size: 11px; font-family: var(--a2ui-font-family); }
+  .a2ui-chart-line { fill: none; stroke: var(--a2ui-color-primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .a2ui-chart-area { fill: var(--a2ui-color-primary); opacity: 0.12; }
+  .a2ui-chart-dot  { fill: var(--a2ui-color-surface); stroke: var(--a2ui-color-primary); stroke-width: 2; }
+
+  /* ─── Timeline ───────────────────────────────────────────── */
+  .a2ui-timeline {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .a2ui-timeline-item {
+    display: grid; grid-template-columns: 24px 1fr; gap: 10px;
+    padding: 6px 0 14px; position: relative;
+  }
+  .a2ui-timeline-item:not(:last-child)::before {
+    content: ""; position: absolute;
+    left: 11px; top: 22px; bottom: -4px; width: 2px;
+    background: var(--a2ui-color-border);
+  }
+  .a2ui-timeline-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--a2ui-color-primary);
+    border: 3px solid var(--a2ui-color-surface);
+    box-shadow: 0 0 0 1px var(--a2ui-color-primary);
+    margin-top: 6px; margin-left: 5px;
+  }
+  .a2ui-timeline-when {
+    font-size: 11.5px; font-weight: 600; color: var(--a2ui-color-mute);
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .a2ui-timeline-title { font-size: 14.5px; font-weight: 600; color: var(--a2ui-color-on-surface); margin-top: 2px; }
+  .a2ui-timeline-detail { font-size: 13.5px; color: var(--a2ui-color-on-secondary); margin-top: 4px; line-height: 1.55; }
+
+  /* ─── ComparisonTable ────────────────────────────────────── */
+  .a2ui-cmp {
+    width: 100%; border-collapse: collapse;
+    background: var(--a2ui-color-surface);
+    border: var(--a2ui-border-width) solid var(--a2ui-color-border);
+    border-radius: var(--a2ui-card-border-radius);
+    overflow: hidden;
+  }
+  .a2ui-cmp th, .a2ui-cmp td {
+    padding: 10px 14px; text-align: left;
+    border-bottom: var(--a2ui-border-width) solid var(--a2ui-color-border);
+    font-size: 13.5px; vertical-align: top;
+  }
+  .a2ui-cmp th {
+    background: var(--a2ui-color-secondary);
+    font-weight: 700; color: var(--a2ui-color-on-surface);
+    font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .a2ui-cmp tr:last-child td { border-bottom: none; }
+  .a2ui-cmp .a2ui-cmp-accent {
+    background: color-mix(in srgb, var(--a2ui-color-primary) 6%, transparent);
+    color: var(--a2ui-color-on-surface); font-weight: 600;
+  }
+  .a2ui-cmp-cell-value { font-weight: 600; color: var(--a2ui-color-on-surface); }
+  .a2ui-cmp-cell-note  { font-size: 11.5px; color: var(--a2ui-color-mute); margin-top: 2px; }
 `;
 
 // ─── Convenience: render a stream into a Shadow DOM host ────────────
