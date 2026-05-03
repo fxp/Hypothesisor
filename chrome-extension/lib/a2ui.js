@@ -27,6 +27,7 @@ const SUPPORTED = new Set([
   // Hypothesisor extended
   "StatTile", "KeyValue", "Highlight", "ProgressBar",
   "BarChart", "LineChart", "Timeline", "ComparisonTable",
+  "MapView",
 ]);
 
 // ─── State container ────────────────────────────────────────────────
@@ -480,6 +481,129 @@ export class A2uiSurface {
         return wrap;
       }
 
+      case "MapView": {
+        // Stylized SVG map with toggleable point layers. Coordinates
+        // are 0-100 (% of canvas), so the LLM doesn't need real geo.
+        const layers = (spec.layers || []).map((l) => ({ ...l }));
+        const points = (spec.points || []);
+        const visiblePath = spec.value && spec.value.path;
+        // Visible layer ids: from data model if bound, else all visible.
+        let visible = visiblePath ? r(spec.value) : null;
+        if (!Array.isArray(visible)) visible = layers.map((l) => l.id);
+
+        const wrap = document.createElement("div");
+        wrap.className = "a2ui-map";
+
+        // Layer toggle bar
+        const bar = document.createElement("div");
+        bar.className = "a2ui-map-layers";
+        for (const l of layers) {
+          const chip = document.createElement("button");
+          chip.type = "button";
+          const on = visible.includes(l.id);
+          chip.className = "a2ui-map-layer" + (on ? " active" : "");
+          chip.style.setProperty("--layer-color", l.color || "var(--a2ui-color-primary)");
+          chip.innerHTML = `<span class="a2ui-map-layer-dot"></span><span class="a2ui-map-layer-icon">${escapeAttr(l.icon || "")}</span><span class="a2ui-map-layer-label"></span><span class="a2ui-map-layer-count"></span>`;
+          chip.querySelector(".a2ui-map-layer-label").textContent = l.label || l.id;
+          chip.querySelector(".a2ui-map-layer-count").textContent =
+            "(" + points.filter((p) => p.layer === l.id).length + ")";
+          chip.addEventListener("click", () => {
+            const cur = (visiblePath ? r(spec.value) : null) || layers.map((x) => x.id);
+            const next = cur.includes(l.id) ? cur.filter((x) => x !== l.id) : [...cur, l.id];
+            if (visiblePath) {
+              this._setByPath(visiblePath, next);
+              this._reactiveRender();
+            } else {
+              chip.classList.toggle("active");
+              wrap.querySelectorAll(`[data-layer="${l.id}"]`).forEach((n) => {
+                n.style.display = next.includes(l.id) ? "" : "none";
+              });
+            }
+          });
+          bar.appendChild(chip);
+        }
+        wrap.appendChild(bar);
+
+        // Map + side panel
+        const main = document.createElement("div");
+        main.className = "a2ui-map-main";
+        const svgWrap = document.createElement("div");
+        svgWrap.className = "a2ui-map-svg-wrap";
+        const W = 600, H = 380;
+        const svg = mkSvg("svg", { viewBox: `0 0 ${W} ${H}`, class: "a2ui-map-svg" });
+        svg.style.width = "100%";
+        svg.style.height = "auto";
+        svg.appendChild(buildMapBackground(spec.background, W, H));
+
+        // Optional route polyline (if points have a `step` index, draw lines in step order)
+        const stepped = points.filter((p) => Number.isFinite(p.step)).sort((a, b) => a.step - b.step);
+        if (stepped.length >= 2) {
+          const path = stepped.map((p, i) => (i === 0 ? "M" : "L") + (p.x / 100 * W).toFixed(1) + " " + (p.y / 100 * H).toFixed(1)).join(" ");
+          svg.appendChild(mkSvg("path", { d: path, class: "a2ui-map-route" }));
+        }
+
+        // Point markers
+        points.forEach((p, i) => {
+          const layer = layers.find((l) => l.id === p.layer) || {};
+          const cx = (p.x / 100) * W;
+          const cy = (p.y / 100) * H;
+          const g = mkSvg("g", { class: "a2ui-map-point", "data-layer": p.layer || "", "data-i": String(i) });
+          g.style.cursor = "pointer";
+          if (!visible.includes(p.layer)) g.style.display = "none";
+          g.appendChild(mkSvg("circle", { cx, cy, r: 14, class: "a2ui-map-point-bg", fill: layer.color || "var(--a2ui-color-primary)", "fill-opacity": "0.18" }));
+          g.appendChild(mkSvg("circle", { cx, cy, r: 7, class: "a2ui-map-point-dot", fill: layer.color || "var(--a2ui-color-primary)" }));
+          g.appendChild(mkSvg("text", { x: cx, y: cy + 24, "text-anchor": "middle", class: "a2ui-map-point-label" }, p.name || ""));
+          if (Number.isFinite(p.step)) {
+            g.appendChild(mkSvg("text", { x: cx, y: cy + 4, "text-anchor": "middle", class: "a2ui-map-point-step" }, String(p.step)));
+          }
+          g.addEventListener("click", () => {
+            const all = wrap.querySelectorAll(".a2ui-map-point.selected");
+            all.forEach((n) => n.classList.remove("selected"));
+            g.classList.add("selected");
+            renderDetailFor(p);
+          });
+          svg.appendChild(g);
+        });
+        svgWrap.appendChild(svg);
+
+        const detail = document.createElement("div");
+        detail.className = "a2ui-map-detail";
+        function renderDetailFor(p) {
+          const layer = layers.find((l) => l.id === p?.layer) || {};
+          if (!p) {
+            detail.innerHTML = `<div class="a2ui-map-detail-empty">点击地图上的标记查看详情</div>`;
+            return;
+          }
+          detail.innerHTML = `
+            <div class="a2ui-map-detail-header">
+              <span class="a2ui-map-detail-icon" style="color:${escapeAttr(layer.color || "var(--a2ui-color-primary)")}">${escapeAttr(layer.icon || "📍")}</span>
+              <div>
+                <div class="a2ui-map-detail-name"></div>
+                <div class="a2ui-map-detail-layer"></div>
+              </div>
+            </div>
+            ${p.detail ? `<div class="a2ui-map-detail-body"></div>` : ""}
+            ${p.tags ? `<div class="a2ui-map-detail-tags">${p.tags.map(t => `<span class="a2ui-map-detail-tag"></span>`).join("")}</div>` : ""}
+          `;
+          detail.querySelector(".a2ui-map-detail-name").textContent = p.name || "";
+          detail.querySelector(".a2ui-map-detail-layer").textContent = layer.label || p.layer || "";
+          if (p.detail) detail.querySelector(".a2ui-map-detail-body").innerHTML = renderInlineMarkdown(String(p.detail));
+          if (p.tags) {
+            detail.querySelectorAll(".a2ui-map-detail-tag").forEach((el, i) => { el.textContent = String(p.tags[i]); });
+          }
+        }
+        renderDetailFor(points[0] || null);
+        if (points[0]) {
+          // mark first as selected initially
+          const firstNode = svg.querySelector(`.a2ui-map-point[data-i="0"]`);
+          firstNode && firstNode.classList.add("selected");
+        }
+        main.appendChild(svgWrap);
+        main.appendChild(detail);
+        wrap.appendChild(main);
+        return wrap;
+      }
+
       case "ComparisonTable": {
         const cols = spec.columns || [];
         const rows = r(spec.rows) || [];
@@ -656,6 +780,32 @@ function renderLineChart(data, opts) {
   }
   return svg;
 }
+
+function buildMapBackground(kind, W, H) {
+  const g = mkSvg("g", { class: "a2ui-map-bg" });
+  // Light parchment base for any preset.
+  g.appendChild(mkSvg("rect", { x: 0, y: 0, width: W, height: H, fill: "#fbf7f0", rx: 12 }));
+  if (kind === "coast" || kind === "peninsula") {
+    // Hint at sea on right + bottom (great for coastal travel guides).
+    g.appendChild(mkSvg("path", {
+      d: `M ${W} 0 L ${W} ${H} L 0 ${H} Q ${W * 0.55} ${H * 0.65} ${W * 0.7} ${H * 0.35} Q ${W * 0.85} ${H * 0.15} ${W} 0 Z`,
+      fill: "#cfe6ee", opacity: "0.55",
+    }));
+    g.appendChild(mkSvg("text", { x: W - 24, y: H - 16, "text-anchor": "end", class: "a2ui-map-bg-label" }, "🌊"));
+  } else if (kind === "island") {
+    g.appendChild(mkSvg("rect", { x: 0, y: 0, width: W, height: H, fill: "#cfe6ee" }));
+    g.appendChild(mkSvg("ellipse", { cx: W / 2, cy: H / 2, rx: W * 0.42, ry: H * 0.42, fill: "#fbf7f0" }));
+  } else if (kind === "city") {
+    // Subtle grid suggesting blocks.
+    for (let x = W / 6; x < W; x += W / 6) g.appendChild(mkSvg("line", { x1: x, x2: x, y1: 0, y2: H, stroke: "#e9e1d4", "stroke-width": "1" }));
+    for (let y = H / 4; y < H; y += H / 4) g.appendChild(mkSvg("line", { x1: 0, x2: W, y1: y, y2: y, stroke: "#e9e1d4", "stroke-width": "1" }));
+  }
+  // Subtle border
+  g.appendChild(mkSvg("rect", { x: 0.5, y: 0.5, width: W - 1, height: H - 1, fill: "none", stroke: "#e2dccb", "stroke-width": "1", rx: 12 }));
+  return g;
+}
+
+function escapeAttr(s) { return String(s ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function mkSvg(tag, attrs, text) {
   const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -1017,6 +1167,74 @@ export const DEFAULT_STYLESHEET = `
   }
   .a2ui-cmp-cell-value { font-weight: 600; color: var(--a2ui-color-on-surface); }
   .a2ui-cmp-cell-note  { font-size: 11.5px; color: var(--a2ui-color-mute); margin-top: 2px; }
+
+  /* ─── MapView ────────────────────────────────────────────── */
+  .a2ui-map { display: flex; flex-direction: column; gap: var(--a2ui-spacing-m); }
+  .a2ui-map-layers { display: flex; flex-wrap: wrap; gap: 6px; }
+  .a2ui-map-layer {
+    font: inherit; font-size: 12.5px; font-weight: 500;
+    padding: 5px 11px; border-radius: 999px; cursor: pointer;
+    background: var(--a2ui-color-surface);
+    color: var(--a2ui-color-mute);
+    border: var(--a2ui-border-width) solid var(--a2ui-color-border);
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background 0.12s, border-color 0.12s, color 0.12s, opacity 0.12s;
+    opacity: 0.55;
+  }
+  .a2ui-map-layer.active {
+    background: color-mix(in srgb, var(--layer-color, var(--a2ui-color-primary)) 8%, transparent);
+    color: var(--a2ui-color-on-surface);
+    border-color: var(--layer-color, var(--a2ui-color-primary));
+    opacity: 1;
+  }
+  .a2ui-map-layer-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--layer-color, var(--a2ui-color-primary)); }
+  .a2ui-map-layer-icon { font-size: 14px; line-height: 1; }
+  .a2ui-map-layer-count { font-size: 11px; color: var(--a2ui-color-mute); }
+  .a2ui-map-main {
+    display: grid; grid-template-columns: 1fr 240px; gap: var(--a2ui-spacing-m);
+    align-items: start;
+  }
+  @media (max-width: 720px) { .a2ui-map-main { grid-template-columns: 1fr; } }
+  .a2ui-map-svg-wrap {
+    border: var(--a2ui-border-width) solid var(--a2ui-color-border);
+    border-radius: var(--a2ui-card-border-radius);
+    overflow: hidden; background: white;
+  }
+  .a2ui-map-route {
+    fill: none; stroke: var(--a2ui-color-primary);
+    stroke-width: 2; stroke-dasharray: 6 6; opacity: 0.55;
+    stroke-linecap: round;
+  }
+  .a2ui-map-point .a2ui-map-point-bg { transition: r 0.15s; }
+  .a2ui-map-point.selected .a2ui-map-point-bg { r: 18; fill-opacity: 0.32; }
+  .a2ui-map-point.selected .a2ui-map-point-dot { r: 9; }
+  .a2ui-map-point-label {
+    fill: var(--a2ui-color-on-surface); font-size: 11.5px; font-weight: 600;
+    font-family: var(--a2ui-font-family); pointer-events: none;
+    paint-order: stroke; stroke: white; stroke-width: 4;
+  }
+  .a2ui-map-point-step {
+    fill: white; font-size: 10px; font-weight: 700;
+    font-family: var(--a2ui-font-family); pointer-events: none;
+  }
+  .a2ui-map-bg-label { font-size: 16px; opacity: 0.5; }
+  .a2ui-map-detail {
+    border: var(--a2ui-border-width) solid var(--a2ui-color-border);
+    border-radius: var(--a2ui-card-border-radius);
+    padding: 14px; min-height: 120px; background: var(--a2ui-color-surface);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .a2ui-map-detail-empty { color: var(--a2ui-color-mute); font-size: 13px; }
+  .a2ui-map-detail-header { display: flex; align-items: flex-start; gap: 10px; }
+  .a2ui-map-detail-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+  .a2ui-map-detail-name { font-size: 14.5px; font-weight: 700; color: var(--a2ui-color-on-surface); }
+  .a2ui-map-detail-layer { font-size: 11.5px; color: var(--a2ui-color-mute); margin-top: 2px; }
+  .a2ui-map-detail-body { font-size: 13px; color: var(--a2ui-color-on-secondary); line-height: 1.55; }
+  .a2ui-map-detail-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .a2ui-map-detail-tag {
+    background: var(--a2ui-color-secondary); color: var(--a2ui-color-on-secondary);
+    padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500;
+  }
 `;
 
 // ─── Convenience: render a stream into a Shadow DOM host ────────────

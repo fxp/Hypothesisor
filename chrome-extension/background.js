@@ -108,53 +108,86 @@ async function runJob(job) {
     }
   } else {
     if (!settings.bigmodelKey) throw withCode("MISSING_BIGMODEL_KEY");
-    const result = await generateReformat({
-      content: job.spec.content, url: job.spec.canonicalUrl, title: job.spec.title,
-      format: job.spec.format, customPrompt: job.spec.customPrompt,
-      apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
-      genLanguage: settings.genLanguage,
-    });
+    // Generate-review-retry loop. Up to 3 attempts; retry only when
+    // review.overall < threshold and feedback exists. Each retry feeds
+    // the previous review's issues + suggestions back into the prompt
+    // as `customPrompt` augmentation. We keep the highest-scoring
+    // attempt as the final answer.
+    const MAX_ATTEMPTS = 3;
+    const MIN_SCORE = 8;
+    let bestResult = null;
+    let bestReview = null;
+    let lastReviewFeedback = "";
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      await update(job.id, {
+        status: "running",
+        statusText: attempt === 1 ? "Generating Web App…" : `Refining (attempt ${attempt}/${MAX_ATTEMPTS})…`,
+        attempt,
+      });
+      const augmentedHint = attempt === 1
+        ? job.spec.customPrompt
+        : (job.spec.customPrompt ? job.spec.customPrompt + "\n\n" : "") + lastReviewFeedback;
+      const r = await generateReformat({
+        content: job.spec.content, url: job.spec.canonicalUrl, title: job.spec.title,
+        customPrompt: augmentedHint,
+        apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
+        genLanguage: settings.genLanguage,
+      });
+      // If review is disabled, take the first attempt and skip the loop.
+      if (settings.reviewQuality === false) {
+        bestResult = r; bestReview = null; break;
+      }
+      await update(job.id, { status: "validating", statusText: `Reviewing quality (attempt ${attempt})…` });
+      const tempReformat = {
+        title: r.title, summary: r.summary, appType: r.appType,
+        a2ui: r.a2ui, html: r.html,
+      };
+      let review = null;
+      try {
+        review = await reviewReformatOutput({
+          content: job.spec.content, reformat: tempReformat,
+          apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl,
+        });
+      } catch (_) {}
+      if (!review || review.error) {
+        // Reviewer failed — take this attempt and stop retrying.
+        bestResult = r; bestReview = review; break;
+      }
+      if (!bestResult || (review.overall || 0) > (bestReview?.overall || 0)) {
+        bestResult = r; bestReview = review;
+      }
+      if (review.overall >= MIN_SCORE || attempt === MAX_ATTEMPTS) break;
+      // Build feedback for the next attempt.
+      const issues = (review.issues || []).slice(0, 5).map((s, i) => `${i + 1}. ${s}`).join("\n");
+      lastReviewFeedback =
+        `【上一轮质量评审 ${review.overall}/10，请改进以下问题再生成】\n` +
+        (issues ? issues + "\n" : "") +
+        (review.suggestions ? `\n建议：${review.suggestions}` : "");
+    }
+
     const reformatId = newReformatId();
     const reformat = {
       id: reformatId, createdAt: Date.now(),
       sourceUrl: job.spec.canonicalUrl, sourceTitle: job.spec.title,
-      format: job.spec.format, customPrompt: job.spec.customPrompt || undefined,
-      title: result.title, summary: result.summary,
-      appType: result.appType,
-      a2ui: result.a2ui,    // v0.4.0+ A2UI envelope messages
-      html: result.html,    // legacy fallback for v0.2-0.3 format
-      truncated: result.truncated,
+      customPrompt: job.spec.customPrompt || undefined,
+      title: bestResult.title, summary: bestResult.summary,
+      appType: bestResult.appType,
+      a2ui: bestResult.a2ui, html: bestResult.html,
+      truncated: bestResult.truncated,
+      review: bestReview || undefined,
     };
     await saveReformat(reformat);
     await update(job.id, {
       status: "done",
-      statusText: "Web App ready",
+      statusText: bestReview ? `Web App ready · quality ${bestReview.overall}/10` : "Web App ready",
       reformatId,
-      reformatTitle: result.title,
-      reformatAppType: result.appType,
-      truncated: result.truncated || false,
+      reformatTitle: bestResult.title,
+      reformatAppType: bestResult.appType,
+      truncated: bestResult.truncated || false,
+      review: bestReview || undefined,
       finishedAt: Date.now(),
     });
     fireNotification(job.id, "reformat-done", await loadJob(job.id));
-    if (settings.reviewQuality !== false) {
-      reviewReformatOutput({
-        content: job.spec.content, reformat,
-        apiKey: settings.bigmodelKey,
-        baseUrl: settings.bigmodelBaseUrl,
-      }).then(async (review) => {
-        if (!review) return;
-        // Persist review on both the job (for popup badge) and the
-        // reformat record (for output.html badge).
-        await update(job.id, { review });
-        const all = await chrome.storage.local.get({ reformats: [] });
-        const list = all.reformats;
-        const idx = list.findIndex((x) => x.id === reformatId);
-        if (idx >= 0) {
-          list[idx] = { ...list[idx], review };
-          await chrome.storage.local.set({ reformats: list });
-        }
-      }).catch(() => {});
-    }
   }
 }
 

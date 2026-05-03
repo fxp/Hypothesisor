@@ -10,7 +10,7 @@ import { loadAllJobs } from "./lib/jobs.js";
 // would throw a ReferenceError and abort the whole module, preventing
 // every event listener below from attaching.
 const $ = (id) => document.getElementById(id);
-let state = { tab: null, content: "", annotations: [], task: "annotate", format: "tldr" };
+let state = { tab: null, content: "", annotations: [], task: "annotate" };
 
 function syncLangToggleLabel() {
   // Button shows the language you'd switch TO, not the current one.
@@ -97,7 +97,6 @@ async function init() {
   } else {
     selectChip("");
   }
-  selectFormat("tldr");
   await refreshJobs();
 }
 
@@ -118,14 +117,11 @@ function selectTask(task) {
   refreshJobs();
 }
 
-function selectFormat(value) {
-  state.format = value;
-  for (const c of $("formatChips").querySelectorAll(".chip")) {
-    c.classList.toggle("active", c.dataset.format === value);
-  }
-  $("formatCustom").hidden = value !== "custom";
-  if (value === "custom") $("formatCustom").focus();
-}
+// L3 has no format presets — every reformat aims for "rich, minimal,
+// interactive presentation of core viewpoints". The custom-prompt
+// input below the action button is purely for optional steering
+// ("focus on cost breakdown", "make it a checklist") — it falls into
+// the LLM as a hint, not a hard category.
 
 async function refreshJobs() {
   // Show running + recent jobs across both annotate + reformat. Active
@@ -340,10 +336,6 @@ document.querySelectorAll(".task-tab").forEach((tab) => {
   tab.addEventListener("click", () => selectTask(tab.dataset.task));
 });
 
-$("formatChips").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (chip) selectFormat(chip.dataset.format);
-});
 
 $("successToastClose").addEventListener("click", () => hideSuccessToast());
 
@@ -454,10 +446,7 @@ $("generate").addEventListener("click", async () => {
 
     let customPrompt = null;
     if (state.task === "reformat") {
-      customPrompt = state.format === "custom" ? $("formatCustom").value.trim() : null;
-      if (state.format === "custom" && !customPrompt) {
-        setStatus(t("status_format_need_prompt"), "error"); return;
-      }
+      customPrompt = $("formatCustom").value.trim() || null;
     }
 
     // Hand off to the service worker. It runs the LLM call detached
@@ -472,7 +461,6 @@ $("generate").addEventListener("click", async () => {
       content: state.content,
       mode: state.mode,
       style: resolveStyle(),
-      format: state.format,
       customPrompt,
     };
     const { jobId, error } = await chrome.runtime.sendMessage({ type: "startJob", spec });
