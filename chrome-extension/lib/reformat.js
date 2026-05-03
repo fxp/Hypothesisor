@@ -143,6 +143,24 @@ const HTML_SYSTEM_PROMPT = `你是一个把网页内容重塑成「内容感知�
 - 字符串内部禁止真实换行
 `;
 
+function reformatLanguageDirective(genLanguage) {
+  switch (genLanguage) {
+    case "bilingual":
+      return "\n\n【输出语言】中英对照：surface 内的 Text 组件用中英两段（中文先，空行后接英文翻译），title/summary 也是中英对照。";
+    case "zh":
+      return "\n\n【输出语言】所有 Text / title / summary 必须中文，不要混入英文。";
+    case "en":
+      return "\n\n【Output language】All Text / title / summary fields must be English.";
+    case "auto":
+    case "":
+    case undefined:
+    case null:
+      return "";
+    default:
+      return `\n\n【输出语言】${genLanguage}`;
+  }
+}
+
 function buildUserPrompt({ url, title, content, format, customPrompt }) {
   const parts = [];
   parts.push(`URL: ${url}`);
@@ -156,7 +174,7 @@ function buildUserPrompt({ url, title, content, format, customPrompt }) {
   return parts.join("\n");
 }
 
-export async function generateReformat({ content, url, title, format, customPrompt, apiKey, baseUrl, model }) {
+export async function generateReformat({ content, url, title, format, customPrompt, apiKey, baseUrl, model, genLanguage }) {
   if (!apiKey) { const e = new Error("MISSING_BIGMODEL_KEY"); e.code = "MISSING_BIGMODEL_KEY"; throw e; }
   const truncated = content.length > 50000 ? content.slice(0, 50000) + "\n\n[内容已截断…]" : content;
   const base = ((baseUrl && baseUrl.trim()) || DEFAULT_BASE_URL).replace(/\/+$/, "");
@@ -176,7 +194,7 @@ export async function generateReformat({ content, url, title, format, customProm
         max_tokens: 16384,
         response_format: { type: "json_object" },
         messages: [
-          { role: "system", content: A2UI_SYSTEM_PROMPT },
+          { role: "system", content: A2UI_SYSTEM_PROMPT + reformatLanguageDirective(genLanguage) },
           { role: "user", content: userPrompt },
         ],
       }),

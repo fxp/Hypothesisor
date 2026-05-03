@@ -8,6 +8,7 @@
 import { callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { generateReformat, saveReformat, newId as newReformatId } from "./lib/reformat.js";
 import { newJobId, saveJob, loadJob } from "./lib/jobs.js";
+import { reviewAnnotateOutput, reviewReformatOutput } from "./lib/review.js";
 
 // ─── Message routing ────────────────────────────────────────────────
 
@@ -74,6 +75,7 @@ async function runJob(job) {
       content: job.spec.content, url: job.spec.canonicalUrl,
       mode: job.spec.mode, style: job.spec.style,
       apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
+      genLanguage: settings.genLanguage,
     });
     await update(job.id, { status: "validating", statusText: "Validating quotes…" });
     const annotations = raw.map((a) => {
@@ -95,12 +97,22 @@ async function runJob(job) {
       finishedAt: Date.now(),
     });
     fireNotification(job.id, "annotate-done", await loadJob(job.id));
+    // Quality review (cheap, async — doesn't block notification).
+    if (settings.reviewQuality !== false) {
+      reviewAnnotateOutput({
+        content: job.spec.content, annotations,
+        apiKey: settings.bigmodelKey,
+        baseUrl: settings.bigmodelBaseUrl,
+      }).then((review) => review && update(job.id, { review }))
+        .catch(() => {});
+    }
   } else {
     if (!settings.bigmodelKey) throw withCode("MISSING_BIGMODEL_KEY");
     const result = await generateReformat({
       content: job.spec.content, url: job.spec.canonicalUrl, title: job.spec.title,
       format: job.spec.format, customPrompt: job.spec.customPrompt,
       apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
+      genLanguage: settings.genLanguage,
     });
     const reformatId = newReformatId();
     const reformat = {
@@ -124,6 +136,25 @@ async function runJob(job) {
       finishedAt: Date.now(),
     });
     fireNotification(job.id, "reformat-done", await loadJob(job.id));
+    if (settings.reviewQuality !== false) {
+      reviewReformatOutput({
+        content: job.spec.content, reformat,
+        apiKey: settings.bigmodelKey,
+        baseUrl: settings.bigmodelBaseUrl,
+      }).then(async (review) => {
+        if (!review) return;
+        // Persist review on both the job (for popup badge) and the
+        // reformat record (for output.html badge).
+        await update(job.id, { review });
+        const all = await chrome.storage.local.get({ reformats: [] });
+        const list = all.reformats;
+        const idx = list.findIndex((x) => x.id === reformatId);
+        if (idx >= 0) {
+          list[idx] = { ...list[idx], review };
+          await chrome.storage.local.set({ reformats: list });
+        }
+      }).catch(() => {});
+    }
   }
 }
 

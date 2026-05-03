@@ -64,7 +64,27 @@ function computeDepth(n) {
   return           { lo: 25, hi: 40, label: "超长篇章" };
 }
 
-function buildSystemPrompt(mode, style, length) {
+// Map a genLanguage setting key to a system-prompt suffix.
+function languageDirective(genLanguage) {
+  switch (genLanguage) {
+    case "bilingual":
+      return "\n\n【输出语言】中英对照：每条 detail 先写中文一段，空行后写英文翻译一段。headline 用中文。quote 永远是原文逐字（语言跟原文一致）。";
+    case "zh":
+      return "\n\n【输出语言】简体中文 — 所有 headline / detail 必须中文，不要混入英文（原文 quote 除外）。";
+    case "en":
+      return "\n\n【输出语言】English only — every headline + detail must be English. Quote stays in the source language verbatim.";
+    case "auto":
+    case "":
+    case undefined:
+    case null:
+      return "";
+    default:
+      // Custom free-text language hint
+      return `\n\n【输出语言】${genLanguage}`;
+  }
+}
+
+function buildSystemPrompt(mode, style, length, genLanguage) {
   let base = ANNOTATION_PROMPTS[mode] || ANNOTATION_PROMPTS.general;
   if (style) {
     const preset = STYLE_PROMPTS[style];
@@ -76,6 +96,7 @@ function buildSystemPrompt(mode, style, length) {
   }
   const { lo, hi, label } = computeDepth(length);
   base += `\n\n【深度·${label}（${length} 字符）】本次生成 ${lo}~${hi} 条标注，覆盖不同章节，避免集中在开头；长文深入具体论据/数据/案例。`;
+  base += languageDirective(genLanguage);
   return base + "\n" + FORMAT_SUFFIX;
 }
 
@@ -120,12 +141,12 @@ export async function extractTabText(tabId) {
   return result || { text: "", url: "", title: "" };
 }
 
-export async function callGLM({ content, url, mode, style, apiKey, baseUrl, model }) {
+export async function callGLM({ content, url, mode, style, apiKey, baseUrl, model, genLanguage }) {
   if (!apiKey) { const e = new Error("MISSING_BIGMODEL_KEY"); e.code = "MISSING_BIGMODEL_KEY"; throw e; }
   const length = content.length;
   const { lo, hi } = computeDepth(length);
   const maxTokens = hi >= 25 ? 8192 : hi >= 16 ? 6144 : 4096;
-  const system = buildSystemPrompt(mode, style, length);
+  const system = buildSystemPrompt(mode, style, length, genLanguage);
   const truncated = length > 60000 ? content.slice(0, 60000) + "\n\n[内容已截断...]" : content;
 
   const endpoint = resolveEndpoint(baseUrl, model);
@@ -416,6 +437,8 @@ export async function getSettings() {
     bigmodelModel: "",
     defaultMode: "general",
     defaultStyle: "",
+    genLanguage: "bilingual",
+    reviewQuality: true,
   });
 }
 

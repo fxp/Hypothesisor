@@ -74,6 +74,18 @@ a:hover { text-decoration: underline; }
   border-radius: 4px; font-size: 11px; font-weight: 700;
   letter-spacing: 0.4px;
 }
+.proto-tag--score      { margin-left: 4px; }
+.proto-tag--score.proto-tag--good { background: rgba(21, 128, 61, 0.1); color: #15803d; }
+.proto-tag--score.proto-tag--ok   { background: rgba(217, 119, 6, 0.1); color: #b45309; }
+.proto-tag--score.proto-tag--warn { background: rgba(189, 28, 43, 0.1); color: #BD1C2B; }
+.review-details {
+  margin-top: 12px; padding: 12px 14px; background: var(--bg-soft);
+  border: 1px solid var(--line); border-radius: 8px; font-size: 13.5px;
+}
+.review-details summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.review-details ul { margin: 8px 0 4px 18px; color: var(--mute); }
+.review-details li { margin-bottom: 4px; }
+.review-details .suggestions { margin: 8px 0 0; color: var(--ink-2); }
 
 #content > h1, #content > h2, #content > h3 {
   letter-spacing: -0.3px; color: var(--ink);

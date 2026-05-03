@@ -34,23 +34,25 @@ function renderBigmodelHint() {
 }
 renderBigmodelHint();
 
-const FIELDS = ["hypothesisToken", "bigmodelKey", "bigmodelBaseUrl", "bigmodelModel", "defaultMode", "defaultStyle"];
+const FIELDS = ["hypothesisToken", "bigmodelKey", "bigmodelBaseUrl", "bigmodelModel", "defaultMode", "defaultStyle", "genLanguage"];
+const BOOL_FIELDS = ["reviewQuality"];
 
 async function load() {
   const s = await chrome.storage.local.get({
-    hypothesisToken: "",
-    bigmodelKey: "",
-    bigmodelBaseUrl: "",
-    bigmodelModel: "",
-    defaultMode: "general",
-    defaultStyle: "",
+    hypothesisToken: "", bigmodelKey: "", bigmodelBaseUrl: "", bigmodelModel: "",
+    defaultMode: "general", defaultStyle: "", genLanguage: "bilingual", reviewQuality: true,
   });
   for (const k of FIELDS) document.getElementById(k).value = s[k];
+  for (const k of BOOL_FIELDS) document.getElementById(k).checked = !!s[k];
 }
 
 document.getElementById("save").addEventListener("click", async () => {
   const patch = {};
-  for (const k of FIELDS) patch[k] = document.getElementById(k).value.trim();
+  for (const k of FIELDS) {
+    const el = document.getElementById(k);
+    patch[k] = (el.tagName === "SELECT") ? el.value : el.value.trim();
+  }
+  for (const k of BOOL_FIELDS) patch[k] = document.getElementById(k).checked;
   await chrome.storage.local.set(patch);
   const status = document.getElementById("status");
   status.textContent = t("options_saved");

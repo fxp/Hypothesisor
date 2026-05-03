@@ -19,6 +19,61 @@ function syncLangToggleLabel() {
 
 await initI18n();
 syncLangToggleLabel();
+showVersionTag();
+
+function showVersionTag() {
+  const v = chrome.runtime.getManifest().version;
+  const el = $("versionTag");
+  if (!el) return;
+  el.textContent = "v" + v;
+  el.addEventListener("click", () => checkForUpdate(v));
+}
+
+async function checkForUpdate(currentVersion) {
+  const el = $("versionTag");
+  el.textContent = "checking…";
+  try {
+    // Try the GitHub releases API; fall back to manifest on the main branch.
+    let latest = null;
+    try {
+      const r = await fetch("https://api.github.com/repos/fxp/Hypothesisor/releases/latest", { cache: "no-store" });
+      if (r.ok) {
+        const d = await r.json();
+        latest = (d.tag_name || "").replace(/^v/, "");
+      }
+    } catch (_) {}
+    if (!latest) {
+      const r = await fetch("https://raw.githubusercontent.com/fxp/Hypothesisor/main/chrome-extension/manifest.json", { cache: "no-store" });
+      if (r.ok) {
+        const m = await r.json();
+        latest = m.version;
+      }
+    }
+    if (!latest) { el.textContent = "v" + currentVersion; el.title = "Couldn't reach GitHub"; return; }
+    if (compareSemver(latest, currentVersion) > 0) {
+      el.textContent = `v${currentVersion} → v${latest}`;
+      el.classList.add("update-available");
+      el.title = "Update available — click to view release";
+      el.onclick = () => chrome.tabs.create({ url: "https://github.com/fxp/Hypothesisor/releases" });
+    } else {
+      el.textContent = "v" + currentVersion + " · latest";
+      el.title = "You're on the latest version";
+      setTimeout(() => { el.textContent = "v" + currentVersion; }, 2500);
+    }
+  } catch (e) {
+    el.textContent = "v" + currentVersion;
+  }
+}
+
+function compareSemver(a, b) {
+  const pa = a.split(".").map(Number);
+  const pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((pa[i] || 0) > (pb[i] || 0)) return 1;
+    if ((pa[i] || 0) < (pb[i] || 0)) return -1;
+  }
+  return 0;
+}
 
 async function init() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -108,6 +163,10 @@ function renderJobItem(job) {
   const subtitle = subtitleFor(job);
   const time = fmtRelativeMin(job.updatedAt || job.createdAt || Date.now());
 
+  const score = job.review?.overall;
+  const scoreBadge = score
+    ? `<span class="ji-score ji-score--${scoreClass(score)}" title="${escape(reviewSummaryText(job.review))}">${score}/10</span>`
+    : "";
   item.innerHTML = `
     <span class="ji-icon">${escape(icon)}</span>
     <span class="ji-badge">${badge}</span>
@@ -115,6 +174,7 @@ function renderJobItem(job) {
       <span class="ji-title"></span>
       <span class="ji-status"></span>
     </span>
+    ${scoreBadge}
     <span class="ji-time">${escape(time)}</span>
   `;
   item.querySelector(".ji-title").textContent = title;
@@ -176,6 +236,20 @@ async function openJob(job) {
     } catch (_) {}
     chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
   }
+}
+
+function scoreClass(score) {
+  if (score >= 8) return "good";
+  if (score >= 6) return "ok";
+  return "warn";
+}
+
+function reviewSummaryText(review) {
+  if (!review) return "";
+  const lines = [`Quality: ${review.overall}/10`];
+  if (review.suggestions) lines.push(review.suggestions);
+  if (review.issues?.length) lines.push("Issues: " + review.issues.slice(0, 3).join(" · "));
+  return lines.join("\n");
 }
 
 function fmtRelativeMin(ts) {

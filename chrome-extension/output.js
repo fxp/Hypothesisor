@@ -53,11 +53,15 @@ async function main() {
 
 function renderAsA2UI(r) {
   const host = $("content");
+  const scoreBadge = r.review?.overall
+    ? `<span class="proto-tag proto-tag--score proto-tag--${r.review.overall >= 8 ? "good" : r.review.overall >= 6 ? "ok" : "warn"}" title="${escapeHtml(r.review.suggestions || "")}">Quality ${r.review.overall}/10</span>`
+    : "";
   host.innerHTML = `
     <header class="page-meta">
       <h1>${escapeHtml(r.title)}</h1>
       ${r.summary ? `<p class="summary">${escapeHtml(r.summary)}</p>` : ""}
-      <p class="lead">${escapeHtml(r.sourceTitle || "")} · <a href="${escapeHtml(r.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(new URL(r.sourceUrl).hostname)}</a> · <span class="proto-tag">A2UI v0.10</span></p>
+      <p class="lead">${escapeHtml(r.sourceTitle || "")} · <a href="${escapeHtml(r.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(new URL(r.sourceUrl).hostname)}</a> · <span class="proto-tag">A2UI v0.10</span> ${scoreBadge}</p>
+      ${r.review?.issues?.length ? `<details class="review-details"><summary>Quality review · ${r.review.issues.length} note(s)</summary><ul>${r.review.issues.map(i => `<li>${escapeHtml(i)}</li>`).join("")}</ul>${r.review.suggestions ? `<p class="suggestions">💡 ${escapeHtml(r.review.suggestions)}</p>` : ""}</details>` : ""}
     </header>
     <div class="surface-wrap"></div>
   `;

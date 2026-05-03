@@ -86,6 +86,9 @@
   #status { color: #15803d; font-size: 13.5px; font-weight: 500; }
   a { color: var(--brand); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  label.row-checkbox { display: flex; align-items: flex-start; gap: 10px; }
+  label.row-checkbox input[type=checkbox] { width: auto; margin-top: 4px; }
+  label.row-checkbox > span { flex: 1; }
 </style>
 </head>
 <body>
@@ -133,6 +136,25 @@
       <span class="label-text" data-i18n="options_label_style">Default style</span>
       <small data-i18n="options_hint_style">Preset key or custom description</small>
       <input id="defaultStyle" type="text" data-i18n-placeholder="options_style_placeholder" />
+    </label>
+
+    <label>
+      <span class="label-text" data-i18n="options_label_language">Generation language</span>
+      <small data-i18n="options_hint_language">What language(s) the LLM writes commentary / titles in. Quotes always stay in the source article's language.</small>
+      <select id="genLanguage">
+        <option value="bilingual" data-i18n="lang_bilingual">中英对照（默认）</option>
+        <option value="auto"      data-i18n="lang_auto">自动 · 跟随原文</option>
+        <option value="zh"        data-i18n="lang_zh">中文</option>
+        <option value="en"        data-i18n="lang_en">English</option>
+      </select>
+    </label>
+
+    <label class="row-checkbox">
+      <input id="reviewQuality" type="checkbox" />
+      <span>
+        <span class="label-text" data-i18n="options_label_review">Run quality review on generated content</span>
+        <small data-i18n="options_hint_review">Adds one extra cheap LLM call after generation to score the result and surface issues. Recommended.</small>
+      </span>
     </label>
 
     <div class="actions">
