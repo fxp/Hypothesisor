@@ -68,9 +68,15 @@
       <input id="styleCustom" type="text" data-i18n-placeholder="popup_style_placeholder" placeholder="Describe your annotation preference" hidden />
     </div>
 
-    <div class="control-row" id="formatRow" hidden>
-      <div class="control-label" data-i18n="popup_label_format">Custom hint</div>
-      <input id="formatCustom" type="text" data-i18n-placeholder="popup_format_placeholder" placeholder="(optional) e.g. focus on cost breakdown" />
+    <div class="format-hint" id="formatRow" hidden>
+      <div class="format-hint-head">
+        <span class="format-hint-label" data-i18n="popup_label_format">Reformat hint</span>
+        <button type="button" id="formatReset" class="format-hint-reset" data-i18n="popup_format_reset" title="Restore preset">Reset</button>
+      </div>
+      <textarea id="formatCustom" rows="3" spellcheck="false"
+        data-i18n-placeholder="popup_format_placeholder"
+        placeholder="What kind of Web App do you want? Edit freely or clear to let the model decide."></textarea>
+      <div class="format-hint-help" data-i18n="popup_format_help">Sent to the model as a steer. Leave blank to let the model pick the best shape on its own.</div>
     </div>
   </section>
 

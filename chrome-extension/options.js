@@ -41,9 +41,11 @@ async function load() {
   const s = await chrome.storage.local.get({
     hypothesisToken: "", bigmodelKey: "", bigmodelBaseUrl: "", bigmodelModel: "",
     defaultMode: "general", defaultStyle: "", genLanguage: "bilingual", reviewQuality: true,
+    genTimeoutMs: 180000,
   });
   for (const k of FIELDS) document.getElementById(k).value = s[k];
   for (const k of BOOL_FIELDS) document.getElementById(k).checked = !!s[k];
+  document.getElementById("genTimeoutSec").value = Math.round((Number(s.genTimeoutMs) || 180000) / 1000);
 }
 
 document.getElementById("save").addEventListener("click", async () => {
@@ -53,6 +55,9 @@ document.getElementById("save").addEventListener("click", async () => {
     patch[k] = (el.tagName === "SELECT") ? el.value : el.value.trim();
   }
   for (const k of BOOL_FIELDS) patch[k] = document.getElementById(k).checked;
+  // Per-job time budget — clamp to [30s, 3600s], persist as ms.
+  const sec = Math.max(30, Math.min(3600, Number(document.getElementById("genTimeoutSec").value) || 180));
+  patch.genTimeoutMs = sec * 1000;
   await chrome.storage.local.set(patch);
   const status = document.getElementById("status");
   status.textContent = t("options_saved");

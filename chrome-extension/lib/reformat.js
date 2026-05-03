@@ -304,9 +304,12 @@ function buildUserPrompt({ url, title, content, format, customPrompt }) {
   return parts.join("\n");
 }
 
-export async function generateReformat({ content, url, title, format, customPrompt, apiKey, baseUrl, model, genLanguage }) {
+export async function generateReformat({ content, url, title, format, customPrompt, apiKey, baseUrl, model, genLanguage, signal }) {
   if (!apiKey) { const e = new Error("MISSING_BIGMODEL_KEY"); e.code = "MISSING_BIGMODEL_KEY"; throw e; }
-  const truncated = content.length > 50000 ? content.slice(0, 50000) + "\n\n[内容已截断…]" : content;
+  // Cap input at 30K chars — long enough for full articles (typical
+  // 5-10K), short enough to keep prompt eval fast. Larger contexts
+  // were producing diminishing returns + much longer LLM latency.
+  const truncated = content.length > 30000 ? content.slice(0, 30000) + "\n\n[内容已截断…]" : content;
   const base = ((baseUrl && baseUrl.trim()) || DEFAULT_BASE_URL).replace(/\/+$/, "");
   const modelName = (model && model.trim()) || DEFAULT_MODEL;
   const userPrompt = buildUserPrompt({ url, title, content: truncated, format, customPrompt });
@@ -318,18 +321,20 @@ export async function generateReformat({ content, url, title, format, customProm
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
       body: JSON.stringify({
         model: modelName,
-        // Web App html easily exceeds 8K tokens; bump to a safer ceiling.
-        // Most modern OpenAI-compat APIs accept 16K output. If the model
-        // doesn't, BigModel returns 400 and we'll surface a clean error.
-        max_tokens: 16384,
+        // 12K output is plenty for typical A2UI envelopes (3-15 KB) and
+        // generates noticeably faster than 16K. Truncated outputs are
+        // rare and salvageable via tolerantParseAppJson.
+        max_tokens: 12288,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: A2UI_SYSTEM_PROMPT + reformatLanguageDirective(genLanguage) },
           { role: "user", content: userPrompt },
         ],
       }),
+      signal,
     });
   } catch (e) {
+    if (e?.name === "AbortError") { const a = new Error("TIMEOUT"); a.code = "TIMEOUT"; a.ctx = "bigmodel"; throw a; }
     const err = new Error(/Failed to fetch|NetworkError/i.test(String(e?.message)) ? "NETWORK" : "CORS");
     err.code = err.message; err.ctx = "bigmodel"; throw err;
   }

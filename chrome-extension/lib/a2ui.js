@@ -133,8 +133,11 @@ export class A2uiSurface {
       case "Text": {
         const el = document.createElement("div");
         el.className = "a2ui-text" + (spec.variant ? " a2ui-text--" + spec.variant : "");
-        const txt = String(r(spec.text) ?? "");
-        el.innerHTML = renderInlineMarkdown(txt);
+        // Object slipped into a text slot (LLM emitted a struct where a
+        // string was expected, or a binding resolved to an object).
+        // Don't let "[object Object]" or stringified JSON leak — pull a
+        // sensible field instead, or render nothing.
+        el.innerHTML = renderInlineMarkdown(coerceTextValue(r(spec.text)));
         return el;
       }
       case "Column": case "Row": {
@@ -168,22 +171,14 @@ export class A2uiSurface {
         const items = r(spec.value) || [];
         const tpl = spec.itemTemplate; // can be a child id or a sub-tree
         if (Array.isArray(items)) {
-          items.forEach((item, idx) => {
-            const tplId = typeof tpl === "string" ? tpl : null;
-            if (tplId && this.components.has(tplId)) {
-              // Render template once per item; we don't yet support
-              // per-item path scoping fully — simple case: items are
-              // primitives we render as Text rows.
-              const row = document.createElement("div");
-              row.className = "a2ui-list-item";
-              row.textContent = typeof item === "string" ? item : JSON.stringify(item);
-              el.appendChild(row);
-            } else {
-              const row = document.createElement("div");
-              row.className = "a2ui-list-item";
-              row.textContent = typeof item === "string" ? item : JSON.stringify(item);
-              el.appendChild(row);
-            }
+          items.forEach((item) => {
+            const row = document.createElement("div");
+            row.className = "a2ui-list-item";
+            // Items can be primitives or richer objects with
+            // {label, text, name, title, value, detail}. Pick a sensible
+            // pair instead of dumping JSON for objects.
+            renderListItem(row, item);
+            el.appendChild(row);
           });
         }
         return el;
@@ -201,7 +196,7 @@ export class A2uiSurface {
           const c = this._renderById(spec.child);
           if (c) el.appendChild(c);
         } else if (spec.label) {
-          el.textContent = String(r(spec.label));
+          el.textContent = coerceTextValue(r(spec.label));
         }
         if (spec.action) {
           el.addEventListener("click", () => this._fireAction(spec, "click"));
@@ -214,7 +209,7 @@ export class A2uiSurface {
         if (spec.label) {
           const lab = document.createElement("span");
           lab.className = "a2ui-textfield-label";
-          lab.textContent = String(r(spec.label));
+          lab.textContent = coerceTextValue(r(spec.label));
           wrap.appendChild(lab);
         }
         const inp = document.createElement("input");
@@ -247,7 +242,7 @@ export class A2uiSurface {
         wrap.appendChild(inp);
         if (spec.label) {
           const lab = document.createElement("span");
-          lab.textContent = String(r(spec.label));
+          lab.textContent = coerceTextValue(r(spec.label));
           wrap.appendChild(lab);
         }
         return wrap;
@@ -358,10 +353,10 @@ export class A2uiSurface {
       case "StatTile": {
         const el = document.createElement("div");
         el.className = "a2ui-stat" + (spec.accent ? ` a2ui-stat--${spec.accent}` : "");
-        const label = String(r(spec.label) ?? "");
-        const value = String(r(spec.value) ?? "");
-        const unit = String(r(spec.unit) ?? "");
-        const delta = spec.delta != null ? String(r(spec.delta)) : null;
+        const label = coerceTextValue(r(spec.label));
+        const value = coerceTextValue(r(spec.value));
+        const unit = coerceTextValue(r(spec.unit));
+        const delta = spec.delta != null ? coerceTextValue(r(spec.delta)) : null;
         const dir = spec.deltaDirection;
         el.innerHTML = `
           <div class="a2ui-stat-label"></div>
@@ -387,9 +382,9 @@ export class A2uiSurface {
         const items = r(spec.items) || [];
         for (const it of items) {
           const dt = document.createElement("dt");
-          dt.textContent = String(it.key ?? it.label ?? "");
+          dt.textContent = coerceTextValue(it.key ?? it.label);
           const dd = document.createElement("dd");
-          dd.textContent = String(it.value ?? "");
+          dd.textContent = coerceTextValue(it.value);
           el.appendChild(dt);
           el.appendChild(dd);
         }
@@ -401,12 +396,12 @@ export class A2uiSurface {
         el.className = "a2ui-highlight" + (spec.accent ? ` a2ui-highlight--${spec.accent}` : "");
         const text = document.createElement("p");
         text.className = "a2ui-highlight-text";
-        text.innerHTML = renderInlineMarkdown(String(r(spec.text) ?? ""));
+        text.innerHTML = renderInlineMarkdown(coerceTextValue(r(spec.text)));
         el.appendChild(text);
         if (spec.source) {
           const src = document.createElement("cite");
           src.className = "a2ui-highlight-source";
-          src.textContent = "— " + String(r(spec.source));
+          src.textContent = "— " + coerceTextValue(r(spec.source));
           el.appendChild(src);
         }
         return el;
@@ -418,7 +413,7 @@ export class A2uiSurface {
         if (spec.label) {
           const lab = document.createElement("div");
           lab.className = "a2ui-progress-label";
-          lab.textContent = String(r(spec.label));
+          lab.textContent = coerceTextValue(r(spec.label));
           wrap.appendChild(lab);
         }
         const max = Number(r(spec.max) ?? 100);
@@ -473,9 +468,9 @@ export class A2uiSurface {
               <div class="a2ui-timeline-title"></div>
               <div class="a2ui-timeline-detail"></div>
             </div>`;
-          li.querySelector(".a2ui-timeline-when").textContent = String(it.when ?? "");
-          li.querySelector(".a2ui-timeline-title").textContent = String(it.title ?? "");
-          li.querySelector(".a2ui-timeline-detail").innerHTML = renderInlineMarkdown(String(it.detail ?? ""));
+          li.querySelector(".a2ui-timeline-when").textContent = coerceTextValue(it.when);
+          li.querySelector(".a2ui-timeline-title").textContent = coerceTextValue(it.title);
+          li.querySelector(".a2ui-timeline-detail").innerHTML = renderInlineMarkdown(coerceTextValue(it.detail));
           wrap.appendChild(li);
         }
         return wrap;
@@ -587,9 +582,9 @@ export class A2uiSurface {
           `;
           detail.querySelector(".a2ui-map-detail-name").textContent = p.name || "";
           detail.querySelector(".a2ui-map-detail-layer").textContent = layer.label || p.layer || "";
-          if (p.detail) detail.querySelector(".a2ui-map-detail-body").innerHTML = renderInlineMarkdown(String(p.detail));
+          if (p.detail) detail.querySelector(".a2ui-map-detail-body").innerHTML = renderInlineMarkdown(coerceTextValue(p.detail));
           if (p.tags) {
-            detail.querySelectorAll(".a2ui-map-detail-tag").forEach((el, i) => { el.textContent = String(p.tags[i]); });
+            detail.querySelectorAll(".a2ui-map-detail-tag").forEach((el, i) => { el.textContent = coerceTextValue(p.tags[i]); });
           }
         }
         renderDetailFor(points[0] || null);
@@ -613,7 +608,7 @@ export class A2uiSurface {
         const trH = document.createElement("tr");
         for (const c of cols) {
           const th = document.createElement("th");
-          th.textContent = String(c.label ?? c.key ?? "");
+          th.textContent = coerceTextValue(c.label ?? c.key);
           if (c.accent) th.classList.add("a2ui-cmp-accent");
           trH.appendChild(th);
         }
@@ -630,11 +625,11 @@ export class A2uiSurface {
                 <div class="a2ui-cmp-cell-value"></div>
                 ${v.note ? `<div class="a2ui-cmp-cell-note"></div>` : ""}
               `;
-              td.querySelector(".a2ui-cmp-cell-value").textContent = String(v.value ?? "");
-              if (v.note) td.querySelector(".a2ui-cmp-cell-note").textContent = String(v.note);
+              td.querySelector(".a2ui-cmp-cell-value").textContent = coerceTextValue(v.value);
+              if (v.note) td.querySelector(".a2ui-cmp-cell-note").textContent = coerceTextValue(v.note);
               if (v.accent) td.classList.add("a2ui-cmp-accent");
             } else {
-              td.textContent = String(v ?? "");
+              td.textContent = coerceTextValue(v);
             }
             if (c.accent) td.classList.add("a2ui-cmp-accent");
             tr.appendChild(td);
@@ -821,6 +816,65 @@ function fmtTick(v) {
   if (Math.abs(n) >= 1e6) return (n / 1e6).toFixed(1) + "M";
   if (Math.abs(n) >= 1e3) return (n / 1e3).toFixed(1) + "k";
   return n % 1 === 0 ? String(n) : n.toFixed(1);
+}
+
+// Coerce any value into a display string for a Text slot. Primitives
+// pass through; objects look for a meaningful field; arrays comma-join
+// their items via the same coercion. Falls back to empty string rather
+// than "[object Object]" / JSON.stringify so the UI never leaks raw
+// data structures.
+function coerceTextValue(v) {
+  if (v == null) return "";
+  if (typeof v === "string") return v;
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  if (Array.isArray(v)) return v.map(coerceTextValue).filter(Boolean).join(", ");
+  if (typeof v === "object") {
+    const cand = v.text ?? v.label ?? v.title ?? v.name ?? v.value ?? v.message ?? v.detail;
+    if (cand != null) return coerceTextValue(cand);
+    return "";
+  }
+  return String(v);
+}
+
+// Render a list-of-anything item. Strings/numbers become a plain row;
+// objects with a {title|label} + {detail|description|value} pair render
+// as a two-line row; otherwise we fall back to coerceTextValue (which
+// skips the object entirely if it has no human-readable field).
+function renderListItem(row, item) {
+  if (item == null) return;
+  if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
+    row.textContent = String(item);
+    return;
+  }
+  if (Array.isArray(item)) {
+    row.textContent = item.map(coerceTextValue).filter(Boolean).join(", ");
+    return;
+  }
+  if (typeof item === "object") {
+    const title = item.title ?? item.label ?? item.name ?? item.heading ?? item.headline;
+    const detail = item.detail ?? item.description ?? item.body ?? item.text ?? item.summary;
+    const value = item.value;
+    if (title != null) {
+      const t = document.createElement("div");
+      t.className = "a2ui-list-item-title";
+      t.textContent = coerceTextValue(title);
+      row.appendChild(t);
+      const sub = detail != null ? coerceTextValue(detail) : (value != null && typeof value !== "object" ? String(value) : "");
+      if (sub) {
+        const d = document.createElement("div");
+        d.className = "a2ui-list-item-detail";
+        d.textContent = sub;
+        row.appendChild(d);
+      }
+      return;
+    }
+    // No structured title — fall back to a single coerced string. Empty
+    // means we skip the row rather than render JSON.
+    const flat = coerceTextValue(item);
+    if (flat) row.textContent = flat;
+    return;
+  }
+  row.textContent = coerceTextValue(item);
 }
 
 // Inline-only markdown subset: **bold**, *italic*, `code`. Intentionally

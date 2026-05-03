@@ -312,8 +312,17 @@
   "task_reformat_sub": {
     "message": "L3 · 换形态"
   },
+  "popup_format_help": {
+    "message": "作为额外提示传给模型。留空则由模型自己挑最合适的形态。"
+  },
+  "popup_format_reset": {
+    "message": "重置"
+  },
+  "popup_format_preset": {
+    "message": "做成信息密度高的 dashboard：优先用 KPI 数字、图表、地图、对比表、时间线等可视化与可交互形态，少用 Card + Text 罗列。拉出 1-2 个最核心的洞察；可调参数做成可交互。"
+  },
   "popup_label_format": {
-    "message": "形态"
+    "message": "Reformat 提示"
   },
   "format_tldr": {
     "message": "📝 摘要"
@@ -331,7 +340,7 @@
     "message": "✏️ 自定义"
   },
   "popup_format_placeholder": {
-    "message": "例如：会议议程、单页备忘录"
+    "message": "希望生成什么样的 Web App？可以自由编辑，留空则交给模型决定。"
   },
   "popup_btn_reformat": {
     "message": "🪄 重塑当前页面"
@@ -432,6 +441,9 @@
   "jobs_subtitle_reformat_done": {
     "message": "Web App 已就绪 · 点击打开"
   },
+  "jobs_cancel_title": {
+    "message": "取消任务"
+  },
   "options_label_language": {
     "message": "生成语言"
   },
@@ -455,5 +467,11 @@
   },
   "options_hint_review": {
     "message": "生成后多调一次便宜的 LLM 评分并指出问题，推荐开启。"
+  },
+  "options_label_timeout": {
+    "message": "单页生成时间上限（秒）"
+  },
+  "options_hint_timeout": {
+    "message": "单次 Annotate / Reformat 任务的最长时间。超时后会中止正在进行的 LLM 请求。范围 30–3600，默认 180（3 分钟）。"
   }
 }

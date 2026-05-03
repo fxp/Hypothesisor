@@ -7,15 +7,58 @@
 
 import { callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { generateReformat, saveReformat, newId as newReformatId } from "./lib/reformat.js";
-import { newJobId, saveJob, loadJob } from "./lib/jobs.js";
+import { newJobId, saveJob, loadJob, loadAllJobs } from "./lib/jobs.js";
 import { reviewAnnotateOutput, reviewReformatOutput } from "./lib/review.js";
 
+// ─── Startup sweep ──────────────────────────────────────────────────
+// MV3 service workers are killed at Chrome's discretion. When the SW
+// dies mid-job, any AbortController/setTimeout we set up for the
+// per-job time budget dies with it, but the job's status entry in
+// chrome.storage stays "running" — and without a fresh run no timer
+// will ever fire. So whenever this worker module loads (cold start,
+// extension reload, etc.) sweep for orphaned jobs older than the
+// configured budget and mark them errored. Run on every SW boot.
+sweepStaleJobs().catch(() => {});
+chrome.runtime.onStartup?.addListener(() => sweepStaleJobs().catch(() => {}));
+chrome.runtime.onInstalled?.addListener(() => sweepStaleJobs().catch(() => {}));
+
+async function sweepStaleJobs() {
+  // At SW module-init time the new worker is not running anything yet
+  // (startJob hasn't been called). So any job in a non-terminal state
+  // belonged to a previous, now-dead SW. Reap unconditionally — we'd
+  // never recover an in-flight fetch across an SW restart anyway.
+  const now = Date.now();
+  const all = await loadAllJobs();
+  for (const j of all) {
+    if (j.status !== "running" && j.status !== "validating" && j.status !== "pending") continue;
+    const startedAt = j.createdAt || j.updatedAt || now;
+    const ageMs = now - startedAt;
+    await saveJob({
+      ...j,
+      status: "error",
+      statusText: `Interrupted — service worker restarted before completion (${Math.round(ageMs / 60000)} min)`,
+      finishedAt: now,
+    });
+  }
+}
+
 // ─── Message routing ────────────────────────────────────────────────
+
+// Track AbortControllers for in-flight jobs so cancelJob can abort
+// fetches immediately instead of waiting for the per-job timeout.
+const jobAborters = new Map();
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg?.type === "startJob") {
     startJob(msg.spec).then(
       (jobId) => sendResponse({ jobId }),
+      (err) => sendResponse({ error: err?.message || String(err) })
+    );
+    return true;
+  }
+  if (msg?.type === "cancelJob" && msg.jobId) {
+    cancelJob(msg.jobId).then(
+      (r) => sendResponse(r),
       (err) => sendResponse({ error: err?.message || String(err) })
     );
     return true;
@@ -67,6 +110,43 @@ async function startJob(spec) {
 async function runJob(job) {
   await update(job.id, { status: "running", statusText: job.type === "annotate" ? "Generating annotations…" : "Generating Web App…" });
   const settings = await getSettings();
+  // Per-job wall-clock budget. Default 5 minutes. Single AbortController
+  // is shared across every fetch in this job (LLM call, review pass,
+  // postAnnotation, retry) so a single setTimeout aborts everything.
+  const timeoutMs = Math.max(30000, Math.min(3600000, Number(settings.genTimeoutMs) || 180000));
+  const ctrl = new AbortController();
+  const startedAt = Date.now();
+  const deadline = startedAt + timeoutMs;
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  jobAborters.set(job.id, ctrl);
+  try {
+    return await runJobInner(job, settings, ctrl.signal, deadline);
+  } finally {
+    clearTimeout(timer);
+    jobAborters.delete(job.id);
+  }
+}
+
+async function cancelJob(jobId) {
+  // Abort the fetch if we're still running it in this SW.
+  const ctrl = jobAborters.get(jobId);
+  if (ctrl) ctrl.abort();
+  jobAborters.delete(jobId);
+  // Mark errored in storage so the popup updates immediately even if
+  // the job was orphaned by an earlier SW death.
+  const job = await loadJob(jobId);
+  if (!job) return { ok: false, reason: "not_found" };
+  if (job.status === "done" || job.status === "error") return { ok: true, alreadyTerminal: true };
+  await saveJob({
+    ...job,
+    status: "error",
+    statusText: "Cancelled by user",
+    finishedAt: Date.now(),
+  });
+  return { ok: true };
+}
+
+async function runJobInner(job, settings, signal, deadline) {
 
   if (job.type === "annotate") {
     if (!settings.bigmodelKey) throw withCode("MISSING_BIGMODEL_KEY");
@@ -76,6 +156,7 @@ async function runJob(job) {
       mode: job.spec.mode, style: job.spec.style,
       apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
       genLanguage: settings.genLanguage,
+      signal,
     });
     await update(job.id, { status: "validating", statusText: "Validating quotes…" });
     const annotations = raw.map((a) => {
@@ -103,6 +184,7 @@ async function runJob(job) {
         content: job.spec.content, annotations,
         apiKey: settings.bigmodelKey,
         baseUrl: settings.bigmodelBaseUrl,
+        signal,
       }).then((review) => review && update(job.id, { review }))
         .catch(() => {});
     }
@@ -113,12 +195,17 @@ async function runJob(job) {
     // the previous review's issues + suggestions back into the prompt
     // as `customPrompt` augmentation. We keep the highest-scoring
     // attempt as the final answer.
-    const MAX_ATTEMPTS = 3;
+    // 2 attempts is the speed/quality sweet spot — first pass + at most
+    // one refinement. Going to 3 doubled wall-clock time for marginal
+    // quality gains. User can hit "Reformat" again if they want more.
+    const MAX_ATTEMPTS = 2;
     const MIN_SCORE = 8;
     let bestResult = null;
     let bestReview = null;
     let lastReviewFeedback = "";
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      // Don't start a fresh attempt we won't have time to finish (10 s buffer).
+      if (attempt > 1 && Date.now() > deadline - 10000) break;
       await update(job.id, {
         status: "running",
         statusText: attempt === 1 ? "Generating Web App…" : `Refining (attempt ${attempt}/${MAX_ATTEMPTS})…`,
@@ -132,6 +219,7 @@ async function runJob(job) {
         customPrompt: augmentedHint,
         apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
         genLanguage: settings.genLanguage,
+        signal,
       });
       // If review is disabled, take the first attempt and skip the loop.
       if (settings.reviewQuality === false) {
@@ -147,6 +235,7 @@ async function runJob(job) {
         review = await reviewReformatOutput({
           content: job.spec.content, reformat: tempReformat,
           apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl,
+          signal,
         });
       } catch (_) {}
       if (!review || review.error) {
@@ -286,6 +375,11 @@ async function injectOverlayOnTab(tabId, reformatId) {
 
 function classifyError(e) {
   if (!e) return "Unknown error";
+  if (e.code === "TIMEOUT") {
+    // Friendly message for the wall-clock per-job budget abort.
+    return "Timed out — try increasing the time budget in Options.";
+  }
+  if (e.name === "AbortError") return "Timed out — try increasing the time budget in Options.";
   if (e.code) return e.code + (e.detail ? ": " + String(e.detail).slice(0, 120) : "");
   return e.message || String(e);
 }

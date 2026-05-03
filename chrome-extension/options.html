@@ -157,6 +157,12 @@
       </span>
     </label>
 
+    <label>
+      <span class="label-text" data-i18n="options_label_timeout">Per-job time budget (seconds)</span>
+      <small data-i18n="options_hint_timeout">Maximum wall-clock time for a single Annotate / Reformat job. When exceeded, in-flight LLM calls are aborted. Range 30–3600. Default 180 (3 min).</small>
+      <input id="genTimeoutSec" type="number" min="30" max="3600" step="30" placeholder="180" />
+    </label>
+
     <div class="actions">
       <button id="save" data-i18n="options_btn_save">Save</button>
       <span id="status"></span>

@@ -41,7 +41,7 @@ const REFORMAT_RUBRIC = `你是一个交互式 Web App 质量审核员。给定�
   "suggestions": "一句话告诉作者怎么改进（中文）"
 }`;
 
-export async function reviewAnnotateOutput({ content, annotations, apiKey, baseUrl, model }) {
+export async function reviewAnnotateOutput({ content, annotations, apiKey, baseUrl, model, signal }) {
   if (!apiKey) return null;
   const compact = annotations.slice(0, 12).map((a) => ({
     quote: (a.quote || "").slice(0, 200),
@@ -49,13 +49,13 @@ export async function reviewAnnotateOutput({ content, annotations, apiKey, baseU
     tags: a.tags,
   }));
   return runReview({
-    apiKey, baseUrl, model,
+    apiKey, baseUrl, model, signal,
     system: ANNOTATE_RUBRIC,
     user: buildUserPayload(content, { annotations: compact }),
   });
 }
 
-export async function reviewReformatOutput({ content, reformat, apiKey, baseUrl, model }) {
+export async function reviewReformatOutput({ content, reformat, apiKey, baseUrl, model, signal }) {
   if (!apiKey) return null;
   // Compact A2UI envelope to fit context cheaply.
   const messages = (reformat.a2ui || []).map((m) => {
@@ -77,7 +77,7 @@ export async function reviewReformatOutput({ content, reformat, apiKey, baseUrl,
     return m;
   });
   return runReview({
-    apiKey, baseUrl, model,
+    apiKey, baseUrl, model, signal,
     system: REFORMAT_RUBRIC,
     user: buildUserPayload(content, {
       title: reformat.title, summary: reformat.summary,
@@ -93,7 +93,7 @@ function buildUserPayload(content, payload) {
   return `=== 原文 ===\n${src}\n\n=== 待审核输出 ===\n${JSON.stringify(payload, null, 2)}`;
 }
 
-async function runReview({ apiKey, baseUrl, model, system, user }) {
+async function runReview({ apiKey, baseUrl, model, system, user, signal }) {
   const base = ((baseUrl && baseUrl.trim()) || DEFAULT_BASE_URL).replace(/\/+$/, "");
   // Always use cheap model for review unless caller forces a specific one.
   const reviewModel = (model && model.trim() && model.toLowerCase().includes("review")) ? model.trim() : REVIEW_MODEL;
@@ -111,8 +111,10 @@ async function runReview({ apiKey, baseUrl, model, system, user }) {
           { role: "user",   content: user },
         ],
       }),
+      signal,
     });
   } catch (e) {
+    if (e?.name === "AbortError") return { error: "timeout" };
     return { error: "network", message: String(e?.message || e) };
   }
   if (!resp.ok) {

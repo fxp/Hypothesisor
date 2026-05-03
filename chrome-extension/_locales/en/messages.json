@@ -315,7 +315,16 @@
     "message": "L3 · new shape"
   },
   "popup_label_format": {
-    "message": "Format"
+    "message": "Reformat hint"
+  },
+  "popup_format_help": {
+    "message": "Sent to the model as a steer. Leave blank to let the model pick the best shape on its own."
+  },
+  "popup_format_reset": {
+    "message": "Reset"
+  },
+  "popup_format_preset": {
+    "message": "Aim for an information-dense dashboard: prefer visual and interactive forms (KPI tiles, charts, maps, comparison tables, timelines) over Card+Text lists. Surface 1–2 core insights and make key parameters interactive when relevant."
   },
   "format_tldr": {
     "message": "📝 TL;DR"
@@ -333,7 +342,7 @@
     "message": "✏️ Custom"
   },
   "popup_format_placeholder": {
-    "message": "e.g. a meeting agenda, a one-pager memo"
+    "message": "What kind of Web App do you want? Edit freely or clear to let the model decide."
   },
   "popup_btn_reformat": {
     "message": "🪄 Reformat this page"
@@ -434,6 +443,9 @@
   "jobs_subtitle_reformat_done": {
     "message": "Web App ready · click to open"
   },
+  "jobs_cancel_title": {
+    "message": "Cancel job"
+  },
   "options_label_language": {
     "message": "Generation language"
   },
@@ -457,5 +469,11 @@
   },
   "options_hint_review": {
     "message": "Adds one extra cheap LLM call after generation to score the output and surface issues. Recommended."
+  },
+  "options_label_timeout": {
+    "message": "Per-job time budget (seconds)"
+  },
+  "options_hint_timeout": {
+    "message": "Maximum wall-clock time for a single Annotate / Reformat job. When exceeded, in-flight LLM calls are aborted. Range 30–3600. Default 180 (3 min)."
   }
 }

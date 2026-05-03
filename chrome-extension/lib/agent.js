@@ -141,7 +141,7 @@ export async function extractTabText(tabId) {
   return result || { text: "", url: "", title: "" };
 }
 
-export async function callGLM({ content, url, mode, style, apiKey, baseUrl, model, genLanguage }) {
+export async function callGLM({ content, url, mode, style, apiKey, baseUrl, model, genLanguage, signal }) {
   if (!apiKey) { const e = new Error("MISSING_BIGMODEL_KEY"); e.code = "MISSING_BIGMODEL_KEY"; throw e; }
   const length = content.length;
   const { lo, hi } = computeDepth(length);
@@ -167,8 +167,10 @@ export async function callGLM({ content, url, mode, style, apiKey, baseUrl, mode
           { role: "user", content: `URL: ${url}\n\n文章内容：\n\n${truncated}` },
         ],
       }),
+      signal,
     });
   } catch (e) {
+    if (e?.name === "AbortError") { const a = new Error("TIMEOUT"); a.code = "TIMEOUT"; a.ctx = "bigmodel"; throw a; }
     throw networkError("bigmodel", e);
   }
   if (!resp.ok) throw await httpError("bigmodel", resp);
@@ -386,7 +388,7 @@ function getContext(content, start, end, n = 48) {
   };
 }
 
-export async function postAnnotation({ url, quote, comment, tags, content, token, title }) {
+export async function postAnnotation({ url, quote, comment, tags, content, token, title, signal }) {
   if (!token) { const e = new Error("MISSING_HYPOTHESIS_TOKEN"); e.code = "MISSING_HYPOTHESIS_TOKEN"; throw e; }
   const loc = validateQuote(content, quote);
   if (!loc.found) { const e = new Error("QUOTE_NOT_FOUND"); e.code = "QUOTE_NOT_FOUND"; throw e; }
@@ -420,8 +422,10 @@ export async function postAnnotation({ url, quote, comment, tags, content, token
         "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
+      signal,
     });
   } catch (e) {
+    if (e?.name === "AbortError") { const a = new Error("TIMEOUT"); a.code = "TIMEOUT"; a.ctx = "hypothesis"; throw a; }
     throw networkError("hypothesis", e);
   }
   if (!resp.ok) throw await httpError("hypothesis", resp);
@@ -439,6 +443,7 @@ export async function getSettings() {
     defaultStyle: "",
     genLanguage: "bilingual",
     reviewQuality: true,
+    genTimeoutMs: 180000,   // 3 minutes per job (default; user-tunable)
   });
 }
 

@@ -97,8 +97,26 @@ async function init() {
   } else {
     selectChip("");
   }
+  await loadFormatHint();
   await refreshJobs();
 }
+
+// ── Reformat hint ─────────────────────────────────────────────────
+// Pre-fill the L3 hint textarea with a quality preset so the LLM gets
+// a strong steer by default. User edits persist via chrome.storage so
+// they don't have to retype every time the popup opens. Reset restores
+// the bundled preset (in the active language).
+async function loadFormatHint() {
+  const { customPromptL3 = "" } = await chrome.storage.local.get({ customPromptL3: "" });
+  // Empty stored value → show the preset. Whitespace-only stored value
+  // also reverts (safe default; the user can always clear again).
+  const initial = customPromptL3.trim() ? customPromptL3 : t("popup_format_preset");
+  $("formatCustom").value = initial;
+}
+$("formatReset").addEventListener("click", () => {
+  $("formatCustom").value = t("popup_format_preset");
+  $("formatCustom").focus();
+});
 
 function selectTask(task) {
   state.task = task;
@@ -180,6 +198,23 @@ function renderJobItem(job) {
     const sp = document.createElement("span");
     sp.className = "ji-spinner";
     item.insertBefore(sp, item.querySelector(".ji-time"));
+    // Manual cancel — kills both the in-flight fetch (if this SW is
+    // still the one running it) and the storage entry. Survives SW
+    // restarts because we always rewrite status to error.
+    const x = document.createElement("button");
+    x.type = "button";
+    x.className = "ji-cancel";
+    x.title = t("jobs_cancel_title", "Cancel");
+    x.textContent = "×";
+    x.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      x.disabled = true;
+      try {
+        await chrome.runtime.sendMessage({ type: "cancelJob", jobId: job.id });
+      } catch (_) {}
+      refreshJobs();
+    });
+    item.appendChild(x);
   }
 
   if (actionable) {
@@ -447,6 +482,10 @@ $("generate").addEventListener("click", async () => {
     let customPrompt = null;
     if (state.task === "reformat") {
       customPrompt = $("formatCustom").value.trim() || null;
+      // Persist so the next popup open shows the same hint instead of
+      // snapping back to the preset. Empty value persists too — that's
+      // the user's deliberate "no hint" choice.
+      await chrome.storage.local.set({ customPromptL3: customPrompt || "" });
     }
 
     // Hand off to the service worker. It runs the LLM call detached
