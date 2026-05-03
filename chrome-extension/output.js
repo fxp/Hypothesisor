@@ -1,5 +1,6 @@
 import { initI18n, applyI18n, t } from "./lib/i18n.js";
 import { loadReformat, buildIframeSrcdoc } from "./lib/reformat.js";
+import { A2uiSurface, DEFAULT_STYLESHEET as A2UI_CSS } from "./lib/a2ui.js";
 
 await initI18n();
 applyI18n();
@@ -37,14 +38,46 @@ async function main() {
   $("loading").hidden = true;
   $("content").hidden = false;
 
-  // v0.2.2+ writes a `html` field; older saves stored a `blocks` list.
-  if (typeof r.html === "string" && r.html.length > 0) {
+  // v0.4.0+: a2ui envelope (preferred). v0.2.2-0.3.x: html field.
+  // Pre-v0.2.2: blocks list. Detect in priority order.
+  if (Array.isArray(r.a2ui) && r.a2ui.length > 0) {
+    renderAsA2UI(r);
+  } else if (typeof r.html === "string" && r.html.length > 0) {
     renderAsIframe(r);
   } else if (Array.isArray(r.blocks)) {
     renderAsBlocks(r);
   } else {
     showEmpty();
   }
+}
+
+function renderAsA2UI(r) {
+  const host = $("content");
+  host.innerHTML = `
+    <header class="page-meta">
+      <h1>${escapeHtml(r.title)}</h1>
+      ${r.summary ? `<p class="summary">${escapeHtml(r.summary)}</p>` : ""}
+      <p class="lead">${escapeHtml(r.sourceTitle || "")} · <a href="${escapeHtml(r.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(new URL(r.sourceUrl).hostname)}</a> · <span class="proto-tag">A2UI v0.10</span></p>
+    </header>
+    <div class="surface-wrap"></div>
+  `;
+  const surfaceHost = host.querySelector(".surface-wrap");
+  const shadow = surfaceHost.attachShadow({ mode: "open" });
+  const styleEl = document.createElement("style");
+  styleEl.textContent = A2UI_CSS;
+  shadow.appendChild(styleEl);
+  const root = document.createElement("div");
+  root.className = "a2ui-root";
+  shadow.appendChild(root);
+  const surface = new A2uiSurface(root, {
+    onAction: (a) => {
+      // Surface emits actions; v0.4.x doesn't yet round-trip to the
+      // model. Log + post for future server-action support.
+      console.log("[A2UI action]", a);
+      chrome.runtime?.sendMessage?.({ type: "a2uiAction", action: a, reformatId: r.id }).catch(() => {});
+    },
+  });
+  surface.applyAll(r.a2ui);
 }
 
 function renderAsIframe(r) {

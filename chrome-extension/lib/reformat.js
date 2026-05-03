@@ -19,7 +19,88 @@ const HINT_BY_FORMAT = {
   custom:    null,  // user prompt is authoritative
 };
 
-const SYSTEM_PROMPT = `你是一个把网页内容重塑成「内容感知的交互式 Web App」的助手。读完下面的网页正文，按内容类型生成最合适的小应用。
+const A2UI_SYSTEM_PROMPT = `你是一个把网页内容重塑成 Web App 的助手。读完正文，输出符合 Google A2UI v0.10 协议的声明式 UI 描述（不是 HTML / 不是代码）。
+
+## 决策步骤
+1. 识别内容类型（旅游/理财/食谱/教程/学术/数据报道/比较/...）
+2. 在 catalog 里挑组件搭出最有用的 surface
+3. 用 data model 承载用户可改的状态（计算器输入、清单勾选）
+
+## 可用 catalog 组件（仅这 11 种，超出会渲染失败）
+
+- **Text** — { text, variant: "h1"|"h2"|"h3"|"body"|"caption" }
+  支持简单 inline markdown：\\*\\*粗体\\*\\* / \\*斜体\\* / \\\`代码\\\`
+- **Column** — { children: [id...], gap, justify, align }
+- **Row** — { children: [id...], gap, justify, align }
+- **Card** — { child: id }
+- **List** — { value: { path: "/items" } } 渲染为简单条目列表
+- **Divider** — { axis: "horizontal" | "vertical" }
+- **Button** — { child: textId, variant: "primary"|"secondary", action: { event: { name, context } } }
+- **TextField** — { label, value: { path: "/calc/principal" } }（双向绑定）
+- **CheckBox** — { label, value: { path: "/done/0" } }
+- **Icon** — { name: "mail"|"check"|"clock"|"map"|"money"|"chart"|"warning"|"info"|... }
+- **Image** — { src, alt }（src 必须是原文里出现的 URL）
+
+## A2UI envelope 必须包含 3 条消息
+
+返回 JSON 对象：
+\`\`\`
+{
+  "version": "v0.10",
+  "appType": "tldr|qa|cards|checklist|calculator|chart|timer|map|comparison|freeform",
+  "title": "...",       // 不在 A2UI 里，方便我们做 surface 标题
+  "summary": "...",
+  "messages": [
+    { "version": "v0.10", "createSurface": { "surfaceId": "main", "catalogId": "https://a2ui.org/specification/v0_10/basic_catalog.json" } },
+    { "version": "v0.10", "updateComponents": { "surfaceId": "main", "components": [...] } },
+    { "version": "v0.10", "updateDataModel": { "surfaceId": "main", "value": { ... } } }
+  ]
+}
+\`\`\`
+
+## 组件硬约束
+1. components 必须是**扁平 array**，相互通过 id 引用
+2. 必须有一个 id 为 "root" 的组件作为入口
+3. 数据从原文中提取（计算器默认值、清单条目、标题），**不要瞎编**
+4. 字符串不要直接换行，需要换行写成 \\n
+5. 引号用 ASCII "
+
+## 例：理财产品 → 计算器
+
+\`\`\`json
+{
+  "version": "v0.10",
+  "appType": "calculator",
+  "title": "活期理财收益估算",
+  "summary": "输入金额，估算年化收益",
+  "messages": [
+    { "version": "v0.10", "createSurface": { "surfaceId": "main", "catalogId": "https://a2ui.org/specification/v0_10/basic_catalog.json" } },
+    { "version": "v0.10", "updateComponents": { "surfaceId": "main", "components": [
+      { "id": "root", "component": "Card", "child": "body" },
+      { "id": "body", "component": "Column", "children": ["title", "rate_row", "input", "result_label", "result"], "gap": 12 },
+      { "id": "title", "component": "Text", "text": "**年化 2.7%** · 灵活申赎", "variant": "h2" },
+      { "id": "rate_row", "component": "Row", "children": ["rate_label", "rate_value"], "justify": "spaceBetween" },
+      { "id": "rate_label", "component": "Text", "text": "七日年化", "variant": "caption" },
+      { "id": "rate_value", "component": "Text", "text": "2.7%" },
+      { "id": "input", "component": "TextField", "label": "本金（元）", "value": { "path": "/principal" } },
+      { "id": "result_label", "component": "Text", "text": "预计一年后", "variant": "caption" },
+      { "id": "result", "component": "Text", "text": { "path": "/computed_label" }, "variant": "h3" }
+    ]}},
+    { "version": "v0.10", "updateDataModel": { "surfaceId": "main", "value": { "principal": "10000", "computed_label": "约 270 元收益" } }}
+  ]
+}
+\`\`\`
+
+注意计算器例子里 \`computed_label\` 是预计算的 — A2UI 客户端不执行公式，所以你要在 updateDataModel 里直接给出当前值。后续用户修改输入会触发 client-side action（v0.4.x 后续支持）。
+
+## JSON 输出硬约束
+- 整体只输出一个 JSON 对象，不要 markdown 围栏
+- 字符串内禁止真实换行，用 \\n
+- 用 ASCII 双引号 "`;
+
+// Legacy HTML prompt (kept for reference; rolled back to until A2UI is
+// stable across more pages — for v0.4.0 we emit A2UI by default).
+const HTML_SYSTEM_PROMPT = `你是一个把网页内容重塑成「内容感知的交互式 Web App」的助手。读完下面的网页正文，按内容类型生成最合适的小应用。
 
 ## 决策步骤
 1. 识别内容类型（旅游/理财/食谱/教程/学术/新闻/数据报道/产品评测/比较/...）
@@ -95,7 +176,7 @@ export async function generateReformat({ content, url, title, format, customProm
         max_tokens: 16384,
         response_format: { type: "json_object" },
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: A2UI_SYSTEM_PROMPT },
           { role: "user", content: userPrompt },
         ],
       }),
@@ -135,6 +216,10 @@ export async function generateReformat({ content, url, title, format, customProm
     appType: parsed.appType || "freeform",
     title: parsed.title || title || "(untitled)",
     summary: parsed.summary || "",
+    // v0.4.0+ envelope. Older saved reformats keep their html field;
+    // popup/output detects which to use.
+    a2ui: Array.isArray(parsed.messages) ? parsed.messages : null,
+    // Fallback: some prompts may still produce html (during transition)
     html: typeof parsed.html === "string" ? parsed.html : "",
     truncated: finishReason === "length" || parsed._recovered === true,
   };

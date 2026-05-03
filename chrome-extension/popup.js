@@ -155,10 +155,16 @@ async function openJob(job) {
     chrome.tabs.create({ url: chrome.runtime.getURL(`review.html?job=${encodeURIComponent(job.id)}`) });
     return;
   }
-  // reformat — try overlay on current tab, else open output.html
+  // reformat — A2UI envelopes need extension context for renderer +
+  // interactivity, so they always open in a new tab. Legacy HTML
+  // reformats can still ride the in-page Shadow DOM overlay.
   if (job.reformatId) {
     try {
       const r = await loadReformat(job.reformatId);
+      if (r && Array.isArray(r.a2ui)) {
+        chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
+        return;
+      }
       if (r && state.tab) {
         await showInPageOverlay(state.tab.id, r, buildIframeSrcdoc(r), {
           openInTab: t("output_open_in_tab"),
@@ -439,11 +445,18 @@ async function onJobUpdate(job) {
     setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
     render();
   } else {
-    // Reformat — try to overlay on the source tab first; fall back to
-    // opening output.html in a new tab if injection isn't allowed.
+    // Reformat — A2UI envelopes always open in a new tab (need extension
+    // context for renderer + interactivity). Legacy HTML reformats
+    // overlay on the source tab.
     try {
       const { loadReformat, buildIframeSrcdoc } = await import("./lib/reformat.js");
       const reformat = await loadReformat(job.reformatId);
+      if (reformat && Array.isArray(reformat.a2ui)) {
+        chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
+        setStatus(job.truncated ? t("status_reformat_truncated") : t("status_reformat_done_tab"), "success");
+        window.close();
+        return;
+      }
       if (reformat && state.tab) {
         await showInPageOverlay(state.tab.id, reformat, buildIframeSrcdoc(reformat), {
           openInTab: t("output_open_in_tab"),

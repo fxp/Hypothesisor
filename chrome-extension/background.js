@@ -108,7 +108,10 @@ async function runJob(job) {
       sourceUrl: job.spec.canonicalUrl, sourceTitle: job.spec.title,
       format: job.spec.format, customPrompt: job.spec.customPrompt || undefined,
       title: result.title, summary: result.summary,
-      appType: result.appType, html: result.html,
+      appType: result.appType,
+      a2ui: result.a2ui,    // v0.4.0+ A2UI envelope messages
+      html: result.html,    // legacy fallback for v0.2-0.3 format
+      truncated: result.truncated,
     };
     await saveReformat(reformat);
     await update(job.id, {

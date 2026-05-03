@@ -5,6 +5,12 @@
 // `chrome.scripting.executeScript` cannot reach outer-scope variables,
 // so we serialize the reformat payload + i18n strings as `args` and
 // reconstruct everything inside the injected function.
+//
+// Two render paths:
+//   - reformat.a2ui  → A2UI v0.10 envelope rendered directly into the
+//                      overlay's Shadow DOM (no iframe — safe data).
+//   - reformat.html  → legacy v0.2-0.3 free-form HTML rendered in
+//                      sandboxed iframe.
 
 export async function showInPageOverlay(tabId, reformat, srcdoc, labels) {
   await chrome.scripting.executeScript({
@@ -133,6 +139,9 @@ function injectOverlay(payload) {
 
   const frameWrap = document.createElement("div");
   frameWrap.className = "frame-wrap";
+  // Legacy HTML reformat — sandboxed iframe with the model's HTML.
+  // (A2UI reformats skip the overlay entirely and open output.html in
+  // a new tab, where we can mount the renderer module natively.)
   const iframe = document.createElement("iframe");
   iframe.setAttribute("sandbox", "allow-scripts");
   iframe.setAttribute("title", safeTitle);
