@@ -451,10 +451,10 @@
     "message": "LLM 写评论 / 标题用什么语言。引用始终保留原文语言。"
   },
   "lang_bilingual": {
-    "message": "中英对照（默认）"
+    "message": "中英对照（约慢 2×）"
   },
   "lang_auto": {
-    "message": "自动 · 跟随原文"
+    "message": "自动 · 跟随原文（默认 · 最快）"
   },
   "lang_zh": {
     "message": "中文"

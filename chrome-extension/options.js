@@ -40,7 +40,7 @@ const BOOL_FIELDS = ["reviewQuality"];
 async function load() {
   const s = await chrome.storage.local.get({
     hypothesisToken: "", bigmodelKey: "", bigmodelBaseUrl: "", bigmodelModel: "",
-    defaultMode: "general", defaultStyle: "", genLanguage: "bilingual", reviewQuality: true,
+    defaultMode: "general", defaultStyle: "", genLanguage: "auto", reviewQuality: true,
     genTimeoutMs: 180000,
   });
   for (const k of FIELDS) document.getElementById(k).value = s[k];

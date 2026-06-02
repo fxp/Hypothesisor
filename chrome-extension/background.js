@@ -19,8 +19,26 @@ import { reviewAnnotateOutput, reviewReformatOutput } from "./lib/review.js";
 // extension reload, etc.) sweep for orphaned jobs older than the
 // configured budget and mark them errored. Run on every SW boot.
 sweepStaleJobs().catch(() => {});
+migrateSettings().catch(() => {});
 chrome.runtime.onStartup?.addListener(() => sweepStaleJobs().catch(() => {}));
-chrome.runtime.onInstalled?.addListener(() => sweepStaleJobs().catch(() => {}));
+chrome.runtime.onInstalled?.addListener(() => { sweepStaleJobs().catch(() => {}); migrateSettings().catch(() => {}); });
+
+// One-shot migration: "bilingual" used to be the default genLanguage. It
+// doubles output tokens (each annotation gets a Chinese + English copy)
+// and was the #1 cause of slow annotates. Anyone who never visited the
+// settings page has it stored by default, not by choice. Flip them to
+// "auto" once on next SW boot. Tracked by a sentinel flag so we never
+// touch the setting again — if they re-set it to bilingual deliberately
+// later, we leave it alone.
+async function migrateSettings() {
+  const SENTINEL = "mig_v0.4.9_bilingual_default";
+  const got = await chrome.storage.local.get([SENTINEL, "genLanguage"]);
+  if (got[SENTINEL]) return;
+  if (got.genLanguage === "bilingual") {
+    await chrome.storage.local.set({ genLanguage: "auto" });
+  }
+  await chrome.storage.local.set({ [SENTINEL]: 1 });
+}
 
 async function sweepStaleJobs() {
   // At SW module-init time the new worker is not running anything yet

@@ -57,11 +57,15 @@ const FORMAT_SUFFIX = `
 - 示例：{"annotations":[{"quote":"...","headline":"点题一句话","detail":"展开 40-80 字","tags":["a","b"]}]}`;
 
 function computeDepth(n) {
+  // Trimmed from the original aggressive counts (e.g. 25-40 on chapters).
+  // Users keep 5-10 annotations even from long form, so generating 25+
+  // candidates wasted tokens *and* doubled wall-clock time without a
+  // proportional quality gain.
   if (n < 4000)  return { lo: 3,  hi: 5,  label: "短文" };
-  if (n < 12000) return { lo: 6,  hi: 10, label: "中等" };
-  if (n < 30000) return { lo: 12, hi: 18, label: "长文" };
-  if (n < 60000) return { lo: 18, hi: 28, label: "深度长文" };
-  return           { lo: 25, hi: 40, label: "超长篇章" };
+  if (n < 12000) return { lo: 5,  hi: 8,  label: "中等" };
+  if (n < 30000) return { lo: 8,  hi: 12, label: "长文" };
+  if (n < 60000) return { lo: 12, hi: 18, label: "深度长文" };
+  return           { lo: 15, hi: 22, label: "超长篇章" };
 }
 
 // Map a genLanguage setting key to a system-prompt suffix.
@@ -441,7 +445,7 @@ export async function getSettings() {
     bigmodelModel: "",
     defaultMode: "general",
     defaultStyle: "",
-    genLanguage: "bilingual",
+    genLanguage: "auto",      // single-language output (follows source language) — bilingual mode doubles output tokens and was the #1 source of slow annotates
     reviewQuality: true,
     genTimeoutMs: 180000,   // 3 minutes per job (default; user-tunable)
   });

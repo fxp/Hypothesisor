@@ -453,13 +453,13 @@
     "message": "What language(s) the LLM writes commentary in. Quotes always stay in the source article's language."
   },
   "lang_bilingual": {
-    "message": "Bilingual 中英 (default)"
+    "message": "Bilingual (Chinese + English, ~2× slower)"
   },
   "lang_auto": {
-    "message": "Auto · match source"
+    "message": "Auto · follow source (default · fastest)"
   },
   "lang_zh": {
-    "message": "中文"
+    "message": "Chinese"
   },
   "lang_en": {
     "message": "English"
