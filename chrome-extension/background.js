@@ -126,14 +126,23 @@ async function startJob(spec) {
 }
 
 async function runJob(job) {
-  await update(job.id, { status: "running", statusText: job.type === "annotate" ? "Generating annotations…" : "Generating Web App…" });
   const settings = await getSettings();
-  // Per-job wall-clock budget. Default 5 minutes. Single AbortController
-  // is shared across every fetch in this job (LLM call, review pass,
-  // postAnnotation, retry) so a single setTimeout aborts everything.
-  const timeoutMs = Math.max(30000, Math.min(3600000, Number(settings.genTimeoutMs) || 180000));
-  const ctrl = new AbortController();
+  // Per-job wall-clock budget. Single AbortController shared across every
+  // fetch in this job (LLM call, review pass, postAnnotation, retry) so
+  // one setTimeout aborts everything. Default 300 s (5 min) — long-form
+  // articles with json_object decoding routinely take 60-180 s on a fast
+  // day, and 180 s budget left zero headroom for slow days.
+  const timeoutMs = Math.max(30000, Math.min(3600000, Number(settings.genTimeoutMs) || 300000));
   const startedAt = Date.now();
+  // Persist startedAt + timeoutMs on the job so the popup can render a
+  // live elapsed/budget progress bar even after SW death/restart.
+  await update(job.id, {
+    status: "running",
+    statusText: job.type === "annotate" ? "Generating annotations…" : "Generating Web App…",
+    startedAt,
+    timeoutMs,
+  });
+  const ctrl = new AbortController();
   const deadline = startedAt + timeoutMs;
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   jobAborters.set(job.id, ctrl);

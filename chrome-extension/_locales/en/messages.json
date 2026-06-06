@@ -475,5 +475,24 @@
   },
   "options_hint_timeout": {
     "message": "Maximum wall-clock time for a single Annotate / Reformat job. When exceeded, in-flight LLM calls are aborted. Range 30–3600. Default 180 (3 min)."
+  },
+  "jobs_progress_elapsed": {
+    "message": "$E$ / $B$",
+    "placeholders": {
+      "e": {
+        "content": "$1"
+      },
+      "b": {
+        "content": "$2"
+      }
+    }
+  },
+  "jobs_progress_overdue": {
+    "message": "$E$ · timing out…",
+    "placeholders": {
+      "e": {
+        "content": "$1"
+      }
+    }
   }
 }

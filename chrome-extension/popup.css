@@ -95,7 +95,23 @@ header a#openOptions:hover, header button.lang-toggle:hover { background: var(--
 }
 .job-item.actionable { cursor: pointer; }
 .job-item.actionable:hover { border-color: #cbd5e1; background: var(--bg-soft); }
-.job-item.running { border-left: 3px solid var(--brand); }
+.job-item.running { border-left: 3px solid var(--brand); flex-wrap: wrap; }
+.job-item .ji-progress {
+  flex-basis: 100%; display: flex; align-items: center; gap: 8px;
+  margin-top: 6px;
+}
+.job-item .ji-progress-bar {
+  flex: 1; height: 4px; background: var(--line); border-radius: 999px; overflow: hidden;
+}
+.job-item .ji-progress-fill {
+  height: 100%; width: 0%; background: var(--brand);
+  border-radius: 999px; transition: width 0.8s linear;
+}
+.job-item .ji-progress-fill.overdue { background: var(--err); }
+.job-item .ji-progress-text {
+  font-size: 10.5px; font-weight: 500; color: var(--mute);
+  font-variant-numeric: tabular-nums; min-width: 78px; text-align: right;
+}
 .job-item.error   { border-left: 3px solid var(--err); background: #fef2f2; }
 .job-item .ji-icon {
   flex-shrink: 0; font-size: 14px; line-height: 1;

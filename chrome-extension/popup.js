@@ -141,6 +141,25 @@ function selectTask(task) {
 // ("focus on cost breakdown", "make it a checklist") — it falls into
 // the LLM as a hint, not a hard category.
 
+// Live timer for running-job elapsed/remaining display. The SW only
+// writes to storage on state transitions, so we tick locally to keep
+// the progress bar advancing every second.
+let _jobsTick = null;
+let _activeJobsCache = [];
+function startJobsTick() {
+  if (_jobsTick) return;
+  _jobsTick = setInterval(() => {
+    if (!_activeJobsCache.length) { stopJobsTick(); return; }
+    for (const job of _activeJobsCache) {
+      const node = document.querySelector(`.job-item[data-job-id="${job.id}"]`);
+      if (node) paintJobProgress(node, job);
+    }
+  }, 1000);
+}
+function stopJobsTick() {
+  if (_jobsTick) { clearInterval(_jobsTick); _jobsTick = null; }
+}
+
 async function refreshJobs() {
   // Show running + recent jobs across both annotate + reformat. Active
   // first (so the user immediately sees what's still cooking), then
@@ -159,6 +178,8 @@ async function refreshJobs() {
   for (const job of list) {
     host.appendChild(renderJobItem(job));
   }
+  _activeJobsCache = list.filter(isActive);
+  if (_activeJobsCache.length) startJobsTick(); else stopJobsTick();
 }
 
 function isActive(job) {
@@ -170,6 +191,7 @@ function renderJobItem(job) {
   const statusClass = job.status === "error" ? "error" : isActive(job) ? "running" : "";
   const actionable = job.status === "done" || job.status === "error";
   item.className = `job-item ${job.type} ${statusClass} ${actionable ? "actionable" : ""}`.trim();
+  item.dataset.jobId = job.id;
 
   const icon = job.type === "annotate" ? "✨" : "🪄";
   const badge = job.type === "annotate" ? "L2" : "L3";
@@ -198,6 +220,12 @@ function renderJobItem(job) {
     const sp = document.createElement("span");
     sp.className = "ji-spinner";
     item.insertBefore(sp, item.querySelector(".ji-time"));
+    // Live elapsed / budget readout + thin progress bar (filled by tick).
+    const prog = document.createElement("div");
+    prog.className = "ji-progress";
+    prog.innerHTML = `<div class="ji-progress-bar"><div class="ji-progress-fill"></div></div><span class="ji-progress-text"></span>`;
+    item.appendChild(prog);
+    paintJobProgress(item, job);
     // Manual cancel — kills both the in-flight fetch (if this SW is
     // still the one running it) and the storage entry. Survives SW
     // restarts because we always rewrite status to error.
@@ -221,6 +249,32 @@ function renderJobItem(job) {
     item.addEventListener("click", () => openJob(job));
   }
   return item;
+}
+
+// Update an active-job item's progress bar + numeric readout. Called
+// once at render time and then every 1 s by the tick.
+function paintJobProgress(item, job) {
+  const fill = item.querySelector(".ji-progress-fill");
+  const text = item.querySelector(".ji-progress-text");
+  if (!fill || !text) return;
+  const startedAt = job.startedAt || job.createdAt || Date.now();
+  const budget = Math.max(1000, job.timeoutMs || 300000);
+  const elapsed = Date.now() - startedAt;
+  const pct = Math.min(100, Math.max(0, (elapsed / budget) * 100));
+  fill.style.width = pct.toFixed(1) + "%";
+  if (elapsed >= budget) {
+    text.textContent = t("jobs_progress_overdue", fmtClockSec(elapsed));
+    fill.classList.add("overdue");
+  } else {
+    text.textContent = t("jobs_progress_elapsed", fmtClockSec(elapsed), fmtClockSec(budget));
+    fill.classList.remove("overdue");
+  }
+}
+function fmtClockSec(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 function subtitleFor(job) {

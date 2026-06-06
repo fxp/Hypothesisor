@@ -473,5 +473,24 @@
   },
   "options_hint_timeout": {
     "message": "单次 Annotate / Reformat 任务的最长时间。超时后会中止正在进行的 LLM 请求。范围 30–3600，默认 180（3 分钟）。"
+  },
+  "jobs_progress_elapsed": {
+    "message": "$E$ / $B$",
+    "placeholders": {
+      "e": {
+        "content": "$1"
+      },
+      "b": {
+        "content": "$2"
+      }
+    }
+  },
+  "jobs_progress_overdue": {
+    "message": "$E$ · 即将超时…",
+    "placeholders": {
+      "e": {
+        "content": "$1"
+      }
+    }
   }
 }
