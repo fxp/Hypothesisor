@@ -178,14 +178,20 @@ async function runJobInner(job, settings, signal, deadline) {
   if (job.type === "annotate") {
     if (!settings.bigmodelKey) throw withCode("MISSING_BIGMODEL_KEY");
     if (!settings.hypothesisToken) throw withCode("MISSING_HYPOTHESIS_TOKEN");
-    const raw = await callGLM({
-      content: job.spec.content, url: job.spec.canonicalUrl,
-      mode: job.spec.mode, style: job.spec.style,
-      apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
-      genLanguage: settings.genLanguage,
-      signal,
-    });
-    await update(job.id, { status: "validating", statusText: "Validating quotes…" });
+    const hb1 = startStageHeartbeat(job.id, "Calling GLM — generating annotation candidates…");
+    let raw;
+    try {
+      raw = await callGLM({
+        content: job.spec.content, url: job.spec.canonicalUrl,
+        mode: job.spec.mode, style: job.spec.style,
+        apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
+        genLanguage: settings.genLanguage,
+        signal,
+      });
+    } finally {
+      clearInterval(hb1);
+    }
+    await update(job.id, { status: "validating", statusText: `Validating ${raw.length} quotes against page text…` });
     const annotations = raw.map((a) => {
       const q = (a.quote || "").trim();
       const ok = validateQuote(job.spec.content, q).found;
@@ -233,26 +239,32 @@ async function runJobInner(job, settings, signal, deadline) {
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       // Don't start a fresh attempt we won't have time to finish (10 s buffer).
       if (attempt > 1 && Date.now() > deadline - 10000) break;
-      await update(job.id, {
-        status: "running",
-        statusText: attempt === 1 ? "Generating Web App…" : `Refining (attempt ${attempt}/${MAX_ATTEMPTS})…`,
-        attempt,
-      });
+      await update(job.id, { status: "running", attempt });
+      const genLabel = attempt === 1
+        ? "Calling GLM — generating Web App…"
+        : `Refining attempt ${attempt}/${MAX_ATTEMPTS} — calling GLM…`;
+      const hbGen = startStageHeartbeat(job.id, genLabel);
       const augmentedHint = attempt === 1
         ? job.spec.customPrompt
         : (job.spec.customPrompt ? job.spec.customPrompt + "\n\n" : "") + lastReviewFeedback;
-      const r = await generateReformat({
-        content: job.spec.content, url: job.spec.canonicalUrl, title: job.spec.title,
-        customPrompt: augmentedHint,
-        apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
-        genLanguage: settings.genLanguage,
-        signal,
-      });
+      let r;
+      try {
+        r = await generateReformat({
+          content: job.spec.content, url: job.spec.canonicalUrl, title: job.spec.title,
+          customPrompt: augmentedHint,
+          apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
+          genLanguage: settings.genLanguage,
+          signal,
+        });
+      } finally {
+        clearInterval(hbGen);
+      }
       // If review is disabled, take the first attempt and skip the loop.
       if (settings.reviewQuality === false) {
         bestResult = r; bestReview = null; break;
       }
-      await update(job.id, { status: "validating", statusText: `Reviewing quality (attempt ${attempt})…` });
+      await update(job.id, { status: "validating" });
+      const hbRev = startStageHeartbeat(job.id, `Reviewing quality (attempt ${attempt}/${MAX_ATTEMPTS})…`);
       const tempReformat = {
         title: r.title, summary: r.summary, appType: r.appType,
         a2ui: r.a2ui, html: r.html,
@@ -265,6 +277,7 @@ async function runJobInner(job, settings, signal, deadline) {
           signal,
         });
       } catch (_) {}
+      clearInterval(hbRev);
       if (!review || review.error) {
         // Reviewer failed — take this attempt and stop retrying.
         bestResult = r; bestReview = review; break;
@@ -316,8 +329,12 @@ async function publishAnnotations(jobId, indices) {
   const list = (job.annotations || []).slice();
   const targets = indices.filter((i) => list[i] && !list[i].invalid && !list[i].posted);
 
+  let done = 0;
   for (const i of targets) {
     const a = list[i];
+    await update(job.id, {
+      statusText: `Posting ${done + 1}/${targets.length}: «${truncate(a.quote, 40)}»…`,
+    });
     try {
       const r = await postAnnotation({
         url: job.spec.canonicalUrl, title: job.spec.title,
@@ -329,8 +346,12 @@ async function publishAnnotations(jobId, indices) {
       a.error = classifyError(e);
     }
     list[i] = a;
+    done++;
     await update(job.id, { annotations: list });
   }
+  // Final summary tagged onto whichever status the job already has.
+  const posted = list.filter((x) => x.posted).length;
+  await update(job.id, { statusText: `Posted ${posted} / ${list.filter((x) => !x.invalid).length}` });
   return { ok: true };
 }
 
@@ -340,6 +361,26 @@ async function update(jobId, patch) {
   const job = await loadJob(jobId);
   if (!job) return;
   await saveJob({ ...job, ...patch, updatedAt: Date.now() });
+}
+
+// Push a rolling statusText while a long-running fetch is in flight so
+// the popup can show "still working" instead of a frozen label.
+//
+// Pattern: caller invokes this BEFORE the long await, gets back an
+// interval id, then clearInterval() in a `finally` after the await.
+// The first immediate update happens synchronously (await-able) so the
+// new label appears even if the fetch resolves under 8 s.
+function startStageHeartbeat(jobId, label) {
+  const startedAt = Date.now();
+  update(jobId, { statusText: label });   // immediate
+  return setInterval(async () => {
+    const sec = Math.floor((Date.now() - startedAt) / 1000);
+    let suffix = "";
+    if (sec >= 120) suffix = ` · ${sec}s — long article, GLM still working`;
+    else if (sec >= 60) suffix = ` · ${sec}s — still working, hang tight`;
+    else if (sec >= 20) suffix = ` · ${sec}s elapsed`;
+    await update(jobId, { statusText: label + suffix });
+  }, 8000);
 }
 
 function fireNotification(jobId, kind, job) {
