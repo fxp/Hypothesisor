@@ -447,7 +447,8 @@ export async function getSettings() {
     defaultStyle: "",
     genLanguage: "auto",      // single-language output (follows source language) — bilingual mode doubles output tokens and was the #1 source of slow annotates
     reviewQuality: true,
-    genTimeoutMs: 180000,   // 3 minutes per job (default; user-tunable)
+    autoPublish: true,        // publish every quote-validated candidate immediately after the annotate run — user can still re-pick and re-publish manually later
+    genTimeoutMs: 300000,     // 5 minutes per job (default; user-tunable)
   });
 }
 

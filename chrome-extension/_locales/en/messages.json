@@ -494,5 +494,11 @@
         "content": "$1"
       }
     }
+  },
+  "options_label_autopublish": {
+    "message": "Auto-publish annotations to Hypothesis"
+  },
+  "options_hint_autopublish": {
+    "message": "When on, every quote-validated candidate is posted automatically as soon as generation finishes — no manual confirmation. Turn off to review and hand-pick each one."
   }
 }

@@ -492,5 +492,11 @@
         "content": "$1"
       }
     }
+  },
+  "options_label_autopublish": {
+    "message": "标注生成后自动发布到 Hypothesis"
+  },
+  "options_hint_autopublish": {
+    "message": "开启时，所有引用通过校验的候选生成后立即发布，无需手动确认。关闭则停在候选列表，由你勾选和点发布。"
   }
 }

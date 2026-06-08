@@ -204,13 +204,43 @@ async function runJobInner(job, settings, signal, deadline) {
       };
     });
     const valid = annotations.filter((a) => !a.invalid).length;
-    await update(job.id, {
-      status: "done",
-      statusText: `${annotations.length} candidates · ${valid} with valid quotes`,
-      annotations,
-      finishedAt: Date.now(),
-    });
-    fireNotification(job.id, "annotate-done", await loadJob(job.id));
+
+    // Auto-publish: by default, post every quote-validated candidate
+    // straight to Hypothesis as soon as the annotate run finishes — no
+    // manual confirmation step. The job stays in "running" state through
+    // the publish loop so the popup keeps showing the spinner + per-item
+    // statusText. Users can opt out via settings.autoPublish = false.
+    const wantsAutoPublish = settings.autoPublish !== false && valid > 0 && !!settings.hypothesisToken;
+    if (wantsAutoPublish) {
+      await update(job.id, {
+        status: "running",
+        statusText: `Publishing ${valid} annotation${valid === 1 ? "" : "s"}…`,
+        annotations,
+      });
+      const validIndices = annotations
+        .map((a, i) => (a.invalid ? -1 : i))
+        .filter((i) => i >= 0);
+      await runPublishLoop(job.id, validIndices, settings, signal, annotations);
+      const finalJob = await loadJob(job.id);
+      const finalList = finalJob.annotations || annotations;
+      const posted = finalList.filter((x) => x.posted).length;
+      await update(job.id, {
+        status: "done",
+        statusText: `Posted ${posted} / ${valid}`,
+        finishedAt: Date.now(),
+      });
+      fireNotification(job.id, "annotate-published", await loadJob(job.id));
+    } else {
+      // Manual mode: surface the candidates and wait for the popup's
+      // "Publish selected" click.
+      await update(job.id, {
+        status: "done",
+        statusText: `${annotations.length} candidates · ${valid} with valid quotes`,
+        annotations,
+        finishedAt: Date.now(),
+      });
+      fireNotification(job.id, "annotate-done", await loadJob(job.id));
+    }
     // Quality review (cheap, async — doesn't block notification).
     if (settings.reviewQuality !== false) {
       reviewAnnotateOutput({
@@ -325,14 +355,28 @@ async function publishAnnotations(jobId, indices) {
   if (!job) throw new Error("Job not found");
   const settings = await getSettings();
   if (!settings.hypothesisToken) throw withCode("MISSING_HYPOTHESIS_TOKEN");
-
   const list = (job.annotations || []).slice();
-  const targets = indices.filter((i) => list[i] && !list[i].invalid && !list[i].posted);
+  await runPublishLoop(jobId, indices, settings, /* signal */ undefined, list);
+  // Final summary tagged onto whichever status the job already has.
+  const finalJob = await loadJob(jobId);
+  const finalList = finalJob.annotations || list;
+  const posted = finalList.filter((x) => x.posted).length;
+  await update(jobId, { statusText: `Posted ${posted} / ${finalList.filter((x) => !x.invalid).length}` });
+  return { ok: true };
+}
 
+// Shared posting loop used by both auto-publish (inside runJobInner) and
+// the manual "Publish selected" path. Iterates targets, writes per-item
+// statusText, persists each result back into the job record. Caller owns
+// terminal status/finishedAt transitions.
+async function runPublishLoop(jobId, indices, settings, signal, list) {
+  const job = await loadJob(jobId);
+  const targets = indices.filter((i) => list[i] && !list[i].invalid && !list[i].posted);
   let done = 0;
   for (const i of targets) {
+    if (signal?.aborted) break;
     const a = list[i];
-    await update(job.id, {
+    await update(jobId, {
       statusText: `Posting ${done + 1}/${targets.length}: «${truncate(a.quote, 40)}»…`,
     });
     try {
@@ -340,6 +384,7 @@ async function publishAnnotations(jobId, indices) {
         url: job.spec.canonicalUrl, title: job.spec.title,
         quote: a.quote, comment: a.comment, tags: a.tags,
         content: job.spec.content, token: settings.hypothesisToken,
+        signal,
       });
       a.posted = true; a.postedUrl = r.url; a.error = null;
     } catch (e) {
@@ -347,12 +392,8 @@ async function publishAnnotations(jobId, indices) {
     }
     list[i] = a;
     done++;
-    await update(job.id, { annotations: list });
+    await update(jobId, { annotations: list });
   }
-  // Final summary tagged onto whichever status the job already has.
-  const posted = list.filter((x) => x.posted).length;
-  await update(job.id, { statusText: `Posted ${posted} / ${list.filter((x) => !x.invalid).length}` });
-  return { ok: true };
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────
@@ -393,6 +434,12 @@ function fireNotification(jobId, kind, job) {
     const valid = (job.annotations || []).filter((a) => !a.invalid).length;
     title = "Annotations ready";
     message = `${valid} candidates from "${truncate(job.sourceTitle || job.sourceHostname, 60)}". Click to review and publish.`;
+  } else if (kind === "annotate-published") {
+    const list = job.annotations || [];
+    const posted = list.filter((a) => a.posted).length;
+    const valid = list.filter((a) => !a.invalid).length;
+    title = "Annotations published";
+    message = `${posted} / ${valid} posted to Hypothesis from "${truncate(job.sourceTitle || job.sourceHostname, 60)}". Click to view on the page.`;
   } else {
     title = "Web App ready";
     message = `"${truncate(job.reformatTitle || job.sourceTitle || job.sourceHostname, 60)}". Click to open.`;
