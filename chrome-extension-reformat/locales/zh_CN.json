@@ -8,30 +8,11 @@
   "popup_settings_title": {
     "message": "设置"
   },
-  "popup_btn_publish": {
-    "message": "发布选中"
-  },
   "status_fetching": {
     "message": "抓取页面正文…"
   },
   "status_need_bigmodel": {
     "message": "请先在设置中填入 BigModel API Key"
-  },
-  "status_publishing": {
-    "message": "发布中：「$QUOTE$」…",
-    "placeholders": {
-      "quote": {
-        "content": "$1"
-      }
-    }
-  },
-  "status_done": {
-    "message": "完成：已发布 $N$ 条",
-    "placeholders": {
-      "n": {
-        "content": "$1"
-      }
-    }
   },
   "status_failed": {
     "message": "失败：$ERR$",
@@ -43,23 +24,6 @@
   },
   "status_short_content": {
     "message": "页面正文过短或无法读取"
-  },
-  "counts_summary": {
-    "message": "$SEL$ 选中 · $POSTED$ 已发布 · $TOTAL$ 生成",
-    "placeholders": {
-      "sel": {
-        "content": "$1"
-      },
-      "posted": {
-        "content": "$2"
-      },
-      "total": {
-        "content": "$3"
-      }
-    }
-  },
-  "ann_quote_missing": {
-    "message": "引用未在当前页面正文中找到，已跳过"
   },
   "page_no_title": {
     "message": "（无标题）"
@@ -259,15 +223,6 @@
   },
   "status_reformat_truncated": {
     "message": "完成。模型输出被截断 —— 已尽力渲染部分 app，若效果不全请换简单点的形态再试。"
-  },
-  "review_select_all": {
-    "message": "全选"
-  },
-  "review_select_none": {
-    "message": "清空"
-  },
-  "review_not_found": {
-    "message": "找不到该任务。"
   },
   "jobs_recent": {
     "message": "任务"

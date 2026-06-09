@@ -3,7 +3,7 @@
 // the review page all see the same state.
 //
 // Lifecycle: pending → running → (validating →) done | error
-// The bg worker writes status updates; popup + review.html listen
+// The bg worker writes status updates; popup listens
 // via chrome.storage.onChanged.
 
 const STORAGE_KEY = "jobs";

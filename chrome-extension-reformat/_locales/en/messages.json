@@ -10,30 +10,11 @@
   "popup_settings_title": {
     "message": "Settings"
   },
-  "popup_btn_publish": {
-    "message": "Publish selected"
-  },
   "status_fetching": {
     "message": "Fetching page text…"
   },
   "status_need_bigmodel": {
     "message": "Please configure your BigModel API key in Settings."
-  },
-  "status_publishing": {
-    "message": "Publishing: «$QUOTE$»…",
-    "placeholders": {
-      "quote": {
-        "content": "$1"
-      }
-    }
-  },
-  "status_done": {
-    "message": "Done. Published $N$ annotations.",
-    "placeholders": {
-      "n": {
-        "content": "$1"
-      }
-    }
   },
   "status_failed": {
     "message": "Failed: $ERR$",
@@ -45,23 +26,6 @@
   },
   "status_short_content": {
     "message": "Page text is too short or unreadable."
-  },
-  "counts_summary": {
-    "message": "$SEL$ selected · $POSTED$ published · $TOTAL$ generated",
-    "placeholders": {
-      "sel": {
-        "content": "$1"
-      },
-      "posted": {
-        "content": "$2"
-      },
-      "total": {
-        "content": "$3"
-      }
-    }
-  },
-  "ann_quote_missing": {
-    "message": "Quote not found in page text — skipped."
   },
   "page_no_title": {
     "message": "(no title)"
@@ -261,15 +225,6 @@
   },
   "status_reformat_truncated": {
     "message": "Done. Output was truncated mid-stream — rendering partial app (try a simpler format if it looks broken)."
-  },
-  "review_select_all": {
-    "message": "Select all"
-  },
-  "review_select_none": {
-    "message": "Clear"
-  },
-  "review_not_found": {
-    "message": "Job not found."
   },
   "jobs_recent": {
     "message": "Jobs"
