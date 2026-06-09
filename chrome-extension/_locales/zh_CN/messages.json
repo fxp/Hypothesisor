@@ -175,9 +175,6 @@
   "options_saved": {
     "message": "已保存"
   },
-  "required": {
-    "message": "*"
-  },
   "error_not_scriptable": {
     "message": "这类页面（chrome://、file://、Chrome 商店、扩展自身页面等）扩展无权访问。请在普通 https:// 网页上试用。"
   },
@@ -300,86 +297,6 @@
   "success_view_on_page": {
     "message": "打开原页面 →"
   },
-  "task_annotate": {
-    "message": "标注"
-  },
-  "task_annotate_sub": {
-    "message": "L2 · 划重点"
-  },
-  "task_reformat": {
-    "message": "重塑"
-  },
-  "task_reformat_sub": {
-    "message": "L3 · 换形态"
-  },
-  "popup_label_format": {
-    "message": "Reformat 提示"
-  },
-  "popup_format_help": {
-    "message": "作为额外提示传给模型。留空则由模型自己挑最合适的形态。"
-  },
-  "popup_format_reset": {
-    "message": "重置"
-  },
-  "popup_format_preset": {
-    "message": "做成信息密度高的 dashboard：优先用 KPI 数字、图表、地图、对比表、时间线等可视化与可交互形态，少用 Card + Text 罗列。拉出 1-2 个最核心的洞察；可调参数做成可交互。"
-  },
-  "format_tldr": {
-    "message": "📝 摘要"
-  },
-  "format_qa": {
-    "message": "💬 问答"
-  },
-  "format_cards": {
-    "message": "🃏 卡片"
-  },
-  "format_checklist": {
-    "message": "✅ 行动清单"
-  },
-  "format_custom": {
-    "message": "✏️ 自定义"
-  },
-  "popup_format_placeholder": {
-    "message": "希望生成什么样的 Web App？可以自由编辑，留空则交给模型决定。"
-  },
-  "popup_btn_reformat": {
-    "message": "🪄 重塑当前页面"
-  },
-  "status_reformat_calling": {
-    "message": "正文 $CHARS$ 字符，正在生成新形态…",
-    "placeholders": {
-      "chars": {
-        "content": "$1"
-      }
-    }
-  },
-  "status_reformat_done": {
-    "message": "完成。已在当前页面渲染生成的 app。"
-  },
-  "status_format_need_prompt": {
-    "message": "请先在输入框里描述你想要的形态"
-  },
-  "reformat_recent": {
-    "message": "最近的重塑"
-  },
-  "output_open_source": {
-    "message": "打开原文"
-  },
-  "output_regenerate": {
-    "message": "重新生成"
-  },
-  "output_loading": {
-    "message": "加载中…"
-  },
-  "output_not_found": {
-    "message": "找不到该重塑结果。"
-  },
-  "output_footer": {
-    "message": "由 Hypothesisor 生成 · L3 生成式 App 层"
-  },
-  "just_now": {
-    "message": "刚刚"
-  },
   "options_label_endpoint": {
     "message": "LLM 接口地址（进阶）"
   },
@@ -391,27 +308,6 @@
   },
   "options_hint_model": {
     "message": "例如 glm-4-plus（默认）· glm-4-flash（快速便宜）· deepseek-chat · moonshot-v1-8k"
-  },
-  "output_open_in_tab": {
-    "message": "在新标签页打开"
-  },
-  "overlay_close": {
-    "message": "关闭（Esc）"
-  },
-  "status_reformat_done_tab": {
-    "message": "完成。已在新标签页打开。"
-  },
-  "status_reformat_truncated": {
-    "message": "完成。模型输出被截断 —— 已尽力渲染部分 app，若效果不全请换简单点的形态再试。"
-  },
-  "review_select_all": {
-    "message": "全选"
-  },
-  "review_select_none": {
-    "message": "清空"
-  },
-  "review_not_found": {
-    "message": "找不到该任务。"
   },
   "jobs_recent": {
     "message": "任务"
@@ -437,9 +333,6 @@
         "content": "$2"
       }
     }
-  },
-  "jobs_subtitle_reformat_done": {
-    "message": "Web App 已就绪 · 点击打开"
   },
   "jobs_cancel_title": {
     "message": "取消任务"

@@ -1,94 +1,21 @@
 {
   "extName": {
-    "message": "Hypothesisor"
+    "message": "Reframe"
   },
   "extDesc": {
-    "message": "用 GLM 读懂当前网页，一键在 Hypothesis 上生成高质量标注。BYO key，纯前端，开源。"
+    "message": "把任意网页重塑成聚焦的交互 Web App。BYO key，纯前端，开源。"
   },
   "popup_settings_title": {
     "message": "设置"
   },
-  "popup_label_mode": {
-    "message": "模式"
-  },
-  "popup_label_style": {
-    "message": "风格"
-  },
-  "popup_style_placeholder": {
-    "message": "描述你的标注偏好"
-  },
-  "popup_btn_generate": {
-    "message": "✨ 标注当前页面"
-  },
   "popup_btn_publish": {
     "message": "发布选中"
-  },
-  "mode_general": {
-    "message": "通用"
-  },
-  "mode_academic": {
-    "message": "学术"
-  },
-  "mode_news": {
-    "message": "新闻"
-  },
-  "mode_tech": {
-    "message": "技术"
-  },
-  "popup_style_default": {
-    "message": "🎯 默认"
-  },
-  "popup_style_custom": {
-    "message": "✏️ 自定义"
-  },
-  "style_non_consensus": {
-    "message": "🤔 非共识"
-  },
-  "style_data": {
-    "message": "📊 数据"
-  },
-  "style_actionable": {
-    "message": "⚡ 可执行"
-  },
-  "style_gold_sentences": {
-    "message": "💎 金句"
-  },
-  "style_critique": {
-    "message": "🔍 批判"
-  },
-  "style_surprise": {
-    "message": "🤯 惊喜事实"
   },
   "status_fetching": {
     "message": "抓取页面正文…"
   },
   "status_need_bigmodel": {
     "message": "请先在设置中填入 BigModel API Key"
-  },
-  "status_need_token": {
-    "message": "请先在设置中填入 Hypothesis Token"
-  },
-  "status_need_token_publish": {
-    "message": "请先在设置中配置 Hypothesis Token"
-  },
-  "status_calling_llm": {
-    "message": "正文 $CHARS$ 字符，调用 GLM 生成标注…",
-    "placeholders": {
-      "chars": {
-        "content": "$1"
-      }
-    }
-  },
-  "status_generated": {
-    "message": "生成 $TOTAL$ 条，$VALID$ 条引用有效",
-    "placeholders": {
-      "total": {
-        "content": "$1"
-      },
-      "valid": {
-        "content": "$2"
-      }
-    }
   },
   "status_publishing": {
     "message": "发布中：「$QUOTE$」…",
@@ -138,13 +65,7 @@
     "message": "（无标题）"
   },
   "options_h1": {
-    "message": "Hypothesisor 设置"
-  },
-  "options_label_token": {
-    "message": "Hypothesis Token"
-  },
-  "options_hint_token": {
-    "message": "到 "
+    "message": "Reframe 设置"
   },
   "options_label_bigmodel": {
     "message": "BigModel API Key"
@@ -156,18 +77,6 @@
         "content": "$1"
       }
     }
-  },
-  "options_label_mode": {
-    "message": "默认模式"
-  },
-  "options_label_style": {
-    "message": "默认风格"
-  },
-  "options_hint_style": {
-    "message": "预置 key（non-consensus / data / actionable / gold-sentences / critique / surprise）或任意自定义描述；留空用 mode 默认。"
-  },
-  "options_style_placeholder": {
-    "message": "例如：具有洞察的观点或者令人惊讶的事实"
   },
   "options_btn_save": {
     "message": "保存"
@@ -280,22 +189,52 @@
   "ctx_bigmodel": {
     "message": "BigModel"
   },
-  "ctx_hypothesis": {
-    "message": "Hypothesis"
+  "popup_label_format": {
+    "message": "Reformat 提示"
   },
-  "success_published_title": {
-    "message": "已发布 $N$ 条标注",
+  "popup_format_help": {
+    "message": "作为额外提示传给模型。留空则由模型自己挑最合适的形态。"
+  },
+  "popup_format_reset": {
+    "message": "重置"
+  },
+  "popup_format_preset": {
+    "message": "做成信息密度高的 dashboard：优先用 KPI 数字、图表、地图、对比表、时间线等可视化与可交互形态，少用 Card + Text 罗列。拉出 1-2 个最核心的洞察；可调参数做成可交互。"
+  },
+  "popup_format_placeholder": {
+    "message": "希望生成什么样的 Web App？可以自由编辑，留空则交给模型决定。"
+  },
+  "popup_btn_reformat": {
+    "message": "🪄 重塑当前页面"
+  },
+  "status_reformat_calling": {
+    "message": "正文 $CHARS$ 字符，正在生成新形态…",
     "placeholders": {
-      "n": {
+      "chars": {
         "content": "$1"
       }
     }
   },
-  "success_published_body": {
-    "message": "装上 Hypothesis 浏览器插件后回到原页面，标注会直接叠加显示"
+  "status_reformat_done": {
+    "message": "完成。已在当前页面渲染生成的 app。"
   },
-  "success_view_on_page": {
-    "message": "打开原页面 →"
+  "output_open_source": {
+    "message": "打开原文"
+  },
+  "output_regenerate": {
+    "message": "重新生成"
+  },
+  "output_loading": {
+    "message": "加载中…"
+  },
+  "output_not_found": {
+    "message": "找不到该重塑结果。"
+  },
+  "output_footer": {
+    "message": "由 Hypothesisor 生成 · L3 生成式 App 层"
+  },
+  "just_now": {
+    "message": "刚刚"
   },
   "options_label_endpoint": {
     "message": "LLM 接口地址（进阶）"
@@ -309,30 +248,32 @@
   "options_hint_model": {
     "message": "例如 glm-4-plus（默认）· glm-4-flash（快速便宜）· deepseek-chat · moonshot-v1-8k"
   },
+  "output_open_in_tab": {
+    "message": "在新标签页打开"
+  },
+  "overlay_close": {
+    "message": "关闭（Esc）"
+  },
+  "status_reformat_done_tab": {
+    "message": "完成。已在新标签页打开。"
+  },
+  "status_reformat_truncated": {
+    "message": "完成。模型输出被截断 —— 已尽力渲染部分 app，若效果不全请换简单点的形态再试。"
+  },
+  "review_select_all": {
+    "message": "全选"
+  },
+  "review_select_none": {
+    "message": "清空"
+  },
+  "review_not_found": {
+    "message": "找不到该任务。"
+  },
   "jobs_recent": {
     "message": "任务"
   },
-  "jobs_subtitle_annotate_done": {
-    "message": "$VALID$/$TOTAL$ 条候选 · 点击审核",
-    "placeholders": {
-      "valid": {
-        "content": "$1"
-      },
-      "total": {
-        "content": "$2"
-      }
-    }
-  },
-  "jobs_subtitle_annotate_posted": {
-    "message": "$POSTED$/$VALID$ 已发布 · 点击审核",
-    "placeholders": {
-      "posted": {
-        "content": "$1"
-      },
-      "valid": {
-        "content": "$2"
-      }
-    }
+  "jobs_subtitle_reformat_done": {
+    "message": "Web App 已就绪 · 点击打开"
   },
   "jobs_cancel_title": {
     "message": "取消任务"
@@ -385,11 +326,5 @@
         "content": "$1"
       }
     }
-  },
-  "options_label_autopublish": {
-    "message": "标注生成后自动发布到 Hypothesis"
-  },
-  "options_hint_autopublish": {
-    "message": "开启时，所有引用通过校验的候选生成后立即发布，无需手动确认。关闭则停在候选列表，由你勾选和点发布。"
   }
 }

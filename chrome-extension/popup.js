@@ -1,7 +1,5 @@
 import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
-import { generateReformat, saveReformat, loadAll as loadAllReformats, loadReformat, newId, buildIframeSrcdoc } from "./lib/reformat.js";
-import { showInPageOverlay } from "./lib/overlay.js";
 import { loadAllJobs } from "./lib/jobs.js";
 
 // $ and syncLangToggleLabel must be defined BEFORE top-level await so
@@ -10,70 +8,14 @@ import { loadAllJobs } from "./lib/jobs.js";
 // would throw a ReferenceError and abort the whole module, preventing
 // every event listener below from attaching.
 const $ = (id) => document.getElementById(id);
-let state = { tab: null, content: "", annotations: [], task: "annotate" };
+let state = { tab: null, content: "", annotations: [] };
 
 function syncLangToggleLabel() {
-  // Button shows the language you'd switch TO, not the current one.
   $("langToggle").textContent = getCurrentLanguage() === "zh_CN" ? "EN" : "中";
 }
 
 await initI18n();
 syncLangToggleLabel();
-showVersionTag();
-
-function showVersionTag() {
-  const v = chrome.runtime.getManifest().version;
-  const el = $("versionTag");
-  if (!el) return;
-  el.textContent = "v" + v;
-  el.addEventListener("click", () => checkForUpdate(v));
-}
-
-async function checkForUpdate(currentVersion) {
-  const el = $("versionTag");
-  el.textContent = "checking…";
-  try {
-    // Try the GitHub releases API; fall back to manifest on the main branch.
-    let latest = null;
-    try {
-      const r = await fetch("https://api.github.com/repos/fxp/Hypothesisor/releases/latest", { cache: "no-store" });
-      if (r.ok) {
-        const d = await r.json();
-        latest = (d.tag_name || "").replace(/^v/, "");
-      }
-    } catch (_) {}
-    if (!latest) {
-      const r = await fetch("https://raw.githubusercontent.com/fxp/Hypothesisor/main/chrome-extension/manifest.json", { cache: "no-store" });
-      if (r.ok) {
-        const m = await r.json();
-        latest = m.version;
-      }
-    }
-    if (!latest) { el.textContent = "v" + currentVersion; el.title = "Couldn't reach GitHub"; return; }
-    if (compareSemver(latest, currentVersion) > 0) {
-      el.textContent = `v${currentVersion} → v${latest}`;
-      el.classList.add("update-available");
-      el.title = "Update available — click to view release";
-      el.onclick = () => chrome.tabs.create({ url: "https://github.com/fxp/Hypothesisor/releases" });
-    } else {
-      el.textContent = "v" + currentVersion + " · latest";
-      el.title = "You're on the latest version";
-      setTimeout(() => { el.textContent = "v" + currentVersion; }, 2500);
-    }
-  } catch (e) {
-    el.textContent = "v" + currentVersion;
-  }
-}
-
-function compareSemver(a, b) {
-  const pa = a.split(".").map(Number);
-  const pb = b.split(".").map(Number);
-  for (let i = 0; i < 3; i++) {
-    if ((pa[i] || 0) > (pb[i] || 0)) return 1;
-    if ((pa[i] || 0) < (pb[i] || 0)) return -1;
-  }
-  return 0;
-}
 
 async function init() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -97,50 +39,10 @@ async function init() {
   } else {
     selectChip("");
   }
-  await loadFormatHint();
   await refreshJobs();
 }
 
-// ── Reformat hint ─────────────────────────────────────────────────
-// Pre-fill the L3 hint textarea with a quality preset so the LLM gets
-// a strong steer by default. User edits persist via chrome.storage so
-// they don't have to retype every time the popup opens. Reset restores
-// the bundled preset (in the active language).
-async function loadFormatHint() {
-  const { customPromptL3 = "" } = await chrome.storage.local.get({ customPromptL3: "" });
-  // Empty stored value → show the preset. Whitespace-only stored value
-  // also reverts (safe default; the user can always clear again).
-  const initial = customPromptL3.trim() ? customPromptL3 : t("popup_format_preset");
-  $("formatCustom").value = initial;
-}
-$("formatReset").addEventListener("click", () => {
-  $("formatCustom").value = t("popup_format_preset");
-  $("formatCustom").focus();
-});
-
-function selectTask(task) {
-  state.task = task;
-  for (const tab of document.querySelectorAll(".task-tab")) {
-    const on = tab.dataset.task === task;
-    tab.classList.toggle("active", on);
-    tab.setAttribute("aria-selected", on ? "true" : "false");
-  }
-  $("styleRow").hidden = task !== "annotate";
-  $("formatRow").hidden = task !== "reformat";
-  $("publishAll").hidden = task !== "annotate";
-  $("counts").hidden = task !== "annotate";
-  // Swap primary button label.
-  $("generate").textContent = t(task === "annotate" ? "popup_btn_generate" : "popup_btn_reformat");
-  // Recent list only relevant for reformat.
-  refreshJobs();
-}
-
-// L3 has no format presets — every reformat aims for "rich, minimal,
-// interactive presentation of core viewpoints". The custom-prompt
-// input below the action button is purely for optional steering
-// ("focus on cost breakdown", "make it a checklist") — it falls into
-// the LLM as a hint, not a hard category.
-
+// ── Jobs panel ────────────────────────────────────────────────────
 // Live timer for running-job elapsed/remaining display. The SW only
 // writes to storage on state transitions, so we tick locally to keep
 // the progress bar advancing every second.
@@ -161,11 +63,12 @@ function stopJobsTick() {
 }
 
 async function refreshJobs() {
-  // Show running + recent jobs across both annotate + reformat. Active
-  // first (so the user immediately sees what's still cooking), then
-  // recently-finished, capped at 8.
   const all = await loadAllJobs();
-  const sorted = all.slice().sort((a, b) => {
+  // Annotate-only build: ignore any straggler reformat jobs from a
+  // pre-split install — they'd render with no badge/score and would
+  // confuse the user.
+  const mine = all.filter((j) => j.type === "annotate");
+  const sorted = mine.slice().sort((a, b) => {
     const aActive = isActive(a) ? 0 : 1;
     const bActive = isActive(b) ? 0 : 1;
     if (aActive !== bActive) return aActive - bActive;
@@ -175,9 +78,7 @@ async function refreshJobs() {
   $("jobsPanel").hidden = list.length === 0;
   const host = $("jobsList");
   host.innerHTML = "";
-  for (const job of list) {
-    host.appendChild(renderJobItem(job));
-  }
+  for (const job of list) host.appendChild(renderJobItem(job));
   _activeJobsCache = list.filter(isActive);
   if (_activeJobsCache.length) startJobsTick(); else stopJobsTick();
 }
@@ -190,12 +91,10 @@ function renderJobItem(job) {
   const item = document.createElement("div");
   const statusClass = job.status === "error" ? "error" : isActive(job) ? "running" : "";
   const actionable = job.status === "done" || job.status === "error";
-  item.className = `job-item ${job.type} ${statusClass} ${actionable ? "actionable" : ""}`.trim();
+  item.className = `job-item annotate ${statusClass} ${actionable ? "actionable" : ""}`.trim();
   item.dataset.jobId = job.id;
 
-  const icon = job.type === "annotate" ? "✨" : "🪄";
-  const badge = job.type === "annotate" ? "L2" : "L3";
-  const title = job.sourceTitle || job.reformatTitle || job.sourceHostname || "(untitled)";
+  const title = job.sourceTitle || job.sourceHostname || "(untitled)";
   const subtitle = subtitleFor(job);
   const time = fmtRelativeMin(job.updatedAt || job.createdAt || Date.now());
 
@@ -204,8 +103,7 @@ function renderJobItem(job) {
     ? `<span class="ji-score ji-score--${scoreClass(score)}" title="${escape(reviewSummaryText(job.review))}">${score}/10</span>`
     : "";
   item.innerHTML = `
-    <span class="ji-icon">${escape(icon)}</span>
-    <span class="ji-badge">${badge}</span>
+    <span class="ji-icon">✨</span>
     <span class="ji-body">
       <span class="ji-title"></span>
       <span class="ji-status"></span>
@@ -220,15 +118,11 @@ function renderJobItem(job) {
     const sp = document.createElement("span");
     sp.className = "ji-spinner";
     item.insertBefore(sp, item.querySelector(".ji-time"));
-    // Live elapsed / budget readout + thin progress bar (filled by tick).
     const prog = document.createElement("div");
     prog.className = "ji-progress";
     prog.innerHTML = `<div class="ji-progress-bar"><div class="ji-progress-fill"></div></div><span class="ji-progress-text"></span>`;
     item.appendChild(prog);
     paintJobProgress(item, job);
-    // Manual cancel — kills both the in-flight fetch (if this SW is
-    // still the one running it) and the storage entry. Survives SW
-    // restarts because we always rewrite status to error.
     const x = document.createElement("button");
     x.type = "button";
     x.className = "ji-cancel";
@@ -237,22 +131,18 @@ function renderJobItem(job) {
     x.addEventListener("click", async (e) => {
       e.stopPropagation();
       x.disabled = true;
-      try {
-        await chrome.runtime.sendMessage({ type: "cancelJob", jobId: job.id });
-      } catch (_) {}
+      try { await chrome.runtime.sendMessage({ type: "cancelJob", jobId: job.id }); } catch (_) {}
       refreshJobs();
     });
     item.appendChild(x);
   }
 
-  if (actionable) {
+  if (actionable && job.status === "done") {
     item.addEventListener("click", () => openJob(job));
   }
   return item;
 }
 
-// Update an active-job item's progress bar + numeric readout. Called
-// once at render time and then every 1 s by the tick.
 function paintJobProgress(item, job) {
   const fill = item.querySelector(".ji-progress-fill");
   const text = item.querySelector(".ji-progress-text");
@@ -280,47 +170,19 @@ function fmtClockSec(ms) {
 function subtitleFor(job) {
   if (job.status === "error") return job.statusText || "error";
   if (isActive(job)) return job.statusText || "Working…";
-  if (job.type === "annotate") {
-    const total = (job.annotations || []).length;
-    const valid = (job.annotations || []).filter((a) => !a.invalid).length;
-    const posted = (job.annotations || []).filter((a) => a.posted).length;
-    const summary = posted > 0
-      ? t("jobs_subtitle_annotate_posted", String(posted), String(valid))
-      : t("jobs_subtitle_annotate_done", String(valid), String(total));
-    return summary;
-  }
-  // reformat done
-  return job.reformatAppType
-    ? `${String(job.reformatAppType).toUpperCase()} · ${t("jobs_subtitle_reformat_done")}`
-    : t("jobs_subtitle_reformat_done");
+  const total = (job.annotations || []).length;
+  const valid = (job.annotations || []).filter((a) => !a.invalid).length;
+  const posted = (job.annotations || []).filter((a) => a.posted).length;
+  return posted > 0
+    ? t("jobs_subtitle_annotate_posted", String(posted), String(valid))
+    : t("jobs_subtitle_annotate_done", String(valid), String(total));
 }
 
-async function openJob(job) {
-  if (job.type === "annotate") {
-    chrome.tabs.create({ url: chrome.runtime.getURL(`review.html?job=${encodeURIComponent(job.id)}`) });
-    return;
-  }
-  // reformat — A2UI envelopes need extension context for renderer +
-  // interactivity, so they always open in a new tab. Legacy HTML
-  // reformats can still ride the in-page Shadow DOM overlay.
-  if (job.reformatId) {
-    try {
-      const r = await loadReformat(job.reformatId);
-      if (r && Array.isArray(r.a2ui)) {
-        chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
-        return;
-      }
-      if (r && state.tab) {
-        await showInPageOverlay(state.tab.id, r, buildIframeSrcdoc(r), {
-          openInTab: t("output_open_in_tab"),
-          close: t("overlay_close"),
-        });
-        window.close();
-        return;
-      }
-    } catch (_) {}
-    chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
-  }
+function openJob(job) {
+  // Reopen the source page so the Hypothesis client can overlay the
+  // posted annotations. The user can also retrieve them at
+  // https://hypothes.is/users/<their-account>.
+  if (job.sourceUrl) chrome.tabs.create({ url: job.sourceUrl });
 }
 
 function scoreClass(score) {
@@ -404,11 +266,9 @@ $("langToggle").addEventListener("click", async () => {
   const next = getCurrentLanguage() === "zh_CN" ? "en" : "zh_CN";
   await setLanguage(next);
   syncLangToggleLabel();
-  // Re-render dynamic content that doesn't carry data-i18n attributes.
   if (state.tab) $("pageTitle").textContent = state.tab.title || t("page_no_title");
   if (state.annotations.length) render();
-  // Re-sync labels that selectTask overrides (primary button) + refresh recent list.
-  selectTask(state.task);
+  refreshJobs();
 });
 
 $("styleChips").addEventListener("click", (e) => {
@@ -420,11 +280,6 @@ $("modePills").addEventListener("click", (e) => {
   const pill = e.target.closest(".pill");
   if (pill) selectMode(pill.dataset.mode);
 });
-
-document.querySelectorAll(".task-tab").forEach((tab) => {
-  tab.addEventListener("click", () => selectTask(tab.dataset.task));
-});
-
 
 $("successToastClose").addEventListener("click", () => hideSuccessToast());
 
@@ -486,7 +341,6 @@ function escape(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
-// Render a small subset of Markdown safely: **bold**, *italic*, paragraphs from blank lines.
 function renderMarkdown(s) {
   const paras = String(s).trim().split(/\n\s*\n/);
   return paras
@@ -517,51 +371,27 @@ $("generate").addEventListener("click", async () => {
     state.content = extracted.text || "";
     state.canonicalUrl = extracted.url || state.tab.url;
     state.title = extracted.title || state.tab.title || "";
-    if (!state.content || state.content.length < 100) {
-      throw new Error(t("status_short_content"));
-    }
-    const settings = await getSettings();
-    const { bigmodelKey, hypothesisToken } = settings;
+    if (!state.content || state.content.length < 100) throw new Error(t("status_short_content"));
+    const { bigmodelKey, hypothesisToken } = await getSettings();
 
-    // Pre-flight: check key availability before queuing work in bg.
-    if (state.task === "annotate") {
-      const missing = [];
-      if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
-      if (!hypothesisToken) missing.push(t("status_need_token"));
-      if (missing.length) { setStatus(missing.join("  ·  "), "error"); return; }
-    } else {
-      if (!bigmodelKey) { setStatus(t("status_need_bigmodel"), "error"); return; }
-    }
+    const missing = [];
+    if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
+    if (!hypothesisToken) missing.push(t("status_need_token"));
+    if (missing.length) { setStatus(missing.join("  ·  "), "error"); return; }
 
-    let customPrompt = null;
-    if (state.task === "reformat") {
-      customPrompt = $("formatCustom").value.trim() || null;
-      // Persist so the next popup open shows the same hint instead of
-      // snapping back to the preset. Empty value persists too — that's
-      // the user's deliberate "no hint" choice.
-      await chrome.storage.local.set({ customPromptL3: customPrompt || "" });
-    }
-
-    // Hand off to the service worker. It runs the LLM call detached
-    // from the popup, persists status to chrome.storage, and fires a
-    // notification when done — so the user can close the popup and
-    // come back via the toast in the OS notification center.
     const spec = {
-      type: state.task,
+      type: "annotate",
       tabId: state.tab.id,
       canonicalUrl: state.canonicalUrl,
       title: state.title,
       content: state.content,
       mode: state.mode,
       style: resolveStyle(),
-      customPrompt,
     };
     const { jobId, error } = await chrome.runtime.sendMessage({ type: "startJob", spec });
     if (error) throw new Error(error);
     state.activeJobId = jobId;
-    setStatus(state.task === "annotate"
-      ? t("status_calling_llm", String(state.content.length))
-      : t("status_reformat_calling", String(state.content.length)));
+    setStatus(t("status_calling_llm", String(state.content.length)));
   } catch (e) {
     setStatus(t("status_failed", formatError(e)), "error");
   } finally {
@@ -569,16 +399,9 @@ $("generate").addEventListener("click", async () => {
   }
 });
 
-// React to live job state changes — popup updates progress, then either
-// renders annotations inline (annotate done) or triggers the in-page
-// overlay (reformat done) and closes itself.
 chrome.storage.onChanged.addListener(async (changes, area) => {
   if (area !== "local" || !changes.jobs) return;
-  // Always re-render the visible jobs panel — every job's status / count
-  // updates show up live, not just the one this popup just submitted.
   refreshJobs();
-  // Plus drive the inline annotate-results / reformat-overlay flow when
-  // the popup happens to be the one that submitted the active job.
   const job = (changes.jobs.newValue || []).find((j) => j.id === state.activeJobId);
   if (!job) return;
   await onJobUpdate(job);
@@ -594,47 +417,22 @@ async function onJobUpdate(job) {
     return;
   }
   // status === "done"
-  if (job.type === "annotate") {
-    state.annotations = (job.annotations || []).map((a) => ({ ...a }));
-    const valid = state.annotations.filter((a) => !a.invalid).length;
-    setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
-    render();
+  state.annotations = (job.annotations || []).map((a) => ({ ...a }));
+  const valid = state.annotations.filter((a) => !a.invalid).length;
+  const posted = state.annotations.filter((a) => a.posted).length;
+  if (posted > 0) {
+    // Auto-publish path completed — celebrate.
+    setStatus(t("status_done", String(posted)), "success");
+    showSuccessToast(posted);
   } else {
-    // Reformat — A2UI envelopes always open in a new tab (need extension
-    // context for renderer + interactivity). Legacy HTML reformats
-    // overlay on the source tab.
-    try {
-      const { loadReformat, buildIframeSrcdoc } = await import("./lib/reformat.js");
-      const reformat = await loadReformat(job.reformatId);
-      if (reformat && Array.isArray(reformat.a2ui)) {
-        chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
-        setStatus(job.truncated ? t("status_reformat_truncated") : t("status_reformat_done_tab"), "success");
-        window.close();
-        return;
-      }
-      if (reformat && state.tab) {
-        await showInPageOverlay(state.tab.id, reformat, buildIframeSrcdoc(reformat), {
-          openInTab: t("output_open_in_tab"),
-          close: t("overlay_close"),
-        });
-        setStatus(job.truncated ? t("status_reformat_truncated") : t("status_reformat_done"), "success");
-        window.close();
-        return;
-      }
-    } catch (_) {
-      chrome.tabs.create({ url: chrome.runtime.getURL(`output.html?id=${encodeURIComponent(job.reformatId)}`) });
-    }
-    setStatus(job.truncated ? t("status_reformat_truncated") : t("status_reformat_done_tab"), "success");
-    refreshJobs();
+    setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
   }
+  render();
 }
 
 $("publishAll").addEventListener("click", async () => {
   const { hypothesisToken } = await getSettings();
-  if (!hypothesisToken) {
-    setStatus(t("status_need_token_publish"), "error");
-    return;
-  }
+  if (!hypothesisToken) { setStatus(t("status_need_token_publish"), "error"); return; }
   $("publishAll").disabled = true;
   const pending = state.annotations.filter((a) => a.selected && !a.invalid && !a.posted);
   for (const a of pending) {
@@ -649,10 +447,7 @@ $("publishAll").addEventListener("click", async () => {
         content: state.content,
         token: hypothesisToken,
       });
-      a.posted = true;
-      a.postedUrl = url;
-      a.selected = false;
-      a.error = null;
+      a.posted = true; a.postedUrl = url; a.selected = false; a.error = null;
     } catch (e) {
       a.error = formatError(e);
     }

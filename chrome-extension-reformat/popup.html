@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Reframe</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1 data-i18n="extName">Reframe</h1>
+    <div class="header-tools">
+      <button id="langToggle" type="button" class="lang-toggle" title="Switch language">中</button>
+      <a id="openOptions" href="#" data-i18n-title="popup_settings_title" title="Settings">⚙</a>
+    </div>
+  </header>
+
+  <section class="target">
+    <div id="pageTitle" class="muted">—</div>
+    <div id="pageUrl" class="url muted"></div>
+  </section>
+
+  <section class="controls">
+    <div class="format-hint" id="formatRow">
+      <div class="format-hint-head">
+        <span class="format-hint-label" data-i18n="popup_label_format">Reformat hint</span>
+        <button type="button" id="formatReset" class="format-hint-reset" data-i18n="popup_format_reset" title="Restore preset">Reset</button>
+      </div>
+      <textarea id="formatCustom" rows="4" spellcheck="false"
+        data-i18n-placeholder="popup_format_placeholder"
+        placeholder="What kind of Web App do you want? Edit freely or clear to let the model decide."></textarea>
+      <div class="format-hint-help" data-i18n="popup_format_help">Sent to the model as a steer. Leave blank to let the model pick the best shape on its own.</div>
+    </div>
+  </section>
+
+  <div class="action-row">
+    <button id="generate" class="primary action" data-i18n="popup_btn_reformat">🪄 Reformat this page</button>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <section id="jobsPanel" class="jobs-panel" hidden>
+    <div class="jobs-panel-label" data-i18n="jobs_recent">Jobs</div>
+    <div id="jobsList" class="jobs-list"></div>
+  </section>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

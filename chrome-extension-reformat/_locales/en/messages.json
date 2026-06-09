@@ -1,96 +1,23 @@
 {
   "extName": {
-    "message": "Hypothesisor",
+    "message": "Reframe",
     "description": "Extension name"
   },
   "extDesc": {
-    "message": "Read the current page with an LLM and post high-quality annotations to Hypothesis in one click. BYO key, client-side, open source.",
+    "message": "Reformat any web page into a focused interactive Web App with an LLM. BYO key, client-side, open source.",
     "description": "Extension description"
   },
   "popup_settings_title": {
     "message": "Settings"
   },
-  "popup_label_mode": {
-    "message": "Mode"
-  },
-  "popup_label_style": {
-    "message": "Style"
-  },
-  "popup_style_placeholder": {
-    "message": "Describe your annotation preference"
-  },
-  "popup_btn_generate": {
-    "message": "✨ Annotate this page"
-  },
   "popup_btn_publish": {
     "message": "Publish selected"
-  },
-  "mode_general": {
-    "message": "General"
-  },
-  "mode_academic": {
-    "message": "Academic"
-  },
-  "mode_news": {
-    "message": "News"
-  },
-  "mode_tech": {
-    "message": "Tech"
-  },
-  "popup_style_default": {
-    "message": "🎯 Default"
-  },
-  "popup_style_custom": {
-    "message": "✏️ Custom"
-  },
-  "style_non_consensus": {
-    "message": "🤔 Non-consensus"
-  },
-  "style_data": {
-    "message": "📊 Data"
-  },
-  "style_actionable": {
-    "message": "⚡ Actionable"
-  },
-  "style_gold_sentences": {
-    "message": "💎 Gold sentences"
-  },
-  "style_critique": {
-    "message": "🔍 Critique"
-  },
-  "style_surprise": {
-    "message": "🤯 Surprising"
   },
   "status_fetching": {
     "message": "Fetching page text…"
   },
   "status_need_bigmodel": {
     "message": "Please configure your BigModel API key in Settings."
-  },
-  "status_need_token": {
-    "message": "Please configure your Hypothesis Token in Settings."
-  },
-  "status_need_token_publish": {
-    "message": "Please configure your Hypothesis Token first."
-  },
-  "status_calling_llm": {
-    "message": "$CHARS$ chars of text — calling GLM…",
-    "placeholders": {
-      "chars": {
-        "content": "$1"
-      }
-    }
-  },
-  "status_generated": {
-    "message": "Generated $TOTAL$ candidates, $VALID$ with valid quotes.",
-    "placeholders": {
-      "total": {
-        "content": "$1"
-      },
-      "valid": {
-        "content": "$2"
-      }
-    }
   },
   "status_publishing": {
     "message": "Publishing: «$QUOTE$»…",
@@ -140,13 +67,7 @@
     "message": "(no title)"
   },
   "options_h1": {
-    "message": "Hypothesisor Settings"
-  },
-  "options_label_token": {
-    "message": "Hypothesis Token"
-  },
-  "options_hint_token": {
-    "message": "Generate one at "
+    "message": "Reframe Settings"
   },
   "options_label_bigmodel": {
     "message": "BigModel API Key"
@@ -158,18 +79,6 @@
         "content": "$1"
       }
     }
-  },
-  "options_label_mode": {
-    "message": "Default mode"
-  },
-  "options_label_style": {
-    "message": "Default style"
-  },
-  "options_hint_style": {
-    "message": "Preset key (non-consensus / data / actionable / gold-sentences / critique / surprise) or any custom description. Leave empty to use the mode default."
-  },
-  "options_style_placeholder": {
-    "message": "e.g. insightful or surprising claims"
   },
   "options_btn_save": {
     "message": "Save"
@@ -282,22 +191,52 @@
   "ctx_bigmodel": {
     "message": "BigModel"
   },
-  "ctx_hypothesis": {
-    "message": "Hypothesis"
+  "popup_label_format": {
+    "message": "Reformat hint"
   },
-  "success_published_title": {
-    "message": "$N$ annotation published.",
+  "popup_format_help": {
+    "message": "Sent to the model as a steer. Leave blank to let the model pick the best shape on its own."
+  },
+  "popup_format_reset": {
+    "message": "Reset"
+  },
+  "popup_format_preset": {
+    "message": "Aim for an information-dense dashboard: prefer visual and interactive forms (KPI tiles, charts, maps, comparison tables, timelines) over Card+Text lists. Surface 1–2 core insights and make key parameters interactive when relevant."
+  },
+  "popup_format_placeholder": {
+    "message": "What kind of Web App do you want? Edit freely or clear to let the model decide."
+  },
+  "popup_btn_reformat": {
+    "message": "🪄 Reformat this page"
+  },
+  "status_reformat_calling": {
+    "message": "$CHARS$ chars — generating new shape…",
     "placeholders": {
-      "n": {
+      "chars": {
         "content": "$1"
       }
     }
   },
-  "success_published_body": {
-    "message": "Open the page with the Hypothesis browser extension to see them inline."
+  "status_reformat_done": {
+    "message": "Done. Showing the generated app on this page."
   },
-  "success_view_on_page": {
-    "message": "Open the page →"
+  "output_open_source": {
+    "message": "Open original"
+  },
+  "output_regenerate": {
+    "message": "Regenerate"
+  },
+  "output_loading": {
+    "message": "Loading…"
+  },
+  "output_not_found": {
+    "message": "Reformat not found."
+  },
+  "output_footer": {
+    "message": "Generated by Hypothesisor · L3 generative app layer"
+  },
+  "just_now": {
+    "message": "just now"
   },
   "options_label_endpoint": {
     "message": "LLM endpoint (advanced)"
@@ -311,30 +250,32 @@
   "options_hint_model": {
     "message": "e.g. glm-4-plus (default) · glm-4-flash (fast/cheap) · deepseek-chat · moonshot-v1-8k"
   },
+  "output_open_in_tab": {
+    "message": "Open in new tab"
+  },
+  "overlay_close": {
+    "message": "Close (Esc)"
+  },
+  "status_reformat_done_tab": {
+    "message": "Done. Opened in a new tab."
+  },
+  "status_reformat_truncated": {
+    "message": "Done. Output was truncated mid-stream — rendering partial app (try a simpler format if it looks broken)."
+  },
+  "review_select_all": {
+    "message": "Select all"
+  },
+  "review_select_none": {
+    "message": "Clear"
+  },
+  "review_not_found": {
+    "message": "Job not found."
+  },
   "jobs_recent": {
     "message": "Jobs"
   },
-  "jobs_subtitle_annotate_done": {
-    "message": "$VALID$/$TOTAL$ candidates · click to review",
-    "placeholders": {
-      "valid": {
-        "content": "$1"
-      },
-      "total": {
-        "content": "$2"
-      }
-    }
-  },
-  "jobs_subtitle_annotate_posted": {
-    "message": "$POSTED$/$VALID$ posted · click to review",
-    "placeholders": {
-      "posted": {
-        "content": "$1"
-      },
-      "valid": {
-        "content": "$2"
-      }
-    }
+  "jobs_subtitle_reformat_done": {
+    "message": "Web App ready · click to open"
   },
   "jobs_cancel_title": {
     "message": "Cancel job"
@@ -387,11 +328,5 @@
         "content": "$1"
       }
     }
-  },
-  "options_label_autopublish": {
-    "message": "Auto-publish annotations to Hypothesis"
-  },
-  "options_hint_autopublish": {
-    "message": "When on, every quote-validated candidate is posted automatically as soon as generation finishes — no manual confirmation. Turn off to review and hand-pick each one."
   }
 }

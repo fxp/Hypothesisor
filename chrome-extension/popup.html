@@ -8,7 +8,6 @@
 <body>
   <header>
     <h1 data-i18n="extName">Hypothesisor</h1>
-    <span id="versionTag" class="version-tag" title="Click to check for updates">v0.0.0</span>
     <div class="header-tools">
       <button id="langToggle" type="button" class="lang-toggle" title="Switch language">中</button>
       <a id="openOptions" href="#" data-i18n-title="popup_settings_title" title="Settings">⚙</a>
@@ -19,19 +18,6 @@
     <div id="pageTitle" class="muted">—</div>
     <div id="pageUrl" class="url muted"></div>
   </section>
-
-  <div class="task-tabs" role="tablist">
-    <button type="button" class="task-tab active" data-task="annotate" role="tab" aria-selected="true">
-      <span class="task-tab-icon">✨</span>
-      <span class="task-tab-label" data-i18n="task_annotate">Annotate</span>
-      <span class="task-tab-sub" data-i18n="task_annotate_sub">L2 · highlights</span>
-    </button>
-    <button type="button" class="task-tab" data-task="reformat" role="tab" aria-selected="false">
-      <span class="task-tab-icon">🪄</span>
-      <span class="task-tab-label" data-i18n="task_reformat">Reformat</span>
-      <span class="task-tab-sub" data-i18n="task_reformat_sub">L3 · new shape</span>
-    </button>
-  </div>
 
   <div id="successToast" class="success-toast" hidden>
     <div class="success-toast-text">
@@ -53,7 +39,7 @@
       </div>
     </div>
 
-    <div class="control-row" id="styleRow">
+    <div class="control-row">
       <div class="control-label" data-i18n="popup_label_style">Style</div>
       <div class="style-chips" id="styleChips" role="radiogroup">
         <button type="button" class="chip" data-style=""               data-i18n="popup_style_default">🎯 Default</button>
@@ -66,17 +52,6 @@
         <button type="button" class="chip" data-style="__custom__"     data-i18n="popup_style_custom">✏️ Custom</button>
       </div>
       <input id="styleCustom" type="text" data-i18n-placeholder="popup_style_placeholder" placeholder="Describe your annotation preference" hidden />
-    </div>
-
-    <div class="format-hint" id="formatRow" hidden>
-      <div class="format-hint-head">
-        <span class="format-hint-label" data-i18n="popup_label_format">Reformat hint</span>
-        <button type="button" id="formatReset" class="format-hint-reset" data-i18n="popup_format_reset" title="Restore preset">Reset</button>
-      </div>
-      <textarea id="formatCustom" rows="3" spellcheck="false"
-        data-i18n-placeholder="popup_format_placeholder"
-        placeholder="What kind of Web App do you want? Edit freely or clear to let the model decide."></textarea>
-      <div class="format-hint-help" data-i18n="popup_format_help">Sent to the model as a steer. Leave blank to let the model pick the best shape on its own.</div>
     </div>
   </section>
 

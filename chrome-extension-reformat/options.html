@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Hypothesisor</title>
+<title>Reframe</title>
 <style>
   :root {
     --brand: #2563EB;
@@ -94,15 +94,9 @@
 <body>
   <div class="container">
     <h1>
-      <span data-i18n="options_h1">Hypothesisor Settings</span>
+      <span data-i18n="options_h1">Reframe Settings</span>
       <button id="langToggle" type="button" class="lang-toggle" title="Switch language">中</button>
     </h1>
-
-    <label>
-      <span class="label-text"><span data-i18n="options_label_token">Hypothesis Token</span><span class="req">*</span></span>
-      <small><span data-i18n="options_hint_token">Generate one at </span><a href="https://hypothes.is/account/developer" target="_blank">hypothes.is/account/developer</a></small>
-      <input id="hypothesisToken" type="password" autocomplete="off" />
-    </label>
 
     <label>
       <span class="label-text"><span data-i18n="options_label_bigmodel">BigModel API Key</span><span class="req">*</span></span>
@@ -123,51 +117,27 @@
     </label>
 
     <label>
-      <span class="label-text" data-i18n="options_label_mode">Default mode</span>
-      <select id="defaultMode">
-        <option value="general"  data-i18n="mode_general">general</option>
-        <option value="academic" data-i18n="mode_academic">academic</option>
-        <option value="news"     data-i18n="mode_news">news</option>
-        <option value="tech"     data-i18n="mode_tech">tech</option>
-      </select>
-    </label>
-
-    <label>
-      <span class="label-text" data-i18n="options_label_style">Default style</span>
-      <small data-i18n="options_hint_style">Preset key or custom description</small>
-      <input id="defaultStyle" type="text" data-i18n-placeholder="options_style_placeholder" />
-    </label>
-
-    <label>
       <span class="label-text" data-i18n="options_label_language">Generation language</span>
-      <small data-i18n="options_hint_language">What language(s) the LLM writes commentary / titles in. Quotes always stay in the source article's language.</small>
+      <small data-i18n="options_hint_language">What language(s) the LLM writes titles / labels in.</small>
       <select id="genLanguage">
-        <option value="auto"      data-i18n="lang_auto">自动 · 跟随原文（默认 · 最快）</option>
-        <option value="zh"        data-i18n="lang_zh">中文</option>
+        <option value="auto"      data-i18n="lang_auto">Auto · follow source (default · fastest)</option>
+        <option value="zh"        data-i18n="lang_zh">Chinese</option>
         <option value="en"        data-i18n="lang_en">English</option>
-        <option value="bilingual" data-i18n="lang_bilingual">中英对照（约慢 2×）</option>
+        <option value="bilingual" data-i18n="lang_bilingual">Bilingual (Chinese + English, ~2× slower)</option>
       </select>
-    </label>
-
-    <label class="row-checkbox">
-      <input id="autoPublish" type="checkbox" />
-      <span>
-        <span class="label-text" data-i18n="options_label_autopublish">Auto-publish annotations to Hypothesis</span>
-        <small data-i18n="options_hint_autopublish">When on, every quote-validated candidate is posted automatically as soon as generation finishes — no manual confirmation. Turn off to review and hand-pick each one.</small>
-      </span>
     </label>
 
     <label class="row-checkbox">
       <input id="reviewQuality" type="checkbox" />
       <span>
         <span class="label-text" data-i18n="options_label_review">Run quality review on generated content</span>
-        <small data-i18n="options_hint_review">Adds one extra cheap LLM call after generation to score the result and surface issues. Recommended.</small>
+        <small data-i18n="options_hint_review">Adds one extra cheap LLM call after generation to score the result and feed issues back into a refinement pass. Recommended.</small>
       </span>
     </label>
 
     <label>
       <span class="label-text" data-i18n="options_label_timeout">Per-job time budget (seconds)</span>
-      <small data-i18n="options_hint_timeout">Maximum wall-clock time for a single Annotate job. When exceeded, in-flight LLM calls are aborted. Range 30–3600. Default 300 (5 min).</small>
+      <small data-i18n="options_hint_timeout">Maximum wall-clock time for a single Reformat job. When exceeded, in-flight LLM calls are aborted. Range 30–3600. Default 300 (5 min).</small>
       <input id="genTimeoutSec" type="number" min="30" max="3600" step="30" placeholder="300" />
     </label>
 
