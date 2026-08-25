@@ -99,38 +99,6 @@
   .demo-wrap { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(37, 99, 235, 0.35); background: #0f172a; }
   .demo-wrap video { display: block; width: 100%; height: auto; }
 
-  /* L3 evolution callout */
-  .l3-callout {
-    background: linear-gradient(135deg, #faf5ff 0%, #eff6ff 100%);
-    border: 1px solid #ddd6fe; border-radius: 14px;
-    padding: 28px 30px; margin: 0 0 8px;
-    position: relative; overflow: hidden;
-  }
-  .l3-callout::before {
-    content: "Two plugins"; position: absolute; top: 14px; right: 18px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
-    color: #7c3aed; background: rgba(124, 58, 237, 0.1);
-    padding: 4px 10px; border-radius: 999px;
-  }
-  .l3-callout h2 { margin: 0 0 8px; font-size: 22px; }
-  .l3-callout > p { color: var(--mute); margin: 0 0 18px; max-width: 560px; }
-  .l3-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .l3-cell {
-    background: white; border: 1px solid var(--line); border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .l3-cell h3 {
-    font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
-    color: var(--mute); margin: 0 0 6px;
-  }
-  .l3-cell .l3-label { font-size: 14.5px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-  .l3-cell .l3-desc { font-size: 13px; color: var(--mute); line-height: 1.5; margin: 0; }
-  .l3-cell.active {
-    border-color: #7c3aed; background: white;
-    box-shadow: 0 8px 24px -10px rgba(124,58,237,0.25);
-  }
-  .l3-cell.active h3 { color: #7c3aed; }
-  @media (max-width: 760px) { .l3-grid { grid-template-columns: 1fr; } }
 
   /* Case-study side-by-side */
   .case-meta { color: var(--mute); margin: -8px 0 28px; font-size: 14.5px; }
@@ -205,8 +173,8 @@
     <div class="hero">
       <h1>Hypothesisor</h1>
       <p class="tagline">
-        <span lang="en">Read any webpage with AI. Annotate with Hypothesis in one click.</span>
-        <span lang="zh">让 AI 为你读懂网页，一键标注到 Hypothesis。</span>
+        <span lang="en">One click. AI reads the page, writes the highlights, posts them to Hypothesis. That's the whole thing.</span>
+        <span lang="zh">点一下，AI 帮你读完网页、写出高亮、发布到 Hypothesis。就这一件事。</span>
       </p>
       <div class="cta">
         <a class="btn primary" href="https://github.com/fxp/Hypothesisor">GitHub</a>
@@ -223,46 +191,6 @@
   </div>
 </header>
 
-<section>
-  <div class="container">
-    <div class="l3-callout">
-      <h2>
-        <span lang="en">From annotation to generative app</span>
-        <span lang="zh">从「划重点」到「重塑形态」</span>
-      </h2>
-      <p>
-        <span lang="en">Three layers of how AI mediates webpages. Hypothesisor lives at L2 (this page). L3 — reshaping the page into a focused app — has its own sibling extension, <a href="https://github.com/fxp/Hypothesisor/tree/main/chrome-extension-reformat" target="_blank">Reframe</a>.</span>
-        <span lang="zh">AI 介入网页的三个层级。Hypothesisor 在 L2（你正在看的这个）。L3 ——把网页重塑成专注的 App ——拆成了独立的姊妹扩展 <a href="https://github.com/fxp/Hypothesisor/tree/main/chrome-extension-reformat" target="_blank">Reframe</a>。</span>
-      </p>
-      <div class="l3-grid">
-        <div class="l3-cell">
-          <h3>L1</h3>
-          <div class="l3-label"><span lang="en">Raw web</span><span lang="zh">原始网页</span></div>
-          <p class="l3-desc">
-            <span lang="en">The page as the publisher shipped it.</span>
-            <span lang="zh">作者发布时的样子，浏览器原生呈现。</span>
-          </p>
-        </div>
-        <div class="l3-cell active">
-          <h3>L2</h3>
-          <div class="l3-label"><span lang="en">Annotation overlay · Hypothesisor</span><span lang="zh">标注叠加层 · Hypothesisor</span></div>
-          <p class="l3-desc">
-            <span lang="en">Original text + AI highlights & comments laid on top. Reading is amplified.</span>
-            <span lang="zh">原文 + AI 高亮和洞察叠在上面，阅读被放大。</span>
-          </p>
-        </div>
-        <div class="l3-cell">
-          <h3>L3</h3>
-          <div class="l3-label"><span lang="en">Generative app · Reframe →</span><span lang="zh">生成式 App · Reframe →</span></div>
-          <p class="l3-desc">
-            <span lang="en">AI reshapes the page into a form you'd rather use. Shipped as a separate plugin so each can stay focused.</span>
-            <span lang="zh">AI 把网页重塑成你想要的形态。独立成另一个插件，让各自保持纯粹。</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section>
   <div class="container">
@@ -449,8 +377,8 @@
       <span lang="zh">为什么做这个</span>
     </h2>
     <p style="color: var(--mute); max-width: 680px;">
-      <span lang="en">Annotating on <a href="https://web.hypothes.is/">Hypothesis</a> amplifies high-quality reading, but the manual cost is high enough that most people give up. Hypothesisor reads the full page with GLM and, in the style you pick (non-consensus takes, gold sentences, critical reading, surprising facts…), drafts 5–40 quality candidates in one go. You check the ones you want and publish. Long pieces automatically get deeper coverage.</span>
-      <span lang="zh">在 <a href="https://web.hypothes.is/">Hypothesis</a> 上做标注是高质量阅读的放大器，但人工标注慢、容易放弃。Hypothesisor 用 GLM 读完整页正文，按你选的「风格」（非共识观点、金句、批判视角、AI 洞察…）一次生成 5-40 条有质量的候选标注，你勾选发布即可。长文会自动加深分析。</span>
+      <span lang="en"><a href="https://web.hypothes.is/">Hypothesis</a> annotations are one of the best reading amplifiers on the web, but doing it by hand is slow enough that most people quit after a few articles. Hypothesisor collapses the whole loop to one click: it reads the page with an LLM, drafts the highlights, validates every quote against the live DOM, and posts them straight to your Hypothesis account. Close the popup — the job keeps running and pings you when it's done.</span>
+      <span lang="zh"><a href="https://web.hypothes.is/">Hypothesis</a> 是全网最好的阅读放大器之一，但人工标注太慢，大多数人试几篇就弃了。Hypothesisor 把整个流程压缩到一次点击：AI 读完整页 → 起草高亮 → 逐字校验引用 → 直接发到你的 Hypothesis 账户。可以关掉弹窗，任务后台继续跑，完成时通知你。</span>
     </p>
   </div>
 </section>

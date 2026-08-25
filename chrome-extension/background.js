@@ -4,8 +4,8 @@
 // (which keeps it alive), updates the job record in chrome.storage.local
 // on each step, and fires a chrome.notification when the job finishes.
 //
-// Hypothesisor v0.5+ is annotate-only. The L3 Reformat path now lives
-// in a separate extension (chrome-extension-reformat / Reframe).
+// Annotate-only. The page-reformat path lives in a separate extension
+// (chrome-extension-reformat / Reframe).
 
 import { callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
 import { newJobId, saveJob, loadJob, loadAllJobs } from "./lib/jobs.js";
