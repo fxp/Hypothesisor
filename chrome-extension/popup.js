@@ -1,14 +1,9 @@
-import { extractTabText, callGLM, validateQuote, postAnnotation, getSettings } from "./lib/agent.js";
-import { initI18n, applyI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
+import { extractTabText, getSettings } from "./lib/agent.js";
+import { initI18n, setLanguage, getCurrentLanguage, t } from "./lib/i18n.js";
 import { loadAllJobs } from "./lib/jobs.js";
 
-// $ and syncLangToggleLabel must be defined BEFORE top-level await so
-// the label helper can access them when init resumes. const in TDZ
-// before its textual line → referencing $ from syncLangToggleLabel
-// would throw a ReferenceError and abort the whole module, preventing
-// every event listener below from attaching.
 const $ = (id) => document.getElementById(id);
-let state = { tab: null, content: "", annotations: [] };
+let state = { tab: null, content: "", activeJobId: null };
 
 function syncLangToggleLabel() {
   $("langToggle").textContent = getCurrentLanguage() === "zh_CN" ? "EN" : "中";
@@ -23,12 +18,10 @@ async function init() {
   state.canonicalUrl = tab?.url || "";
   state.title = tab?.title || "";
   state.style = "";
-  state.mode = "general";
   $("pageTitle").textContent = tab?.title || t("page_no_title");
   $("pageUrl").textContent = tab?.url || "";
 
   const s = await getSettings();
-  selectMode(s.defaultMode || "general");
   if (s.defaultStyle) {
     const preset = $("styleChips").querySelector(`.chip[data-style="${cssEscape(s.defaultStyle)}"]`);
     if (preset) selectChip(s.defaultStyle);
@@ -43,9 +36,6 @@ async function init() {
 }
 
 // ── Jobs panel ────────────────────────────────────────────────────
-// Live timer for running-job elapsed/remaining display. The SW only
-// writes to storage on state transitions, so we tick locally to keep
-// the progress bar advancing every second.
 let _jobsTick = null;
 let _activeJobsCache = [];
 function startJobsTick() {
@@ -64,9 +54,6 @@ function stopJobsTick() {
 
 async function refreshJobs() {
   const all = await loadAllJobs();
-  // Annotate-only build: ignore any straggler reformat jobs from a
-  // pre-split install — they'd render with no badge/score and would
-  // confuse the user.
   const mine = all.filter((j) => j.type === "annotate");
   const sorted = mine.slice().sort((a, b) => {
     const aActive = isActive(a) ? 0 : 1;
@@ -74,7 +61,7 @@ async function refreshJobs() {
     if (aActive !== bActive) return aActive - bActive;
     return (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0);
   });
-  const list = sorted.slice(0, 8);
+  const list = sorted.slice(0, 6);
   $("jobsPanel").hidden = list.length === 0;
   const host = $("jobsList");
   host.innerHTML = "";
@@ -90,8 +77,7 @@ function isActive(job) {
 function renderJobItem(job) {
   const item = document.createElement("div");
   const statusClass = job.status === "error" ? "error" : isActive(job) ? "running" : "";
-  const actionable = job.status === "done" || job.status === "error";
-  item.className = `job-item annotate ${statusClass} ${actionable ? "actionable" : ""}`.trim();
+  item.className = `job-item annotate ${statusClass}`.trim();
   item.dataset.jobId = job.id;
 
   const title = job.sourceTitle || job.sourceHostname || "(untitled)";
@@ -137,8 +123,11 @@ function renderJobItem(job) {
     item.appendChild(x);
   }
 
-  if (actionable && job.status === "done") {
-    item.addEventListener("click", () => openJob(job));
+  // Clicking a finished job's row opens its source page so the user
+  // can see the annotations layered on by the Hypothesis client.
+  if (job.status === "done" && job.sourceUrl) {
+    item.classList.add("actionable");
+    item.addEventListener("click", () => chrome.tabs.create({ url: job.sourceUrl }));
   }
   return item;
 }
@@ -170,19 +159,12 @@ function fmtClockSec(ms) {
 function subtitleFor(job) {
   if (job.status === "error") return job.statusText || "error";
   if (isActive(job)) return job.statusText || "Working…";
-  const total = (job.annotations || []).length;
-  const valid = (job.annotations || []).filter((a) => !a.invalid).length;
-  const posted = (job.annotations || []).filter((a) => a.posted).length;
+  const list = job.annotations || [];
+  const valid = list.filter((a) => !a.invalid).length;
+  const posted = list.filter((a) => a.posted).length;
   return posted > 0
     ? t("jobs_subtitle_annotate_posted", String(posted), String(valid))
-    : t("jobs_subtitle_annotate_done", String(valid), String(total));
-}
-
-function openJob(job) {
-  // Reopen the source page so the Hypothesis client can overlay the
-  // posted annotations. The user can also retrieve them at
-  // https://hypothes.is/users/<their-account>.
-  if (job.sourceUrl) chrome.tabs.create({ url: job.sourceUrl });
+    : t("jobs_subtitle_annotate_done", String(valid), String(list.length));
 }
 
 function scoreClass(score) {
@@ -207,13 +189,6 @@ function fmtRelativeMin(ts) {
   return Math.round(sec / 86400) + "d";
 }
 
-function selectMode(value) {
-  state.mode = value;
-  for (const p of $("modePills").querySelectorAll(".pill")) {
-    p.classList.toggle("active", p.dataset.mode === value);
-  }
-}
-
 function cssEscape(s) {
   return String(s).replace(/["\\]/g, "\\$&");
 }
@@ -227,7 +202,6 @@ function selectChip(value) {
   if (value === "__custom__") $("styleCustom").focus();
 }
 
-// Translate an Error with a machine-readable `code` into a user-friendly localized string.
 function formatError(e) {
   if (!e) return "";
   const ctxLabel = e.ctx === "bigmodel" ? t("ctx_bigmodel") : e.ctx === "hypothesis" ? t("ctx_hypothesis") : "";
@@ -267,7 +241,6 @@ $("langToggle").addEventListener("click", async () => {
   await setLanguage(next);
   syncLangToggleLabel();
   if (state.tab) $("pageTitle").textContent = state.tab.title || t("page_no_title");
-  if (state.annotations.length) render();
   refreshJobs();
 });
 
@@ -275,21 +248,6 @@ $("styleChips").addEventListener("click", (e) => {
   const chip = e.target.closest(".chip");
   if (chip) selectChip(chip.dataset.style);
 });
-
-$("modePills").addEventListener("click", (e) => {
-  const pill = e.target.closest(".pill");
-  if (pill) selectMode(pill.dataset.mode);
-});
-
-$("successToastClose").addEventListener("click", () => hideSuccessToast());
-
-function showSuccessToast(count) {
-  $("successToastTitle").textContent = t("success_published_title", String(count));
-  $("successToastBody").textContent = t("success_published_body");
-  $("successToastLink").href = state.canonicalUrl || state.tab?.url || "#";
-  $("successToast").hidden = false;
-}
-function hideSuccessToast() { $("successToast").hidden = true; }
 
 function setStatus(text, kind = "") {
   const el = $("status");
@@ -302,68 +260,8 @@ function resolveStyle() {
   return state.style || null;
 }
 
-function render() {
-  const container = $("results");
-  container.innerHTML = "";
-  state.annotations.forEach((a, i) => {
-    const div = document.createElement("div");
-    div.className = "ann" + (a.posted ? " posted" : "") + (a.invalid ? " invalid" : "");
-    const check = a.invalid || a.posted
-      ? ""
-      : `<input type="checkbox" data-i="${i}" ${a.selected ? "checked" : ""}>`;
-    const tags = (a.tags || []).map((t) => `<span class="tag">${t}</span>`).join("");
-    const meta = a.posted
-      ? `<div class="meta">✅ <a href="${a.postedUrl}" target="_blank">${a.postedUrl}</a></div>`
-      : a.invalid
-      ? `<div class="meta">⚠️ ${escape(t("ann_quote_missing"))}</div>`
-      : a.error
-      ? `<div class="meta" style="color:#BD1C2B">❌ ${a.error}</div>`
-      : "";
-    div.innerHTML = `
-      <div class="row">${check}<div style="flex:1">
-        <div class="quote">「${escape(a.quote || "")}」</div>
-        <div class="comment">${renderMarkdown(a.comment || "")}</div>
-        <div class="tags">${tags}</div>
-        ${meta}
-      </div></div>`;
-    container.appendChild(div);
-  });
-  container.querySelectorAll("input[type=checkbox]").forEach((c) => {
-    c.addEventListener("change", (e) => {
-      state.annotations[+e.target.dataset.i].selected = e.target.checked;
-      updatePublishButton();
-    });
-  });
-  updatePublishButton();
-}
-
-function escape(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
-function renderMarkdown(s) {
-  const paras = String(s).trim().split(/\n\s*\n/);
-  return paras
-    .map((p) => {
-      const safe = escape(p.replace(/\n/g, " "));
-      const withBold = safe.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-      const withItalic = withBold.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
-      return `<p>${withItalic}</p>`;
-    })
-    .join("");
-}
-
-function updatePublishButton() {
-  const selectable = state.annotations.filter((a) => !a.invalid && !a.posted);
-  const selected = selectable.filter((a) => a.selected);
-  $("publishAll").disabled = selected.length === 0;
-  const posted = state.annotations.filter((a) => a.posted).length;
-  $("counts").textContent = t("counts_summary", String(selected.length), String(posted), String(state.annotations.length));
-}
-
 $("generate").addEventListener("click", async () => {
   if (!state.tab) return;
-  hideSuccessToast();
   $("generate").disabled = true;
   setStatus(t("status_fetching"));
   try {
@@ -372,7 +270,7 @@ $("generate").addEventListener("click", async () => {
     state.canonicalUrl = extracted.url || state.tab.url;
     state.title = extracted.title || state.tab.title || "";
     if (!state.content || state.content.length < 100) throw new Error(t("status_short_content"));
-    const { bigmodelKey, hypothesisToken } = await getSettings();
+    const { bigmodelKey, hypothesisToken, defaultMode } = await getSettings();
 
     const missing = [];
     if (!bigmodelKey) missing.push(t("status_need_bigmodel"));
@@ -385,7 +283,7 @@ $("generate").addEventListener("click", async () => {
       canonicalUrl: state.canonicalUrl,
       title: state.title,
       content: state.content,
-      mode: state.mode,
+      mode: defaultMode || "general",
       style: resolveStyle(),
     };
     const { jobId, error } = await chrome.runtime.sendMessage({ type: "startJob", spec });
@@ -408,7 +306,7 @@ chrome.storage.onChanged.addListener(async (changes, area) => {
 });
 
 async function onJobUpdate(job) {
-  if (job.status === "running" || job.status === "validating" || job.status === "pending") {
+  if (isActive(job)) {
     setStatus(job.statusText || "Working…");
     return;
   }
@@ -416,46 +314,26 @@ async function onJobUpdate(job) {
     setStatus(t("status_failed", job.statusText || "error"), "error");
     return;
   }
-  // status === "done"
-  state.annotations = (job.annotations || []).map((a) => ({ ...a }));
-  const valid = state.annotations.filter((a) => !a.invalid).length;
-  const posted = state.annotations.filter((a) => a.posted).length;
-  if (posted > 0) {
-    // Auto-publish path completed — celebrate.
-    setStatus(t("status_done", String(posted)), "success");
-    showSuccessToast(posted);
-  } else {
-    setStatus(t("status_generated", String(state.annotations.length), String(valid)), "success");
-  }
-  render();
-}
-
-$("publishAll").addEventListener("click", async () => {
-  const { hypothesisToken } = await getSettings();
-  if (!hypothesisToken) { setStatus(t("status_need_token_publish"), "error"); return; }
-  $("publishAll").disabled = true;
-  const pending = state.annotations.filter((a) => a.selected && !a.invalid && !a.posted);
-  for (const a of pending) {
-    setStatus(t("status_publishing", a.quote.slice(0, 30)));
-    try {
-      const { url } = await postAnnotation({
-        url: state.canonicalUrl,
-        title: state.title,
-        quote: a.quote,
-        comment: a.comment,
-        tags: a.tags,
-        content: state.content,
-        token: hypothesisToken,
-      });
-      a.posted = true; a.postedUrl = url; a.selected = false; a.error = null;
-    } catch (e) {
-      a.error = formatError(e);
+  // status === "done" — jump the user back to the source page (with a
+  // reload so the Hypothesis client picks up the fresh annotations)
+  // and close the popup. If the tab has been closed or navigated, open
+  // a fresh one on the source URL.
+  const posted = (job.annotations || []).filter((a) => a.posted).length;
+  setStatus(t("status_done", String(posted)), "success");
+  const url = job.sourceUrl || state.canonicalUrl;
+  try {
+    if (state.tab?.id) {
+      // Refocus + reload the original tab so the overlay is up to date.
+      await chrome.tabs.update(state.tab.id, { active: true });
+      await chrome.tabs.reload(state.tab.id);
+    } else if (url) {
+      await chrome.tabs.create({ url });
     }
-    render();
+  } catch (_) {
+    if (url) chrome.tabs.create({ url });
   }
-  const ok = state.annotations.filter((a) => a.posted).length;
-  setStatus(t("status_done", String(ok)), "success");
-  if (ok > 0) showSuccessToast(ok);
-});
+  // Small delay so the user sees the "Done" status flash before close.
+  setTimeout(() => window.close(), 400);
+}
 
 init();

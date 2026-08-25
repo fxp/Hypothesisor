@@ -35,12 +35,12 @@ function renderBigmodelHint() {
 renderBigmodelHint();
 
 const FIELDS = ["hypothesisToken", "bigmodelKey", "bigmodelBaseUrl", "bigmodelModel", "defaultMode", "defaultStyle", "genLanguage"];
-const BOOL_FIELDS = ["reviewQuality", "autoPublish"];
+const BOOL_FIELDS = ["reviewQuality"];
 
 async function load() {
   const s = await chrome.storage.local.get({
     hypothesisToken: "", bigmodelKey: "", bigmodelBaseUrl: "", bigmodelModel: "",
-    defaultMode: "general", defaultStyle: "", genLanguage: "auto", reviewQuality: true, autoPublish: true,
+    defaultMode: "general", defaultStyle: "", genLanguage: "auto", reviewQuality: true,
     genTimeoutMs: 300000,
   });
   for (const k of FIELDS) document.getElementById(k).value = s[k];

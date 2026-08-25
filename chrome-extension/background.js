@@ -73,13 +73,6 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     );
     return true;
   }
-  if (msg?.type === "publishAnnotations") {
-    publishAnnotations(msg.jobId, msg.indices).then(
-      (r) => sendResponse(r),
-      (err) => sendResponse({ error: err?.message || String(err) })
-    );
-    return true;
-  }
   if (msg?.type === "openOptions") {
     chrome.runtime.openOptionsPage();
     sendResponse({ ok: true });
@@ -183,12 +176,11 @@ async function runJobInner(job, settings, signal) {
   });
   const valid = annotations.filter((a) => !a.invalid).length;
 
-  // Auto-publish (default): post every quote-validated candidate
-  // straight to Hypothesis. Job stays "running" through the publish loop
-  // so the popup keeps showing the spinner + per-item statusText. Users
-  // can opt out via settings.autoPublish = false.
-  const wantsAutoPublish = settings.autoPublish !== false && valid > 0 && !!settings.hypothesisToken;
-  if (wantsAutoPublish) {
+  // Always auto-publish every quote-validated candidate. Manual pick-
+  // and-publish was removed in the simplify pass — the popup now closes
+  // and reloads the source tab on completion, so there's no UI surface
+  // for hand-picking anyway.
+  if (valid > 0) {
     await update(job.id, {
       status: "running",
       statusText: `Publishing ${valid} annotation${valid === 1 ? "" : "s"}…`,
@@ -206,11 +198,11 @@ async function runJobInner(job, settings, signal) {
     });
     fireNotification(job.id, "annotate-published", await loadJob(job.id));
   } else {
-    // Manual mode: surface the candidates and wait for the popup's
-    // "Publish selected" click.
+    // No valid quotes — nothing to publish, but still mark done so the
+    // popup surfaces "0 / N" instead of a stuck spinner.
     await update(job.id, {
       status: "done",
-      statusText: `${annotations.length} candidates · ${valid} with valid quotes`,
+      statusText: `${annotations.length} candidates · 0 with valid quotes`,
       annotations,
       finishedAt: Date.now(),
     });
@@ -229,23 +221,10 @@ async function runJobInner(job, settings, signal) {
   }
 }
 
-async function publishAnnotations(jobId, indices) {
-  const job = await loadJob(jobId);
-  if (!job) throw new Error("Job not found");
-  const settings = await getSettings();
-  if (!settings.hypothesisToken) throw withCode("MISSING_HYPOTHESIS_TOKEN");
-  const list = (job.annotations || []).slice();
-  await runPublishLoop(jobId, indices, settings, /* signal */ undefined, list);
-  const finalJob = await loadJob(jobId);
-  const finalList = finalJob.annotations || list;
-  const posted = finalList.filter((x) => x.posted).length;
-  await update(jobId, { statusText: `Posted ${posted} / ${finalList.filter((x) => !x.invalid).length}` });
-  return { ok: true };
-}
-
-// Shared posting loop used by both auto-publish (inside runJobInner) and
-// the manual "Publish selected" path. Iterates targets, writes per-item
-// statusText, persists each result back into the job record.
+// Publishing loop invoked from runJobInner. Iterates the targets,
+// writes per-item statusText, persists each result back into the job
+// record. Since manual "Publish selected" was removed, this is only
+// called from the auto-publish path — signal is the per-job budget.
 async function runPublishLoop(jobId, indices, settings, signal, list) {
   const job = await loadJob(jobId);
   const targets = indices.filter((i) => list[i] && !list[i].invalid && !list[i].posted);

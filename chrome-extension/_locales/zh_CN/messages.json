@@ -8,20 +8,11 @@
   "popup_settings_title": {
     "message": "设置"
   },
-  "popup_label_mode": {
-    "message": "模式"
-  },
-  "popup_label_style": {
-    "message": "风格"
-  },
   "popup_style_placeholder": {
     "message": "描述你的标注偏好"
   },
   "popup_btn_generate": {
     "message": "✨ 标注当前页面"
-  },
-  "popup_btn_publish": {
-    "message": "发布选中"
   },
   "mode_general": {
     "message": "通用"
@@ -68,32 +59,10 @@
   "status_need_token": {
     "message": "请先在设置中填入 Hypothesis Token"
   },
-  "status_need_token_publish": {
-    "message": "请先在设置中配置 Hypothesis Token"
-  },
   "status_calling_llm": {
     "message": "正文 $CHARS$ 字符，调用 GLM 生成标注…",
     "placeholders": {
       "chars": {
-        "content": "$1"
-      }
-    }
-  },
-  "status_generated": {
-    "message": "生成 $TOTAL$ 条，$VALID$ 条引用有效",
-    "placeholders": {
-      "total": {
-        "content": "$1"
-      },
-      "valid": {
-        "content": "$2"
-      }
-    }
-  },
-  "status_publishing": {
-    "message": "发布中：「$QUOTE$」…",
-    "placeholders": {
-      "quote": {
         "content": "$1"
       }
     }
@@ -116,20 +85,6 @@
   },
   "status_short_content": {
     "message": "页面正文过短或无法读取"
-  },
-  "counts_summary": {
-    "message": "$SEL$ 选中 · $POSTED$ 已发布 · $TOTAL$ 生成",
-    "placeholders": {
-      "sel": {
-        "content": "$1"
-      },
-      "posted": {
-        "content": "$2"
-      },
-      "total": {
-        "content": "$3"
-      }
-    }
   },
   "ann_quote_missing": {
     "message": "引用未在当前页面正文中找到，已跳过"
@@ -283,20 +238,6 @@
   "ctx_hypothesis": {
     "message": "Hypothesis"
   },
-  "success_published_title": {
-    "message": "已发布 $N$ 条标注",
-    "placeholders": {
-      "n": {
-        "content": "$1"
-      }
-    }
-  },
-  "success_published_body": {
-    "message": "装上 Hypothesis 浏览器插件后回到原页面，标注会直接叠加显示"
-  },
-  "success_view_on_page": {
-    "message": "打开原页面 →"
-  },
   "options_label_endpoint": {
     "message": "LLM 接口地址（进阶）"
   },
@@ -385,11 +326,5 @@
         "content": "$1"
       }
     }
-  },
-  "options_label_autopublish": {
-    "message": "标注生成后自动发布到 Hypothesis"
-  },
-  "options_hint_autopublish": {
-    "message": "开启时，所有引用通过校验的候选生成后立即发布，无需手动确认。关闭则停在候选列表，由你勾选和点发布。"
   }
 }
