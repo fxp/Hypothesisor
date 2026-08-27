@@ -218,7 +218,7 @@ function formatError(e) {
     case "EXTRACT_FAILED":           return t("error_extract_failed", e.detail || e.message);
     case "NETWORK":                  return t("error_network");
     case "CORS":                     return t("error_cors");
-    case "LLM_EMPTY":                return t("error_llm_empty");
+    case "LLM_EMPTY":                return t("error_llm_empty", e.detail || "");
     case "LLM_NO_JSON":              return t("error_llm_no_json");
     case "LLM_JSON_PARSE":           return t("error_llm_json_parse", e.detail || "");
     case "QUOTE_NOT_FOUND":          return t("ann_quote_missing");

@@ -179,8 +179,31 @@ export async function callGLM({ content, url, mode, style, apiKey, baseUrl, mode
   }
   if (!resp.ok) throw await httpError("bigmodel", resp);
   const data = await resp.json();
-  const text = data.choices?.[0]?.message?.content || "";
-  if (!text) { const e = new Error("LLM_EMPTY"); e.code = "LLM_EMPTY"; throw e; }
+  const choice = data.choices?.[0] || {};
+  const msg = choice.message || {};
+  // Some GLM reasoning variants (glm-4.5, glm-z1-*) return the JSON body
+  // in `reasoning_content` and leave `content` blank — accept either.
+  let text = msg.content || msg.reasoning_content || "";
+  if (typeof text !== "string") text = String(text ?? "");
+  if (!text.trim()) {
+    const finish = choice.finish_reason || "unknown";
+    const usage = data.usage || {};
+    // Surface every clue we have so the popup can show a real reason
+    // instead of the anonymous "LLM_EMPTY". Model + finish_reason +
+    // token counts are enough to distinguish max_tokens exhaustion,
+    // content-filter refusal, and a genuinely blank response.
+    const detail =
+      `model=${endpoint.model} finish=${finish}` +
+      (usage.completion_tokens != null ? ` out=${usage.completion_tokens}tok` : "") +
+      (usage.prompt_tokens != null ? ` in=${usage.prompt_tokens}tok` : "") +
+      (choice.error?.message ? ` err="${choice.error.message}"` : "") +
+      (data.error?.message ? ` err="${data.error.message}"` : "");
+    const e = new Error("LLM_EMPTY");
+    e.code = "LLM_EMPTY";
+    e.detail = detail;
+    e.ctx = "bigmodel";
+    throw e;
+  }
   let parsed;
   try {
     parsed = parseLLMJson(text);

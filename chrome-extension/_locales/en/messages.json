@@ -221,7 +221,12 @@
     }
   },
   "error_llm_empty": {
-    "message": "BigModel returned an empty response — try again or change the style prompt."
+    "message": "BigModel returned an empty response ($DETAIL$) — try again, or switch model in Settings.",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
   },
   "error_llm_no_json": {
     "message": "BigModel didn't return valid JSON — try again. If it keeps failing, make the custom style shorter."

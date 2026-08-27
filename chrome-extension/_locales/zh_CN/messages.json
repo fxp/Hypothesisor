@@ -219,7 +219,12 @@
     }
   },
   "error_llm_empty": {
-    "message": "BigModel 返回空响应，换个风格描述或稍后重试"
+    "message": "BigModel 返回空响应（$DETAIL$）—— 再试一次，或在设置里换个模型。",
+    "placeholders": {
+      "detail": {
+        "content": "$1"
+      }
+    }
   },
   "error_llm_no_json": {
     "message": "BigModel 未返回合法 JSON，再试一次；如果反复失败，试着把自定义 style 写短一些"
