@@ -22,16 +22,27 @@ async function init() {
   $("pageUrl").textContent = tab?.url || "";
 
   const s = await getSettings();
-  if (s.defaultStyle) {
-    const preset = $("styleChips").querySelector(`.chip[data-style="${cssEscape(s.defaultStyle)}"]`);
-    if (preset) selectChip(s.defaultStyle);
-    else {
-      selectChip("__custom__");
-      $("styleCustom").value = s.defaultStyle;
-    }
+  // Style select — preselect the preset if one is saved in Options; if
+  // the saved value doesn't match any preset, treat it as a custom
+  // preference and surface it in the free-text input.
+  const styleSel = $("styleSelect");
+  const knownStyles = Array.from(styleSel.options).map((o) => o.value);
+  if (s.defaultStyle && knownStyles.includes(s.defaultStyle)) {
+    selectStyle(s.defaultStyle);
+  } else if (s.defaultStyle) {
+    selectStyle("__custom__");
+    $("styleCustom").value = s.defaultStyle;
   } else {
-    selectChip("");
+    selectStyle("");
   }
+  // Language select — user asked for Chinese default; fall through to
+  // the Options-page value so a user who set English there still gets
+  // English by default here.
+  const langSel = $("langSelect");
+  const langChoices = Array.from(langSel.options).map((o) => o.value);
+  const initialLang = langChoices.includes(s.genLanguage) ? s.genLanguage : "zh";
+  langSel.value = initialLang;
+  state.language = initialLang;
   await refreshJobs();
 }
 
@@ -189,15 +200,10 @@ function fmtRelativeMin(ts) {
   return Math.round(sec / 86400) + "d";
 }
 
-function cssEscape(s) {
-  return String(s).replace(/["\\]/g, "\\$&");
-}
-
-function selectChip(value) {
+function selectStyle(value) {
   state.style = value;
-  for (const c of $("styleChips").querySelectorAll(".chip")) {
-    c.classList.toggle("active", c.dataset.style === value);
-  }
+  const sel = $("styleSelect");
+  if (sel.value !== value) sel.value = value;
   $("styleCustom").hidden = value !== "__custom__";
   if (value === "__custom__") $("styleCustom").focus();
 }
@@ -244,10 +250,8 @@ $("langToggle").addEventListener("click", async () => {
   refreshJobs();
 });
 
-$("styleChips").addEventListener("click", (e) => {
-  const chip = e.target.closest(".chip");
-  if (chip) selectChip(chip.dataset.style);
-});
+$("styleSelect").addEventListener("change", (e) => selectStyle(e.target.value));
+$("langSelect").addEventListener("change", (e) => { state.language = e.target.value; });
 
 function setStatus(text, kind = "") {
   const el = $("status");
@@ -285,6 +289,7 @@ $("generate").addEventListener("click", async () => {
       content: state.content,
       mode: defaultMode || "general",
       style: resolveStyle(),
+      genLanguage: state.language || "zh",
     };
     const { jobId, error } = await chrome.runtime.sendMessage({ type: "startJob", spec });
     if (error) throw new Error(error);

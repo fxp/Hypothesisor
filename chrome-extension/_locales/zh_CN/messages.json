@@ -27,7 +27,7 @@
     "message": "技术"
   },
   "popup_style_default": {
-    "message": "🎯 默认"
+    "message": "🎯 全部内容（默认）"
   },
   "popup_style_custom": {
     "message": "✏️ 自定义"
@@ -326,5 +326,14 @@
         "content": "$1"
       }
     }
+  },
+  "popup_label_style": {
+    "message": "关注"
+  },
+  "popup_label_language": {
+    "message": "语言"
+  },
+  "lang_auto_short": {
+    "message": "自动 · 跟随原文"
   }
 }

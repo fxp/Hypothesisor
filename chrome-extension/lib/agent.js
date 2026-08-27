@@ -445,7 +445,7 @@ export async function getSettings() {
     bigmodelModel: "",
     defaultMode: "general",
     defaultStyle: "",
-    genLanguage: "auto",      // single-language output (follows source language) — bilingual mode doubles output tokens and was the #1 source of slow annotates
+    genLanguage: "zh",        // Chinese by default. Popup exposes a per-run switcher so English pages still get English commentary with one click.
     reviewQuality: true,
     genTimeoutMs: 300000,     // 5 minutes per job (default; user-tunable)
   });

@@ -156,7 +156,7 @@ async function runJobInner(job, settings, signal) {
       content: job.spec.content, url: job.spec.canonicalUrl,
       mode: job.spec.mode, style: job.spec.style,
       apiKey: settings.bigmodelKey, baseUrl: settings.bigmodelBaseUrl, model: settings.bigmodelModel,
-      genLanguage: settings.genLanguage,
+      genLanguage: job.spec.genLanguage || settings.genLanguage,
       signal,
     });
   } finally {

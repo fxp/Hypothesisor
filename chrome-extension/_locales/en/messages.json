@@ -29,7 +29,7 @@
     "message": "Tech"
   },
   "popup_style_default": {
-    "message": "🎯 Default"
+    "message": "🎯 All content (default)"
   },
   "popup_style_custom": {
     "message": "✏️ Custom"
@@ -328,5 +328,14 @@
         "content": "$1"
       }
     }
+  },
+  "popup_label_style": {
+    "message": "Focus"
+  },
+  "popup_label_language": {
+    "message": "Language"
+  },
+  "lang_auto_short": {
+    "message": "Auto · follow source"
   }
 }

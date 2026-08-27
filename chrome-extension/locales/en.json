@@ -28,9 +28,7 @@
   "mode_tech": {
     "message": "Tech"
   },
-  "popup_style_default": {
-    "message": "🎯 Default"
-  },
+  "popup_style_default": "🎯 All content (default)",
   "popup_style_custom": {
     "message": "✏️ Custom"
   },
@@ -328,5 +326,8 @@
         "content": "$1"
       }
     }
-  }
+  },
+  "popup_label_style": "Focus",
+  "popup_label_language": "Language",
+  "lang_auto_short": "Auto · follow source"
 }
