@@ -160,8 +160,17 @@ async function runGitSteps(stream, cwd, steps) {
 async function ensureGitClone(stream) {
   if (!fs.existsSync(path.join(GIT_CLONE_DIR, ".git"))) {
     stream.log(`cloning ${GIT_REMOTE} into ${GIT_CLONE_DIR} (first run only)...`);
-    const code = await runStreaming("git", ["clone", GIT_REMOTE, GIT_CLONE_DIR], { env: process.env }, (line) => stream.log(line));
+    let code = await runStreaming("git", ["clone", GIT_REMOTE, GIT_CLONE_DIR], { env: process.env }, (line) => stream.log(line));
     if (code !== 0) throw new Error(`git clone failed with code ${code}`);
+
+    // Carry over this repo's own commit identity (if it has a local
+    // override) so commits from this clone attribute the same way,
+    // instead of git falling back to an auto-detected user@hostname.
+    for (const key of ["user.name", "user.email"]) {
+      const got = await runCollecting("git", ["config", key], { cwd: REPO_ROOT, env: process.env });
+      const value = got.stdout.trim();
+      if (got.code === 0 && value) await runCollecting("git", ["config", key, value], { cwd: GIT_CLONE_DIR, env: process.env });
+    }
     return;
   }
   const code = await runGitSteps(stream, GIT_CLONE_DIR, [
