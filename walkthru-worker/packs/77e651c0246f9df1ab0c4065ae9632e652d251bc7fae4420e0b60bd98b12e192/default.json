@@ -1,0 +1,53 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "77e651c0246f9df1ab0c4065ae9632e652d251bc7fae4420e0b60bd98b12e192-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:39:48.973Z",
+  "sourceUrl": "https://techcrunch.com/2026/08/31/the-pentagon-now-has-its-own-version-of-chatgpt-and-grok/",
+  "sourceTitle": "五角大楼同时部署ChatGPT和Grok内部版",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了五角大楼如何同时引入ChatGPT和Grok的定制版本，构建了一个名为GenAI.mil的内部AI平台，为300万文职和军事人员提供服务。这一举措背后反映了军方在拥抱AI技术的同时，也面临着安全与效率之间的平衡问题，以及与AI公司之间的复杂关系。",
+  "essay": "五角大楼最近推出了ChatGPT Mil和Grok for Government这两个定制化AI工具，将其整合到GenAI.mil这个集中式安全门户中，为300万文职和军事人员提供生成式AI服务。这个平台最初只提供Google Gemini，现在扩展到包括OpenAI和xAI的产品，目的是让国防部员工能够访问前沿商业AI模型，同时避免敏感政府数据通过普通消费者渠道传输。\n\n值得注意的是，GenAI.mil已经吸引了170万用户，占国防部总人数的一半以上，显示出军方对AI工具的强烈需求。这些工具各有所侧重：ChatGPT Mil专注于聊天、文件处理和项目协作，适合行政、物流、规划等非机密日常工作；而Grok for Government则以更军事化的方式描述其功能，承诺为\"作战人员\"提供即时生产力提升、更强的知识连续性和更安全高效的协作能力，应用范围从市场研究分析到供应链管理。\n\n这一系列举措反映了五角大楼更广泛的战略，即利用AI工具加速工作流程，为国防部获取竞争优势而不牺牲安全性。然而，文章也揭示了军方与AI公司之间的复杂关系，特别是Anthropic的Claude模型缺席的情况。Anthropic被特朗普政府标记为供应链风险，原因是它拒绝给 Pentagon 无限制使用其AI工具，而是坚持某些安全护栏。这表明在AI军事应用中，技术能力与安全考量之间的平衡仍然是一个充满争议的领域。",
+  "outro": "五角大楼的AI部署反映了现代军事与科技深度融合的趋势，同时也揭示了在安全与效率、控制与开放之间的永恒张力。",
+  "steps": [
+    {
+      "quote": "The Pentagon has launched versions of OpenAI's ChatGPT and xAI's Grok, giving 3 million civilian and military personnel access to generative AI tools that have been tailored to \"warfighter needs.\"",
+      "title": "军方AI部署",
+      "narration": "这就引出了文章的核心事件——五角大楼同时引入了两个主流AI工具的定制版本，专门针对军事需求进行了优化。这标志着AI技术在军事领域的应用进入了新阶段。",
+      "kind": "claim"
+    },
+    {
+      "quote": "GenAI.mil, which offered Google Gemini when it first launched, is designed to give Department of Defense employees access to commercial frontier AI models without sending sensitive government data through ordinary consumer channels.",
+      "title": "于是，我们看到了这个AI平台",
+      "narration": "于是，我们看到了这个AI平台的设计初衷——它是一个集中式的安全门户，让国防部员工能够访问前沿商业AI模型，同时避免敏感数据通过普通消费者渠道传输。这里强调了安全与效率的平衡。",
+      "kind": "context"
+    },
+    {
+      "quote": "GenAI.mil has already onboarded more than 1.7 million unique users out of the department's 3 million personnel, according to the department.",
+      "title": "这解释了为什么这个平台如此重",
+      "narration": "这解释了为什么这个平台如此重要——它已经吸引了超过170万用户，占国防部总人数的一半以上。这个数字表明军方对AI工具的需求非常强烈，也反映了这一举措的实际影响力。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Anthropic was labeled a supply-chain risk by the Trump administration — a designation that it is currently fighting in court — after it refused to give the Pentagon unrestricted use of its AI tools and instead insisted on certain safety guardrails.",
+      "title": "但作者马上话锋一转，揭示了这",
+      "narration": "但作者马上话锋一转，揭示了这一AI部署背后的复杂政治和技术关系。Anthropic的缺席不是因为技术不足，而是因为它拒绝放弃安全护栏，这引发了一场关于AI军事应用中安全与控制权的重要辩论。",
+      "kind": "insight"
+    },
+    {
+      "quote": "\"Starshield AI's Grok for Government will provide the warfighter with immediate productivity gains, stronger knowledge continuity and more secure and efficient collaboration,\" according to the Defense Department's press release.",
+      "title": "紧接着，我们看到军方对Gro",
+      "narration": "紧接着，我们看到军方对Grok功能的描述充满了军事术语，强调它能为\"作战人员\"提供即时生产力提升和更安全的协作。这种表述与ChatGPT Mil的行政用途形成鲜明对比，揭示了不同AI工具在军事应用中的差异化定位。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The Pentagon has struck deals with a number of other tech companies in a bid to boost its AI capabilities, including Amazon Web Services, Microsoft, Nvidia, and Reflection AI.",
+      "title": "这说明了五角大楼的AI战略是",
+      "narration": "这说明了五角大楼的AI战略是多管齐下的，不仅依赖OpenAI和xAI，还与多家科技公司建立了合作关系。这种多元化布局反映了军方在AI领域的广泛投入和对技术供应链的重视。",
+      "kind": "conclusion"
+    }
+  ]
+}

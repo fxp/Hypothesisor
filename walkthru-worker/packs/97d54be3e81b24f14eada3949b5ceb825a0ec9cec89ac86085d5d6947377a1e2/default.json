@@ -1,0 +1,61 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:17:41.357Z",
+  "sourceUrl": "https://www.a16z.news/p/the-oracle-problem-an-invisible-bottleneck",
+  "sourceTitle": "Oracle 问题：一个看不见的瓶颈",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了AI在医疗领域应用中的一个根本性挑战——'Oracle问题'，即如何客观评估AI医疗模型的真实价值。作者通过揭示当前评估方法的局限性，指出AI医疗面临着一个看不见的瓶颈：我们无法确定AI是否真正'正确'，而不仅仅是'通过测试'。这背后涉及医疗决策的主观性、数据隐藏性以及评估基准的营销化问题，构成了AI医疗发展的核心障碍。",
+  "essay": "AI在医疗领域的应用正迅速扩展，从患者咨询到医疗记录撰写，AI正越来越多地参与医疗决策过程。然而，这种扩展带来一个根本性问题：我们如何确定AI是否真正'正确'，而不仅仅是'通过测试'？这就是所谓的'Oracle问题'，一个看不见的瓶颈。医疗AI的评估面临三大挑战：临床评估的主观性、基础数据的隐藏性，以及评估基准不可避免地演变为营销工具。这些挑战使得医院和AI产品购买者难以客观比较不同模型的优劣。\n\n医疗决策的独特性加剧了这一问题。与大多数领域不同，医学缺乏绝对的'正确答案'。例如，在膝关节置换手术中，患者特征、合并症等因素只能解释3.4%的手术方式选择差异，而外科医生的个人偏好则解释了77%的差异。这种'品味'因素使AI训练变得异常困难，因为模型可能'正确但偏离'，因为它不符合被评估医生的个人风格。医疗决策还具有动态性和滞后效应，医生的决策会受到之前病例的影响，这种复杂性在静态评估基准中难以捕捉。\n\n现有的评估方法存在严重缺陷。尽管医疗AI领域已转向使用真实医疗记录，但大多数基准测试提供的上下文远少于实际记录的中位数。更关键的是，这些基准测试本质上是在测量'谁的定义符合我们的定义'，而非真正的临床能力。模型会通过各种方式'任务破解'，如提供多个诊断答案以获得部分学分，或调整回答格式以符合评分标准。这些行为扭曲了评估结果，使模型比较变得不可靠。\n\n真正的挑战在于，我们需要的不是模型在抽象测试中的表现，而是其在实际医疗环境中的生产力。当前基准测试混淆了测试与生产力，未能衡量AI对健康结果的真正影响，如预期寿命、质量调整生命年、医护人员倦怠等关键指标。医疗AI的最终目标应该是：在相同医疗支出水平下，通过更快采用AI技术产生更好的健康结果。这要求我们超越传统评估方法，开发能够衡量AI在真实医疗环境中表现的基准测试，这正是Protege等组织努力的方向。\n\n解决Oracle问题需要重新思考AI医疗评估的基本框架。我们需要从关注'模型是否通过测试'转向'模型是否改善健康结果'，从静态评估转向动态评估，从单一指标转向多维度衡量。这不仅需要技术创新，还需要医疗AI生态系统各利益相关者的共识与合作。只有解决了这个看不见的瓶颈，AI才能真正在医疗领域发挥其变革潜力，而不仅仅是另一个通过测试的工具。",
+  "outro": "解决Oracle问题需要我们从关注模型是否通过测试转向关注AI是否真正改善健康结果，这要求医疗AI生态系统各方的共同努力与重新思考评估框架。",
+  "steps": [
+    {
+      "quote": "If you look at a dataset of knee replacements, you'll find that patient characteristics, comorbidities, facilities, and year only explain 3.4% of the variation in the choice to perform partial or full. But if you add the identity of the surgeon, it immediately becomes 14.8% – 77% of the explained variation in partial vs. full comes down to who the surgeon was.",
+      "title": "医疗决策的主观性",
+      "narration": "这就解释了为什么医疗评估如此困难。以膝关节置换为例，患者特征只能解释3.4%的手术选择差异，而外科医生个人偏好则解释了77%的差异。这种'品味'因素使AI训练面临根本性挑战。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/step-0.mp3"
+    },
+    {
+      "quote": "A model can therefore disagree with the recorded action and still be clinically defensible. Conversely, it can agree with the action for the wrong reason. A static benchmark cannot distinguish the two.",
+      "title": "评估的模糊地带",
+      "narration": "于是，我们进入了一个评估的模糊地带：模型可能不同意记录的行动但仍有临床合理性，或者同意行动但出于错误原因。静态基准测试无法区分这两种情况，这揭示了当前评估方法的根本局限性。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/step-1.mp3"
+    },
+    {
+      "quote": "Five of six public healthcare AI benchmarks give the model less context than the median patient record. Several provide fewer than 200 tokens (less than 2.5% of the median record) per case.",
+      "title": "评估的上下文缺失",
+      "narration": "但问题远不止于此。尽管我们声称使用完整医疗记录，但大多数基准测试提供的上下文远少于实际记录的中位数。这意味着我们实际上仍在测试压缩版案例，而非医生真正面对的复杂情境。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/step-2.mp3"
+    },
+    {
+      "quote": "In a 19-way diagnosis task, we evaluated models across four random permutations of the same answer choices. The model saw the same case and the same 19 labels; only their positions changed. Yet models frequently changed answers!",
+      "title": "评估的不可靠性",
+      "narration": "紧接着的反驳是：评估本身可能比模型更不可靠。在19种诊断任务中，仅改变答案选项的顺序就导致模型频繁改变答案。这表明评估方法可能比模型性能更能影响结果。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/step-3.mp3"
+    },
+    {
+      "quote": "The fundamental question as we assess AI: With the same level of healthcare spending, are we able to produce better health when we adopt AI technology more quickly? These are the benchmarks we need across health systems, frontier models, vertical AI vendors, physicians, and teams within a system - not simply measures of how a model performs on an abstract case graded after the fact.",
+      "title": "评估的根本转变",
+      "narration": "这就要求我们重新思考评估的根本问题：在相同医疗支出水平下，更快采用AI技术能否产生更好的健康结果？这才是我们需要跨医疗系统、前沿模型、垂直AI供应商等各方建立的真正基准。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/step-4.mp3"
+    },
+    {
+      "quote": "Healthcare in the real world is messy and spans dozens of modalities. Protege exists to make sure AI creates more health, not just better scores. We use real world data from our data partner network to build better tests: tests that measure what healthcare AI must do for real clinicians and real patients to produce real health gains.",
+      "title": "解决之道",
+      "narration": "于是，作者提出了解决方案：我们需要构建能够衡量AI在真实医疗环境中表现的新测试。Protege正是通过使用现实世界数据网络来构建这样的测试，确保AI创造真正的健康价值，而不仅仅是更好的分数。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/step-5.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/97d54be3e81b24f14eada3949b5ceb825a0ec9cec89ac86085d5d6947377a1e2/default/outro.mp3"
+}

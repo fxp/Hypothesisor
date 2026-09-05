@@ -1,0 +1,82 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:15:55.371Z",
+  "sourceUrl": "https://www.whitehouse.gov/wp-content/uploads/2026/07/Science-A-New-Golden-Age.pdf",
+  "sourceTitle": "白宫报告：科学，新的黄金时代",
+  "author": "xiaoping",
+  "intro": "这份白宫报告探讨了美国科学发展的现状与未来，提出了在人工智能时代重振美国科学领导力的战略。报告指出，尽管美国在科学创新方面曾取得辉煌成就，但当前面临全球竞争加剧、科研机构僵化、创新效率下降等挑战。文章围绕如何通过改革科研资助体系、加强公私合作、培养多元人才以及拥抱AI革命等关键议题，勾勒出美国科学'新黄金时代'的蓝图。",
+  "essay": "《科学：新的黄金时代》报告深刻剖析了美国科学体系面临的挑战与机遇。报告开篇回顾了美国科学发展的辉煌历史，从爱迪生的电灯到莱特兄弟的飞行，再到阿波罗登月计划，彰显了美国科学创新的独特精神。然而，报告警示我们，科学研究的'线性模式'已不再适用，现代科学呈现出基础研究与实际应用之间的迭代互动关系。**私人部门研发投入**已达到约7000亿美元，远超政府与高等教育机构的总和，这反映了科研生态系统的深刻变革。\n\n报告指出了当前美国科学体系面临的严峻挑战。尽管联邦政府对科研的投入持续增长，但科研生产力却在下降。研究人员将近一半的时间被行政文书工作所占据，而联邦和大学官僚机构的膨胀进一步减少了可用于实际科学研究的资金。更令人担忧的是，美国科学博士学位授予给临时签证持有者的比例已从1980年的约20%上升到2024年的40%，这反映了美国本土科学人才培养的不足。与此同时，全球竞争对手，特别是中国，在研发投入上已与美国相当，并采取了全社会动员的战略来抢占战略技术高地。\n\n针对这些挑战，报告提出了四大核心战略方向。首先，将科研资助体系从'机构本位'转向'科学家本位'，通过扩大便携式研究生奖学金、支持早期职业独立性、引入长周期资助等方式，让研究人员能够专注于真正重要的科学问题。其次，改革资金分配机制，采用'金票'制度、快速资助、挑战性奖金等多元化资助方式，打破共识驱动的同行评审模式。第三，加强公私合作，建立'无创新许可'环境，开放联邦基础设施，组建'前竞争性'联盟，将州和县作为创新实验室。第四，为AI革命做好准备，启动'创世计划'，建立'黄金标准科学'，发展AI驱动的验证系统，推动自主实验，并探索'AI原生'科研机构。\n\n报告最后展望了美国科学的'新黄金时代'，强调AI将加速科学发现，扩展人类认知能力，并解决人类面临的重大挑战。然而，报告也警示，只有大胆改革科研机构，建设国家级基础设施，并确保AI学习知识库的严格验证，才能充分发挥AI及其相关生产力的提升作用。这份报告不仅是对美国科学体系的诊断，更是对未来科技发展方向的战略规划，为美国在21世纪保持科技领导地位提供了路线图。",
+  "outro": "这份报告勾勒了美国科学'新黄金时代'的愿景，强调通过改革科研资助体系、加强公私合作、培养多元人才以及拥抱AI革命，美国可以重获科技领导地位，确保科学进步的果实首先惠及美国人民。",
+  "steps": [
+    {
+      "quote": "The American story is one of boundless creativity and bold ambition, driven by an indomitable pioneering spirit that propels exploration and discovery. It is this spirit that illuminated the world with Edison’s lightbulb, carried the Wright brothers into the skies, and sent Armstrong to the moon. Today, a new frontier of scientific discovery lies before us.",
+      "title": "美国创新精神",
+      "narration": "开篇引用特朗普总统的话，点明了美国科学发展的核心驱动力——那种无与伦比的创造力和雄心壮志。这种精神从爱迪生、莱特兄弟到阿姆斯特朗，一直推动着美国探索未知领域，为全文奠定了基调。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-0.mp3"
+    },
+    {
+      "quote": "The foundation of these profound advancements was laid in the years following World War II, thanks largely to the vision set out by Vannevar Bush, the chief science advisor to Presidents Roosevelt and Truman. In his canonical 1945 report, Science: The Endless Frontier, Bush made the prescient case for federal support of basic research, laying the groundwork for the modern scientific enterprise.",
+      "title": "布什的愿景",
+      "narration": "报告强调了布什1945年报告的深远影响，他前瞻性地提出了联邦支持基础研究的必要性，为现代科研体系奠定了基础。这一历史背景引出了当前面临的问题：虽然投入增加，但科研生产力却在下降。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-1.mp3"
+    },
+    {
+      "quote": "Private industry has become by far the largest source of research and development (R&D) funding in the United States, with its share nearly doubling from the 1950s to today. American companies now deploy around $700 billion annually, more than triple the combined spending from government and higher education.",
+      "title": "私人研发主导",
+      "narration": "报告提供了关键数据，显示私人部门已成为美国研发的主要资金来源，年投入约7000亿美元，是政府和高等教育机构总和的三倍多。这一数据点明了科研生态系统的重大转变，要求政府角色相应调整。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-2.mp3"
+    },
+    {
+      "quote": "Despite massive increases in biomedical funding since the 1990s, the rate of significant breakthroughs appears to have slowed and drug approvals have flatlined. Researchers today often spend half their time on paperwork and administrative tasks, a burden worsened by expanding federal and university bureaucracies that further reduce funding available for actual science.",
+      "title": "科研效率下降",
+      "narration": "报告揭示了当前科研体系的一个核心矛盾：尽管生物医学研究投入大幅增加，但重大突破的速率却在下降，研究人员近一半时间被行政工作占据。这一现象表明，简单的资金增加无法解决科研效率问题，需要系统性改革。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-3.mp3"
+    },
+    {
+      "quote": "Refocus on the Individual Scientist: Put the working researcher back at the center of America's scientific enterprise. Free them from the growing administrative burdens that now weigh them down for nearly half their working hours. Bet on people, not just projects, by expanding portable graduate fellowships like the National Science Foundation (NSF) Graduate Research Fellowship Program (GRFP), backing early-career independence, and scaling long-horizon grants for the best and brightest modeled on National Institutes of Health (NIH) Director's Pioneer Award.",
+      "title": "以科学家为中心",
+      "narration": "报告提出了第一个核心战略：将科研资助体系从'机构本位'转向'科学家本位'。通过减轻研究人员近一半的行政负担，扩大便携式研究生奖学金，支持早期职业独立性，让研究人员能够专注于真正重要的科学问题。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-4.mp3"
+    },
+    {
+      "quote": "Restore Permissionless Innovation: American regulators have grown skilled at weighing the risks of action, but blind to the costs of inaction. Developing good rules require real-world evidence, and building that evidence base only comes from letting innovators prototype and experiment. Extend the President's reforms in nuclear, pharmaceuticals, and drones across other sectors. Weigh benefits alongside risks, streamline permitting, and use regulatory sandboxes to test new technologies under controlled conditions.",
+      "title": "无创新许可环境",
+      "narration": "报告提出了第三个战略方向：建立'无创新许可'环境。指出监管机构擅长权衡行动风险，却忽视不行动的成本。通过在核能、制药和无人机等领域的改革经验推广到其他领域，使用监管沙盒等创新方法，让创新者能够在受控条件下进行实验。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-5.mp3"
+    },
+    {
+      "quote": "Launch and Scale the Genesis Mission: Fully fund and expand the Genesis Mission as America's flagship AI for science initiative, integrating supercomputers, AI models, scientific instruments, and datasets across national laboratories to double the productivity and impact of U.S. science within a decade. Direct it at cross-cutting problems where breakthroughs unlock entire branches of downstream discovery and where AI can transform the practice of science itself.",
+      "title": "创世计划",
+      "narration": "报告提出了应对AI时代的核心举措：启动'创世计划'，作为美国AI科学旗舰倡议。通过整合国家实验室的超级计算机、AI模型、科学仪器和数据，在未来十年内将美国科学的生产力和影响提高一倍，专注于能解锁整个下游科学分支突破的交叉问题。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-6.mp3"
+    },
+    {
+      "quote": "Institutionalize Gold Standard Science: AI operating on a flawed knowledge base will only entrench bad science. Enforce reproducibility, transparency, data sharing, and falsifiability across all federally funded research through the Restoring Gold Standard Science Executive Order, creating a trusted foundation for AI-powered discovery.",
+      "title": "黄金标准科学",
+      "narration": "报告强调了在AI时代确保科学质量的重要性：通过'恢复黄金标准科学'行政命令，强制所有联邦资助研究实现可重复性、透明度、数据共享和可证伪性，为AI驱动的发现建立可信基础。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-7.mp3"
+    },
+    {
+      "quote": "Throughout our history, Americans have reinvented, reformed, and refounded our institutions when the moment demanded it. Each generation of American scientists, inventors, and pioneers has seized the opportunity to expand the frontiers of knowledge. On the occasion of America's 250th anniversary, we must remember that ours is a Republic defined by courage, innovation, and exploration.",
+      "title": "创新传统",
+      "narration": "报告以美国历史传统作结，强调美国250周年之际，必须记住这个国家是以勇气、创新和探索为特征的共和国。面对当前挑战，美国需要像历史上的每一代人一样，在关键时刻重新构想整个科研体系。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/step-8.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/e24862e9bdbe74f07a4b3595c465e85e41e09d9af64c2d4017e5854eb363bc0c/default/outro.mp3"
+}

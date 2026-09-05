@@ -1,0 +1,109 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T01:36:40.670Z",
+  "sourceUrl": "https://newsletter.semianalysis.com/p/are-open-models-catching-up",
+  "sourceTitle": "Are Open Models Catching Up?",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了开源AI模型与闭源前沿模型之间的能力差距演变历程。作者通过分析三个AI发展时代（早期扩展时代、推理时代和智能代理时代）的模型性能数据，发现了一个令人惊讶的趋势：开源模型赶上闭源前沿模型所需的时间正在逐代减半。这一发现不仅挑战了人们对AI领域集中化的传统认知，也为未来AI发展格局提供了新的思考视角。",
+  "essay": "过去两个月是开源AI的突破期，像GLM 5.3和Kimi K3这样的模型已经能够执行与Anthropic价值650亿美元ARR相媲美的编码和智能代理任务。这引发了一个关键问题：如果开源模型只需闭源模型的一小部分成本就能提供足够的能力，模型层是否会商品化？灾难性的利润前景促使我们深入分析开源与闭源模型之间的能力差距演变。**文章将AI发展分为三个时代**，每个时代都代表了模型效用的阶梯式提升：早期扩展时代（2022-2024）、推理时代（2024-2025）和智能代理时代（2025至今）。这种分时代分析方法揭示了开源与闭源差距的周期性变化规律。\n\n在早期扩展时代，Llama-2-70B作为首个接近前沿的开源模型，与GPT-3.5 Turbo之间存在显著差距，复合得分为39.9对75.7。这一初始差距为整个时代设定了叙事基调：Mixtral-8x7B在2023年12月发布后逐步接近GPT-4能力，但随后GPT-4 Turbo和GPT-4o又领先一步。直到2024年7月Llama-3.1-405B发布，开源模型才关闭了GPT-3.5 Turbo的差距，而DeepSeek V3在2024年12月才匹配了GPT-4o的能力。值得注意的是，这一时代的前沿模型能力提升有限，主要目标在于使GPT-4更便宜、更快，而非更智能。\n\n推理时代的标志是OpenAI在2024年9月推出的o1-preview模型，它彻底改变了基准测试的选择和差距格局。与早期扩展时代相比，推理时代开始时开源与闭源源码的初始差距显著缩小——只有12.1分，而非前一个时代的35.8分。这一差距主要由DeepSeek R1缩小，它在2025年5月以78分的成绩关闭了初始差距，用时仅8.5个月。这一时期值得注意的是Anthropic的战略选择，他们没有在排行榜上争夺第一，而是将Claude打造为默认编码代理，为下一个时代设定了基准。\n\n智能代理时代的到来标志着测试标准再次转变，从复杂的数学问题转向模型编写代码、进行网络搜索和使用计算机的能力。Anthropic的Claude Code在这一时期取得了巨大成功，自2025年5月全面发布以来，为Anthropic带来了超过650亿美元的ARR增长。尽管OpenAI和Anthropic在这一时代平均每51天发布一次模型，远快于前两个时代的213天和120天，但开源模型关闭差距的速度却更快：Kimi K2.6在4.8个月内超越了Opus 4.5，GLM-5.2在6个月内超过了GPT-5.2。**这一趋势与之前时代完全一致**，每个时代关闭差距的时间大约是前一个时代的一半。\n\n展望未来，虽然基准测试并非衡量模型能力的全部，但开源模型追赶速度的加快趋势确实存在。这一发现对AI领域的集中化叙事提出了挑战，表明开源社区可能比预期更快地缩小与闭源前沿模型的差距。尽管安全测试和产品化等因素可能影响这一趋势，但历史数据表明，开源模型在创新和追赶方面具有显著优势，这可能导致AI领域更加分散和竞争激烈的发展格局。",
+  "outro": "开源模型与闭源前沿模型之间的差距正在以惊人的速度缩小，每个时代关闭差距的时间大约是前一个时代的一半。这一趋势表明，AI领域可能比预期更加分散和竞争激烈，而非由少数几家巨头主导。",
+  "steps": [
+    {
+      "quote": "However, major FUD has also emerged as a result of open model success: if open models stay capable enough relative to the closed frontier at a fraction of the cost, won't the model layer become commoditized?",
+      "title": "商品化担忧",
+      "narration": "这就带来一个问题：如果开源模型只需闭源模型的一小部分成本就能提供足够的能力，模型层是否会商品化？这一担忧源于开源模型的快速进步，可能对前沿实验室的利润造成灾难性影响。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-0.mp3"
+    },
+    {
+      "quote": "There have been three eras thus far in the history of LLMs: early scaling, reasoning, and agentic. Each era represented a step-function increase in model utility, and rather than trying to plot a single continuous trend, we believe it's better to evaluate the models and benchmarks from each era individually.",
+      "title": "三个AI时代",
+      "narration": "作者将LLM发展分为三个时代：早期扩展、推理和智能代理，每个时代都代表了模型效用的阶梯式提升。这种分时代分析方法比尝试绘制单一连续趋势更能准确反映模型能力的演变。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-1.mp3"
+    },
+    {
+      "quote": "When viewed this way, it becomes clear that the open vs. closed gap moves in cycles. At the start of each era, a frontier lab completes some promising research, trains an impressive model, deploys it at scale to their users, and jumps ahead. Then, other labs identify the key advances, reverse-engineer what the frontier lab is doing, replicate them in their own models, and close the gap.",
+      "title": "差距周期性",
+      "narration": "通过这种方式可以清楚地看到，开源与闭源之间的差距呈现周期性变化：每个时代开始时，前沿实验室通过突破性研究领先，随后其他实验室通过识别关键进展、反向工程和复制来缩小差距。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-2.mp3"
+    },
+    {
+      "quote": "The result is a clear trend: with each generation, open-source models take half as long to catch up to the first closed-source model of the era.",
+      "title": "追赶加速",
+      "narration": "这一分析结果揭示了一个明确趋势：随着每一代的发展，开源模型赶上时代首个闭源模型的时间大约减半，这表明开源社区的追赶速度正在显著加快。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-3.mp3"
+    },
+    {
+      "quote": "It took until the Llama-3.1-405B release in July 2024 for open models to close the GPT-3.5 Turbo gap, with a composite score of 86. The last frontier model, GPT-4o, was matched in capability by DeepSeek V3 in December 2024, scoring 95.5 and 94.1 respectively.",
+      "title": "首次差距关闭",
+      "narration": "直到2024年7月Llama-3.1-405B发布，开源模型才关闭了GPT-3.5 Turbo的差距，而DeepSeek V3在2024年12月才匹配了GPT-4o的能力，这标志着开源模型首次成功缩小与闭源前沿模型的差距。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-4.mp3"
+    },
+    {
+      "quote": "While OpenAI and Google traded crowns, Anthropic was turning Claude into the default coding agent. This set the terms for the next era: the benchmarks that now matter run in a terminal.",
+      "title": "Anthropic战略",
+      "narration": "值得注意的是，在OpenAI和Google争夺排行榜第一的同时，Anthropic正专注于将Claude打造为默认编码代理，这一战略选择为下一个时代设定了基准——现在重要的基准测试是在终端环境中运行的。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-5.mp3"
+    },
+    {
+      "quote": "Yet despite the massive explosion in economic value created by frontier models, the gap closed faster in Era 3 than either era before it. Kimi K2.6 surpassed Opus 4.5 with a score of 56.3 in 4.8 months, and GLM-5.2 cleared GPT-5.2 with a score of 72.4 in 6 months.",
+      "title": "最快差距关闭",
+      "narration": "尽管前沿模型创造了巨大的经济价值，但智能代理时代的差距关闭速度比前两个时代都快：Kimi K2.6在4.8个月内超越了Opus 4.5，GLM-5.2在6个月内超过了GPT-5.2，进一步证实了逐代减半的趋势。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-6.mp3"
+    },
+    {
+      "quote": "First, we want to acknowledge that benchmarks are not the end all be all. Kimi K3 may score higher than Fable 5 on our curated composite, but we still prefer using Fable at SemiAnalysis for our day to day work. This is partly because Anthropic has done a better job productizing their model via things like Claude Code and Claude Tag, but also largely because benchmarks aren't a perfect proxy for real work.",
+      "title": "基准测试局限",
+      "narration": "需要承认的是，基准测试并非衡量模型能力的全部。虽然Kimi K3在某些基准测试上得分更高，但实际使用中产品化程度和用户体验同样重要，这表明真实工作表现与基准测试分数之间存在差距。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-7.mp3"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*='071b0427-31a2-42ce-9aae-7af8499352fa']",
+      "title": "开源模型发布时间线",
+      "narration": "这张时间线把2026年6月到8月的十次主要开源权重模型发布排在一起，平均不到十天就有一个新模型。尤其注意8月中旬，DeepSeek V4 Pro、GLM-5.3和Qwen3.8-27B挤在两天内接连放出，节奏明显在加速。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.08,
+          0.35,
+          0.96,
+          0.8
+        ],
+        "explanation": "时间轴上每个点对应一次开源模型发布，右侧8月中旬三个模型挤在两天内，最能体现发布节奏的密集与加速。"
+      },
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-8.mp3"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*='b272b3ef-7f89-4f4a-a44d-9be5a279da5c']",
+      "title": "开源追平闭源，史上最快",
+      "narration": "这张图用阶梯线追踪闭源和开源前沿模型的综合得分：去年12月开源GLM-4.7只有29.6分，落后闭源不少；但到今年8月，开源Kimi K3已冲到93分，几乎追平闭源GPT-5.6的99.1分。开源与闭源的差距正以有史以来最快的速度收窄，这是全文的核心论据。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.68,
+          0.28,
+          1,
+          0.6
+        ],
+        "explanation": "右端是'最快收窄'的关键：Kimi K3的93.0和GLM-5的72.4步步逼近GPT-5.6的99.1，两条线几乎汇合。"
+      },
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/step-9.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a10c615cf7b7b3c669803b0942631b8bff232b63c614544be4d046984570bdf4/default/outro.mp3"
+}

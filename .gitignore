@@ -7,3 +7,6 @@ dist/
 .claude/
 /demo.mp4
 /hypothesisor-*.zip
+.gstack/
+.wrangler/
+

@@ -1,0 +1,54 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:18:33.704Z",
+  "sourceUrl": "https://magazine.sebastianraschka.com/p/claude-watermarking",
+  "sourceTitle": "拆解 Claude 水印",
+  "author": "xiaoping",
+  "intro": "这篇文章深入拆解了Claude模型的水印技术，从基础原理到实际应用，再到局限性和未来影响。作者通过视频讲解的方式，详细展示了水印如何在文本生成过程中被植入，以及如何检测和移除这种水印。文章的核心矛盾在于：水印技术理论上可以识别AI生成的内容，但实际应用中可能面临被绕过或导致文本质量下降的问题。",
+  "essay": "Claude水印技术的核心在于通过控制文本生成过程中的随机采样来实现，而非改变模型本身。在常规的文本生成中，大型语言模型会根据输入提示生成一个token分布，然后通过随机采样选择下一个token。水印技术则是通过一个秘密密钥和前几个token来生成一个特定的随机种子，使得在多个可能性相近的token选择中，总是选择同一个token。这种方法不会显著影响文本质量，因为它只在那些有多个合理选择的token位置应用。\n\n水印检测依赖于一个评分函数，该函数使用相同的秘密密钥和一组随机水印函数来计算文本的分数。如果分数超过某个阈值，则文本被判定为带有水印。这种检测方法不需要重新运行原始模型，大大降低了计算成本。然而，水印的移除相对简单——只需编辑文本中那些可能被水印标记的token位置，但由于我们不知道具体哪些位置被标记，通常需要随机修改多处文本。\n\n水印技术面临的主要挑战是其有效性依赖于特定场景下的token选择。当文本中没有多个合理选择的token时，水印就无法应用。此外，随着水印技术的普及，用户可能会采用两步流程：首先使用Claude等带水印的模型生成文本，然后通过本地模型进行编辑以移除水印。这种方法虽然有效，但可能导致文本质量下降，因为编辑过程可能引入不必要的更改。\n\n从长远来看，水印技术可能会改变AI生成内容的生态。虽然它可以帮助识别AI生成的内容，但也可能导致内容质量下降和更复杂的生成流程。随着更多AI提供商采用类似技术，用户可能会转向使用未实施水印的本地模型，或开发更复杂的编辑流程来绕过检测。这种技术博弈将持续演变，水印技术也需要不断改进以应对新的挑战。",
+  "outro": "Claude水印技术通过控制文本生成过程中的随机采样实现，理论上能识别AI生成内容，但实际应用中可能面临被绕过或导致文本质量下降的问题。这一技术博弈将持续演变，水印技术也需要不断改进以应对新的挑战。",
+  "steps": [
+    {
+      "quote": "So, in watermarking, Claude watermarking is kind of like the idea that it sets a random seed. But this random seed, instead of being like a number that is fixed based on, I don't know, someone writing down a fixed number, they're using a secret key that is essentially like an API key, a secret key, and from that key, together with the four previous words, they derive this random seed essentially.",
+      "title": "密钥机制",
+      "narration": "水印的关键在于秘密密钥，这个密钥与上下文中的前几个词结合生成随机种子。这意味着只有拥有密钥的人才能知道文本是如何被生成的，其他人无法检测水印，除非获得密钥或检测API。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c/default/step-0.mp3"
+    },
+    {
+      "quote": "The watermarking is essentially doing the same thing. Now, instead of just using a simple random seed, they have a so-called random key, where this random key is involved in selecting the text, essentially. But what we can already say is that, in the Claude blog post, they say the watermarking shouldn't make the text worse.",
+      "title": "不影响质量",
+      "narration": "作者指出水印技术不会显著降低文本质量，因为它只是在那些有多个合理选择的token位置应用确定性选择。在这些位置，无论选择哪个token，文本质量都不会有太大差异，所以水印不会'使文本变差'。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c/default/step-1.mp3"
+    },
+    {
+      "quote": "Now, removing the watermark is interesting. So now that we know how the watermarking works, we also know the shortcomings. I mean, this is really highly dependent on specific tokens in certain positions. So, for example, in this given text, if these colored words or tokens are the watermarking positions, we know that we could remove the watermark by editing this, right? If we change all the words at these positions, we would be 100% able to defeat this watermark.",
+      "title": "移除水印",
+      "narration": "移除水印的方法很简单：修改那些可能被水印标记的token位置。但问题是我们不知道具体哪些位置被标记，所以只能随机编辑多处文本。这表明水印技术在实际应用中可能很容易被规避。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c/default/step-2.mp3"
+    },
+    {
+      "quote": "So again, the tournament sampling is mainly to make detection easier and cheaper. We could also use something like NumPy's random choice with a random seed or to make the sampling deterministic. But then again, it would be hard to score any text on the internet.",
+      "title": "检测优化",
+      "narration": "锦标赛采样的主要目的是使水印检测更简单、更便宜。如果使用简单的随机选择，检测时需要重新运行原始模型，成本极高。而锦标赛采样生成的签名可以直接用于评分，无需重新运行模型。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c/default/step-3.mp3"
+    },
+    {
+      "quote": "So I think people will just use a local model and then generate edited AI-generated text. And my guess is it will be slightly worse than the original text because for the local model, you might now be using a smaller model.",
+      "title": "未来趋势",
+      "narration": "随着更多AI提供商实施水印，用户可能会转向使用未实施水印的本地模型进行编辑。这种方法虽然能绕过检测，但可能导致文本质量下降，因为编辑过程可能使用较小的模型或引入不必要的更改。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c/default/step-4.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ec1dae1d3407b62bf780e54bb648e5672afb2b5d0cad6ca830c7d3de1da2319c/default/outro.mp3"
+}

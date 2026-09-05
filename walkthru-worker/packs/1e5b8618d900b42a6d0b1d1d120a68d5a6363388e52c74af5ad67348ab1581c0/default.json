@@ -1,0 +1,59 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "1e5b8618d900b42a6d0b1d1d120a68d5a6363388e52c74af5ad67348ab1581c0-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-04T02:13:53.684Z",
+  "sourceUrl": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/",
+  "sourceTitle": "Google发布Gemini 3.8 Flash/Cyber",
+  "author": "xiaoping",
+  "intro": "这篇文章介绍了Google最新发布的Gemini 3.8 Flash和Gemini 3.8 Flash Cyber两大模型，展示了AI在软件工程、自主代理工作和网络安全领域的重大突破。这些模型不仅在性能上超越前代，还以更低的成本提供了接近前沿模型的强大能力。然而，随着AI能力的快速提升，一个关键问题浮现：如何在保证安全性的同时，让这些强大的技术真正服务于人类需求？",
+  "essay": "Google最近发布的Gemini 3.8系列模型代表了人工智能领域的又一次重大飞跃，特别是在软件工程和自主代理工作方面。**Gemini 3.8 Flash**作为公司迄今为止最强大的工作马模型，在软件工程、自主任务和专业领域的关键多步骤推理方面实现了显著提升。值得注意的是，尽管性能大幅提高，它仍以与3.7 Flash相同的低价格提供这些能力，输入token成本仅为每百万0.75美元，输出token为每百万3.75美元。这种性能与成本的平衡点，体现了Google在AI商业化道路上的战略思考。\n\n然而，真正的突破在于Gemini 3.8 Flash在复杂任务中展现出的\"努力工作\"特性。与以往模型不同，3.8 Flash会执行额外的推理步骤，并迭代调用工具，有时甚至会使用更多token来最大化性能。这种设计选择带来了显著回报——在DeepSWE v1.1基准测试中，它能够端到端自主解决复杂的工程问题，性能超过了许多更大的前沿模型，而成本却只是其中的一小部分。这一特性使得3.8 Flash在需要高级分析和报告的专业领域表现出色，如金融和法律领域的基准测试中均优于前代模型和其他前沿模型。\n\n**Gemini 3.8 Flash Cyber**则专门针对网络安全领域，提供了自主漏洞发现和自动修复能力。在CyberGym行业标准基准测试中，它展示了前沿级别的自主漏洞发现能力，超越了包括3.5 Flash Cyber在内的多个模型。更令人印象深刻的是，在涵盖20种编程语言的复杂代码库测试中，其成功率超过70%，远超之前的模型。在漏洞修复方面，3.8 Flash Cyber在CWE-Bench基准测试中达到了47.2%的pass@1率，与领先的前沿模型47.8%的表现几乎相当，但成本却低得多。这种性能与成本的平衡，为网络安全防御提供了全新可能性。\n\n安全性是这些模型设计中的核心考量。Gemini 3.8系列配备了针对化学、生物、放射性和核(CBRN)以及网络攻击领域的防护措施，同时允许有益用例的开发。特别是3.8 Flash Cyber，为可信防御者提供了更全面的网络安全能力，但仅通过新的Fairwind计划向特定群体开放。Google已经将这些模型应用于自身安全防护，Chrome安全团队发现3.8 Flash Cyber产生的漏洞补丁数量是最佳商业模型的2.6倍，而云漏洞研究团队则利用该模型在不到2小时内发现了一个关键漏洞，通常这类发现需要数月时间。\n\n这些模型的发布标志着AI从简单工具向自主代理的转变。通过Google Antigravity平台，开发者可以创建复杂的交互式应用，如3D游戏、功能性DOS版Google Maps和硬件解剖可视化工具。这些应用展示了AI在创意和工程领域的潜力，同时也提出了关于AI自主性和人类监督的重要问题。随着AI能力的不断提升，如何确保这些技术被负责任地使用，同时最大化其对社会和企业的积极影响，将成为未来发展的关键挑战。",
+  "outro": "Gemini 3.8系列模型展示了AI在性能、成本和应用广度上的全面突破，同时通过安全机制确保技术被负责任地使用，这标志着AI正从工具向自主代理转变，为各行各业带来全新可能性。",
+  "steps": [
+    {
+      "quote": "Building on the momentum of 3.7 Flash from three weeks ago and marking our third Flash release in only six weeks, today we're introducing Gemini 3.8, our best reasoning and coding model yet, at the same speed and low cost of 3.7.",
+      "title": "新一代模型发布",
+      "narration": "这就带来一个问题——AI模型迭代速度如此之快，如何在保持成本优势的同时不断提升性能？Google通过Gemini 3.8给出了答案。",
+      "kind": "context"
+    },
+    {
+      "quote": "Gemini 3.8 Flash: our most intelligent workhorse model, delivering significant improvements from 3.7 Flash across software engineering, agentic tasks, and critical, multi-step reasoning in specialized domains.",
+      "title": "性能全面提升",
+      "narration": "于是，Google推出了3.8 Flash，它在软件工程、自主任务和专业领域的关键多步骤推理方面实现了显著提升，同时保持与3.7相同的低价格。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Gemini 3.8 Flash Cyber: our most capable cybersecurity model with frontier-level performance in vulnerability detection and automated patching, available to trusted defenders through our new Fairwind Program.",
+      "title": "网络安全专精",
+      "narration": "紧接着，Google转向网络安全领域，推出了3.8 Flash Cyber，这是迄今为止最强大的网络安全模型，在漏洞检测和自动修复方面达到前沿水平，但仅通过Fairwind计划向可信防御者开放。",
+      "kind": "claim"
+    },
+    {
+      "quote": "On DeepSWE v1.1 (Long-Horizon Software Engineering) 3.8 Flash outperforms most larger frontier models in autonomously solving complex engineering problems end to end, only at a fraction of the cost.",
+      "title": "工程能力突破",
+      "narration": "这里的关键是，3.8 Flash能够在端到端自主解决复杂工程问题时，超越许多更大的前沿模型，而成本只是其中的一小部分，这解释了为什么它被称为'最佳推理和编码模型'。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "These performance gains stem from a core design choice: 3.8 Flash works harder. On complex tasks, it exhibits greater diligence — executing extra reasoning steps, and calling tools iteratively.",
+      "title": "工作方式革新",
+      "narration": "但作者马上话锋一转：性能提升的背后是一个核心设计选择——3.8 Flash'工作更努力'，它会执行额外的推理步骤并迭代调用工具，这种'努力'带来了显著的性能飞跃。",
+      "kind": "insight"
+    },
+    {
+      "quote": "On this benchmark, Gemini 3.8 Flash Cyber is on the Pareto frontier: with a pass@1 of 47.2% compared to a leading frontier model at 47.8%, yet offered at a significantly lower cost.",
+      "title": "漏洞修复能力",
+      "narration": "问题是如何在保证修复质量的同时降低成本？3.8 Flash Cyber在CWE-Bench基准测试中达到了47.2%的pass@1率，与领先前沿模型47.8%的表现几乎相当，但成本却低得多，实现了性能与成本的完美平衡。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Chrome Security team found that 3.8 Flash Cyber produced 2.6 times more correct patches to vulnerabilities in Chrome than the best commercial models that are much larger.",
+      "title": "实际应用效果",
+      "narration": "于是，这些能力不仅停留在理论层面，Chrome安全团队发现3.8 Flash Cyber产生的漏洞补丁数量是最佳商业模型的2.6倍，这证明了其在实际应用中的巨大价值。",
+      "kind": "evidence"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Walkthru 编辑后台</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Walkthru 编辑后台</h1>
+    <div class="header-note">本地专用 · 127.0.0.1 · API key 只在你自己的 shell 里</div>
+  </header>
+
+  <main>
+    <section class="panel" id="lookupPanel">
+      <h2>1. 查找已发布</h2>
+      <div class="row">
+        <input type="url" id="lookupUrl" placeholder="文章 URL（用于查找 / 作为生成目标）" />
+        <button type="button" id="lookupBtn" class="btn primary">查找</button>
+      </div>
+      <div class="hash-line muted" id="hashLine" hidden></div>
+      <div id="lookupResults" class="pack-list"></div>
+      <div id="lookupEmpty" class="muted" hidden>这个 URL 还没有发布过 walkthrough。</div>
+    </section>
+
+    <section class="panel" id="generatePanel">
+      <h2>2. 生成新版本</h2>
+      <div class="grid2">
+        <label>标题<input type="text" id="genTitle" placeholder="文章标题" /></label>
+        <label>作者<input type="text" id="genAuthor" placeholder="xiaoping" /></label>
+      </div>
+      <label>正文（从原文页面复制粘贴进来）
+        <textarea id="genText" rows="10" placeholder="粘贴文章正文……"></textarea>
+        <span class="muted small" id="genTextLen">0 字符</span>
+      </label>
+
+      <div class="grid2">
+        <label>版本类型
+          <select id="genMode">
+            <option value="default">标准版（单次生成，较快）</option>
+            <option value="deep">完整版（按章节生成，尽量详细，较慢）</option>
+          </select>
+        </label>
+        <label id="chaptersField">章节数（完整版）<input type="number" id="genChapters" value="4" min="2" max="20" /></label>
+      </div>
+      <div class="grid2">
+        <label>语言
+          <select id="genLang">
+            <option value="zh" selected>中文</option>
+            <option value="en">English</option>
+            <option value="auto">自动检测</option>
+            <option value="bilingual">中英对照</option>
+          </select>
+        </label>
+        <label class="checkbox-row"><input type="checkbox" id="genTts" /> 生成语音讲解（TTS，需要 VOLCENGINE_API_KEY）</label>
+      </div>
+
+      <div class="images-block">
+        <div class="row space-between">
+          <strong>配图（可选）</strong>
+          <button type="button" id="addImageBtn" class="btn link">+ 添加一张图</button>
+        </div>
+        <p class="muted small">每张图需要：本地图片文件、页面上定位它的 CSS selector、以及图片附近的一段原文（用来把它插入讲解的正确位置）。</p>
+        <div id="imagesList"></div>
+      </div>
+
+      <button type="button" id="generateBtn" class="btn primary big">开始生成</button>
+      <pre id="genLog" class="log" hidden></pre>
+    </section>
+
+    <section class="panel" id="editorPanel" hidden>
+      <h2>3. 编辑 / 发布</h2>
+      <div class="editor-meta muted small" id="editorMeta"></div>
+
+      <label>开场白 intro<textarea id="editIntro" rows="3"></textarea></label>
+      <label>导读文章 essay<textarea id="editEssay" rows="6"></textarea></label>
+      <label>收尾 outro<textarea id="editOutro" rows="2"></textarea></label>
+
+      <div class="row space-between">
+        <h3 style="margin:0">讲解步骤</h3>
+        <button type="button" id="addStepBtn" class="btn link">+ 添加一步</button>
+      </div>
+      <div id="stepsList"></div>
+
+      <div class="row">
+        <button type="button" id="publishBtn" class="btn primary big">发布</button>
+        <button type="button" id="deleteBtn" class="btn danger" hidden>删除这个版本</button>
+      </div>
+      <pre id="pubLog" class="log" hidden></pre>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

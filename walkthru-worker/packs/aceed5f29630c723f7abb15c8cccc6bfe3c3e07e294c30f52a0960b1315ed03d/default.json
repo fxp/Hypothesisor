@@ -1,0 +1,41 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "aceed5f29630c723f7abb15c8cccc6bfe3c3e07e294c30f52a0960b1315ed03d-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:40:48.406Z",
+  "sourceUrl": "https://blog.cloudflare.com/botbase-for-operators/",
+  "sourceTitle": "Cloudflare推出BotBase",
+  "author": "xiaoping",
+  "intro": "Cloudflare推出了BotBase for Operators，这是一个为机器人运营商设计的平台，旨在解决机器人提交过程中的透明度和可管理性问题。这个工具让机器人运营商能够提交、跟踪和更新他们的机器人信息，同时为网站所有者提供更好的机器人管理能力。这个平台解决了机器人生态系统中的一个关键矛盾：网站所有者需要控制自动化流量，而机器人运营商需要清晰的身份识别和信息更新渠道。",
+  "essay": "Cloudflare推出的BotBase for Operators标志着机器人生态系统管理的重要进步。这个平台为机器人运营商提供了全新的提交和管理体验，解决了长期以来机器人提交过程中的\"黑盒\"问题。过去，机器人运营商提交申请后，无法追踪审查状态、了解拒绝原因或更新现有信息，这种不确定性严重影响了机器人生态系统的健康发展。\n\n新平台将BotBase整合到了Cloudflare仪表板的\"保护与连接 → 应用安全 → BotBase\"部分，提供了三个主要功能：机器人目录浏览、提交表单和提交历史记录。特别是提交历史记录功能，让运营商可以查看每个提交的详细状态——\"等待审查\"、\"已接受\"或\"已拒绝\"，并附有明确的拒绝原因和修复指导。这一功能大大提升了透明度，消除了过去需要联系支持团队才能获取信息的困境。\n\n更值得注意的是，BotBase采用了更加细致的分类系统，要求运营商详细描述机器人的行为内容使用方式和运营者身份。这种基于行为的分类方法，取代了过去单一标签的局限，使网站所有者能够更准确地决定如何处理特定机器人。同时，审查过程的自动化也显著提高了效率，通过自动检查IP列表、反向DNS验证和Web Bot Auth签名，大多数提交现在可以比以前更快地完成审查。\n\n这一平台的推出不仅提升了机器人运营商的体验，也为网站所有者提供了更可靠的机器人管理工具。通过促进双方之间的透明度和理解，BotBase正在构建一个更加健康、可持续的机器人生态系统，让网站所有者和机器人运营商能够更好地共存。",
+  "outro": "BotBase for Operators通过提供透明度、灵活性和自动化审查，解决了机器人生态系统中的关键矛盾，让网站所有者和机器人运营商能够更好地共存，共同构建一个更加健康、可持续的自动化流量环境。",
+  "steps": [
+    {
+      "quote": "But this ecosystem goes both ways. While website owners need to decide which automated traffic they allow, bot operators need a clear way to identify themselves, explain what their bots do, and keep that information current.",
+      "title": "双向生态系统",
+      "narration": "这就引出了问题的关键：机器人生态系统是双向的。网站所有者需要决定允许哪些自动化流量，而机器人运营商也需要清晰的身份识别方式，并能解释和更新他们的机器人信息。",
+      "kind": "context"
+    },
+    {
+      "quote": "The new intake form asks you to describe your bot the way it actually behaves. It follows the same behavior and content use model we introduced on July 1, so instead of squeezing your bot into a single label, you now tell us three things.",
+      "title": "行为分类",
+      "narration": "但作者提出了一个重要洞见：新表单采用了基于行为的分类系统，取代了过去单一标签的局限。现在需要描述三个关键方面：机器人做什么、如何使用内容以及谁在运行它，这种更细致的分类方式让描述更加准确。",
+      "kind": "insight"
+    },
+    {
+      "quote": "We rebuilt that process to run automatically. Your bot runs through a series of checks — is it a duplicate of one we already track, is your user-agent pattern specific enough to identify your bot without overlapping one that's already registered, and, most importantly, does your claimed verification method actually hold up?",
+      "title": "自动化审查",
+      "narration": "这解释了为什么审查过程能够更快：Cloudflare重建了审查流程，使其自动化运行。机器人会经过一系列自动检查，包括是否为重复项、用户代理模式是否足够特定，以及验证方法是否有效，大大提高了审查效率。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Our vision is to keep expanding BotBase so operators can understand exactly how their bot is treated and get guidance on how to crawl the web more politely, turning a one-way submission into an ongoing relationship.",
+      "title": "持续关系",
+      "narration": "最后，作者展望了未来愿景：BotBase将继续扩展，帮助运营商了解他们的机器人如何被对待，并提供更礼貌的爬取指导，将一次性提交转变为持续的关系，这标志着机器人生态系统管理的重要转变。",
+      "kind": "conclusion"
+    }
+  ]
+}

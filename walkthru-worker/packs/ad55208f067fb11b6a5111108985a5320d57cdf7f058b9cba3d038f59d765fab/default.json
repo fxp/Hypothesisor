@@ -1,0 +1,61 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T01:40:38.497Z",
+  "sourceUrl": "https://www.anthropic.com/research/riemann-zeta",
+  "sourceTitle": "Learning more about Claude's mathematical capabilities",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了AI模型Claude在尝试解决数学界著名的黎曼猜想时，意外地改进了一个相关问题的下界。文章从背景介绍到具体方法，再到这一发现的意义，展现了AI在数学研究中的新能力。核心线索是：AI如何在不解决重大猜想的情况下，却能推动相关数学领域的进步？",
+  "essay": "Anthropic的研究人员给Claude提出了一个极具挑战性的任务：尝试解决数学界最著名的未解问题之一——黎曼猜想。虽然Claude未能证明这个自1859年提出、悬赏百万美元的难题，但在探索过程中，它意外地在一个相关问题上取得了突破。Claude改进了关于黎曼zeta函数零点满足黎曼猜想比例的下界，从41.6%提高到了67.2%。这一结果是通过结合Aryan、Baluyot等数学家的研究成果以及Bombieri在2000年的工作实现的。Claude的方法涉及构建一个由Weil诱导的二次型函数空间，并利用正定和负定子空间之间的关系，这一关键步骤使它能够超越前人的研究成果。\n\nClaude的发现过程展示了AI在数学研究中的独特能力。在Anthropic员工Jarred Sumner的鼓励下，Claude首先生成了650个想法，但都失败了。随后，它协调了约60个子代理，通过2400个shell命令和数百个Python脚本进行了深入探索。这些子代理不仅相互验证工作，还进行了数千次数值检查，并下载了54篇论文确保这一发现是新颖的。Claude还主动撰写论文，并建议人类数学家验证其结果。Anthropic的数学家Levent Alpöge和Ralph Furman确认了这一发现，Claude还用Lean形式化验证了结果。\n\n这一结果的意义远超具体数值的提升。它表明AI模型能够以新颖且令人惊讶的方式扩展数学家思想的影响范围。尽管Claude最初对自己的发现持怀疑态度，可能是因为它从训练数据中了解到数学开放问题的难度和AI模型的局限性，但在鼓励下，它最终取得了这一成果。这一发现提醒我们，AI的进步速度可能被低估，即使是看似不可能的任务，也可能产生有价值的副产品。Claude的成功不是因为它解决了黎曼猜想本身，而是因为它在探索过程中开辟了新的数学路径。",
+  "outro": "Claude的成就提醒我们，AI在数学研究中的价值不仅在于解决重大猜想，更在于它能开辟新的研究路径，推动相关领域的进步。",
+  "steps": [
+    {
+      "quote": "Recently, a member of staff at Anthropic gave Claude an unreasonable challenge. It was about one of the most famous unsolved problems in mathematics: Take a real stab at the Riemann hypothesis.",
+      "title": "挑战提出",
+      "narration": "Anthropic的一位员工给Claude提出了一个看似不可能完成的任务——尝试解决数学界最著名的未解问题之一，黎曼猜想。这就像让一个初学者去攀登珠穆朗玛峰，看似荒谬，却可能带来意想不到的收获。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/step-0.mp3"
+    },
+    {
+      "quote": "Claude did take a real stab, but as you might have expected if you're familiar with the difficulty of the task (the Riemann hypothesis dates back to 1859 and has a million-dollar bounty), it didn't succeed. Nevertheless, during its attempt, it unexpectedly made strides on a related problem.",
+      "title": "意外突破",
+      "narration": "正如预期的那样，Claude未能解决这个自1859年提出、悬赏百万美元的难题。然而，在尝试过程中，它却在一个相关问题上取得了意想不到的进展，这就像攀登珠峰时虽然没有登顶，却发现了新的登山路线。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/step-1.mp3"
+    },
+    {
+      "quote": "An unreleased research version of Claude has improved on a longstanding lower bound for the fraction of zeros of the Riemann zeta function that satisfy the Riemann hypothesis. Drawing on extensive prior research by mathematicians over the past decades, it has increased this bound from 41.6% to 67.2%.",
+      "title": "具体成果",
+      "narration": "Claude改进了关于黎曼zeta函数零点满足黎曼猜想比例的下界，从41.6%提高到了67.2%。这一成果不是凭空而来，而是建立在数学家们过去几十年的广泛研究基础上，体现了AI能够整合和推进人类知识的能力。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/step-2.mp3"
+    },
+    {
+      "quote": "Claude found that combining the results from Aryan and from Baluyot, Goldston, Suriajaya, and Turnage-Butterbaugh with the work of Bombieri provides a way to surpass the previous state-of-the-art lower-bound proportion of 41.6%, increasing it to 67.2%.",
+      "title": "方法创新",
+      "narration": "Claude的创新之处在于将Aryan、Baluyot等数学家的研究成果与Bombieri的工作结合起来，形成了一种新的方法。这就像拼图游戏中，Claude发现了如何将看似不相关的拼块组合成更完整的图像，实现了质的飞跃。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/step-3.mp3"
+    },
+    {
+      "quote": "Initially, Claude generated and tried 650 ideas, none of which worked. Jarred prompted Claude to try again, and it spent a day and a half coordinating about 60 Claude subagents, which this time went much deeper: between them, they ran 2,400 shell commands and wrote hundreds of Python scripts.",
+      "title": "探索过程",
+      "narration": "Claude的发现并非一蹴而就。它首先尝试了650个想法都失败了，随后协调60个子代理进行了更深入的探索，运行了2400个shell命令并编写了数百个Python脚本。这个过程展示了AI如何通过系统化、大规模的尝试来突破瓶颈。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/step-4.mp3"
+    },
+    {
+      "quote": "This result shows that AI models like Claude can extend the impact and reach of mathematicians' ideas in new and sometimes surprising ways. Even though it couldn't resolve the Riemann hypothesis itself, this result emerged as the unintended byproduct of that original request.",
+      "title": "深层意义",
+      "narration": "Claude的发现表明，AI模型能够以新颖且令人惊讶的方式扩展数学家思想的影响范围。最有趣的是，这一成果是在尝试解决黎曼猜想这一原始请求过程中意外产生的副产品，揭示了AI研究的一个独特优势。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/step-5.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/ad55208f067fb11b6a5111108985a5320d57cdf7f058b9cba3d038f59d765fab/default/outro.mp3"
+}

@@ -1,0 +1,59 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "9a7bec8566cef16a4fca02a2d71d72116b2e7e4ad4fbd43f63422a489a1493d6-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:42:07.432Z",
+  "sourceUrl": "https://www.cnbc.com/2026/08/31/ai-warning-house-intelligence-committee.html",
+  "sourceTitle": "众议院情报委员会警告AI黑天鹅风险",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了美国众议院情报委员会对AI技术可能带来的'黑天鹅'风险发出的警告。文章围绕AI如何被恐怖分子或敌对势力利用，以及美国情报机构如何应对这一潜在威胁展开。在9/11事件25周年之际，这一警告显得尤为及时，它提出了一个关键矛盾：AI技术既可能带来巨大经济价值，也可能成为恐怖分子和敌对国家开发更危险武器的工具，我们如何在享受AI红利的同时防范其潜在风险？",
+  "essay": "美国众议院情报委员会发布了一份重要报告，警告AI技术可能带来的'黑天鹅'风险，这一警告恰逢9/11事件25周年前夕，具有特殊的历史意义。报告明确指出，**前沿大型语言模型**有可能使任何不良行为者，包括恐怖分子，更容易开发和实施更具破坏性的攻击。这一发现令人警醒，因为自9/11以来，防止恐怖组织获取大规模杀伤性武器的技术和专业知识一直是美国情报机构和国家安全体系的重点。\n\n报告的核心观点是，现有安全保障可能不足以跟上AI技术的快速发展。虽然AI实验室试图防止模型返回可能帮助不良行为者（例如制造生物武器）的信息，但模型的基本能力正在迅速发展，并且难以完全控制此类模型的使用。这揭示了一个关键矛盾：我们既希望推动AI技术的创新和应用，又必须防止它落入错误手中。\n\n面对这一挑战，委员会建议情报机构'加速自身负责任地采用先进AI能力'，以确保美国保持领先地位。同时，投资'安全的AI工具用于收集、分析和预警，并结合严格的测试、人工监督以及强大的隐私和公民自由保护'至关重要。这表明，应对AI威胁需要平衡技术创新与安全保障，既要利用AI的优势，又要建立有效的防护机制。\n\n委员会还指出，美国面临的威胁环境'自9/11以来从未如此复杂和危险'，我们在应对这些漏洞方面存在'严重差距'，'没有充分准备'。这一评估强调了AI安全问题的紧迫性和复杂性，需要政府、企业和研究机构的共同努力，才能在享受AI带来的机遇的同时，有效防范其潜在风险。",
+  "outro": "这份报告提醒我们，AI技术既可能带来巨大经济价值，也可能成为恐怖分子和敌对国家的强大工具。在享受AI红利的同时，建立有效的安全保障机制，平衡技术创新与风险防范，是我们面临的关键挑战。",
+  "steps": [
+    {
+      "quote": "The House Permanent Select Committee on Intelligence urged U.S. spy agencies to better prepare for “Black Swan” artificial intelligence risks in a new report.",
+      "title": "委员会警告",
+      "narration": "众议院情报委员会发布了一份新报告，敦促美国间谍机构更好地准备应对AI'黑天鹅'风险。这标志着美国立法机构开始正式关注AI技术可能带来的不可预见且影响深远的安全威胁。",
+      "kind": "context"
+    },
+    {
+      "quote": "The report warned that AI could be leveraged by terrorists or adversaries to develop more dangerous weapons and plot more deadly attacks.",
+      "title": "恐怖威胁",
+      "narration": "报告特别警告AI可能被恐怖分子或敌对势力利用，开发更危险的武器并策划更致命的袭击。这就提出了一个关键问题：随着AI技术发展，恐怖主义威胁的性质会如何改变？",
+      "kind": "claim"
+    },
+    {
+      "quote": "The report, and warning about the destructive potential of AI, comes less than two weeks away from the 25th anniversary of the 9/11 terror attacks that killed thousands and remade U.S. security efforts.",
+      "title": "历史背景",
+      "narration": "这一关于AI破坏潜力的警告发布在9/11恐怖袭击25周年纪念日前不到两周，这绝非巧合。它提醒我们，恐怖主义威胁从未消失，而AI可能为这种威胁带来新的维度。",
+      "kind": "context"
+    },
+    {
+      "quote": "Frontier large language models have the possibility of making it significantly easier for any rogue actor, including terrorists, to develop and conduct more destructive attacks.",
+      "title": "技术风险",
+      "narration": "报告指出，前沿大型语言模型可能使任何不良行为者，包括恐怖分子，更容易开发和实施更具破坏性的攻击。这解释了为什么AI被视为一种特殊的威胁——它降低了发动复杂袭击的技术门槛。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The lawmakers urged the intelligence community to “accelerate its own responsible adoption of advanced AI capabilities so that the United States stays ahead of its adversaries.”",
+      "title": "应对策略",
+      "narration": "面对这一挑战，立法者敦促情报机构'加速自身负责任地采用先进AI能力'，以确保美国保持领先地位。这表明应对AI威胁需要双管齐下：既要防范敌对势力使用AI，也要积极利用AI增强自身能力。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Investing in “secure AI tools for collection, analysis, and warning paired with rigorous testing, human oversight, and strong privacy and civil liberties protections” is critical to addressing the next generation of threats.",
+      "title": "安全框架",
+      "narration": "报告强调，投资'安全的AI工具用于收集、分析和预警，并结合严格的测试、人工监督以及强大的隐私和公民自由保护'至关重要。这提出了一个平衡的解决方案：技术创新必须与安全保障同步推进。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The committee broadly found that the U.S. “faces a threat environment as complex and dangerous as any since September 11, 2001.” “Serious gaps remain in our ability to confront and address these vulnerabilities. We are not adequately prepared to confront and address our vulnerabilities,”",
+      "title": "现状评估",
+      "narration": "委员会评估认为，美国面临的威胁环境'自9/11以来从未如此复杂和危险'，我们在应对这些漏洞方面存在'严重差距'，'没有充分准备'。这一结论强调了AI安全问题的紧迫性，需要立即采取行动。",
+      "kind": "conclusion"
+    }
+  ]
+}

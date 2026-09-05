@@ -1,0 +1,92 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T01:30:34.482Z",
+  "sourceUrl": "https://techcrunch.com/2026/08/24/openai-is-building-an-ai-agent-for-everything-will-everyone-use-them/",
+  "sourceTitle": "OpenAI Is Building an AI Agent for Everything. Will Everyone Use Them?",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了OpenAI如何开发面向各行各业的AI代理工具，以及这些工具能否被广泛采用。文章揭示了OpenAI内部员工与外部用户在使用AI代理工具上的巨大差距，分析了AI代理面临的挑战，包括用户体验、数据隐私、成本控制等问题，以及OpenAI与竞争对手之间的竞争态势。",
+  "essay": "OpenAI正致力于开发能够为各行各业提供服务的AI代理工具，这些工具不仅仅是回答问题，而是能够自主完成复杂任务。这一愿景在ChatGPT Work产品中得到了体现，该产品旨在将大语言模型与白领工作者的数字工作流程相结合，帮助会计师、投资者、医生等专业人士提高工作效率。然而，数据显示，尽管OpenAI内部员工对Codex的使用率接近100%，但组织订阅用户的采用率仅为17%，个人订阅用户更是不到1%，这一巨大差距反映了AI代理工具在推广过程中面临的挑战。\n\n为了理解这一差距，我们需要了解OpenAI工程师正在构建的技术基础。每个大语言模型都需要一个\"harness\"（软件框架）来决定模型能看到什么信息、使用哪些工具以及如何呈现答案。对于开发者来说，命令行接口足以改变软件构建和部署方式，但大多数用户并不使用CLI，这就是为什么Windows会取代DOS。OpenAI试图将专业工具的功能变得像提示一样简单，就像早期数字工具模仿物理对象的设计一样，这种\"仿生设计\"有助于用户过渡到新技术。\n\nChatGPT Work目前最适合处理常规、数据密集型的协调任务。OpenAI员工用它来设置每周指标报告，将电子表格转化为规划工具。风险投资家使用它来汇编相关通信和分析，运营团队则创建定制仪表板和数据可视化。当系统正常工作时，它可以令人印象深刻，比如从邮件中提取格式混乱的幼儿园日历并导入Google Calendar。然而，设置权限的过程令人困惑，许多重要设置仅在网页应用中可用，且ChatGPT Work的限制有时令人费解，比如可以创建日历事件但不能创建新日历。\n\nOpenAI面临的一个重要挑战是，大多数工作流程不像代码那样可测量或可评估。软件要么工作要么不工作，但即使是这种区别也减少了关于代码好坏的细微差别。好的演示文稿、商业策略或销售pitch不容易评估或追踪。此外，OpenAI与竞争对手之间的竞争也影响了产品设计。尽管OpenAI工程师声称不太关注竞争对手的harness，但产品界面的极端相似性、竞争情报的必要性以及ChatGPT Work启动时要求导入Claude Cowork数据的事实，都表明竞争确实存在。OpenAI最初开发的Codex过于依赖模型自主性，而Anthropic的Claude Code采用对话式方法，事实证明更有效。\n\n最后，关于什么是好的harness设计也存在争议。OpenAI工程师认为，好的harness工程应该更精确地确定模型解决问题真正需要的信息，因为模型在允许它们做自己事情方面越来越好。然而，沃顿商学院的Ethan Mollick认为Claude更用户友好，因为它进行比较并展示结果，反复征求输入和反馈。同时，开源Pi的创建者Mario Zechner认为，OpenAI等大公司推动其harness是为了锁定用户，因为\"他们需要拥有整个堆栈；否则，他们只会成为模型提供商，然后需要与中国模型竞争\"。成本也是一个重要问题，作者在四天内使用了超过8000万个token，成本65美元，是订阅价格的3倍以上。OpenAI承诺将继续提高效率，但AI代理工具能否真正被广泛采用，仍取决于能否解决用户体验、数据隐私、成本控制等一系列挑战。",
+  "outro": "AI代理工具能否被广泛采用，取决于OpenAI能否解决用户体验、数据隐私、成本控制等一系列挑战，同时平衡模型能力与用户控制权的关系。",
+  "steps": [
+    {
+      "quote": "How much control are you willing to give an LLM over your digital life?",
+      "title": "控制权的让渡",
+      "narration": "文章开篇提出了一个关键问题：用户愿意让大语言模型控制多少数字生活？这为全文设定了关于AI代理权限和信任的基调。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-0.mp3"
+    },
+    {
+      "quote": "OpenAI's marketing copy puts the goal succinctly: A world where \"where [artificial] intelligence goes beyond answering questions to helping everyone turn their biggest ideas into reality.\"",
+      "title": "OpenAI的愿景",
+      "narration": "这就引出了OpenAI的核心主张——AI不再只是回答问题，而是帮助人们将最大想法变为现实。这解释了为什么他们要开发ChatGPT Work这样的产品。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-1.mp3"
+    },
+    {
+      "quote": "An OpenAI-backed study found that in June, 98% of OpenAI employees were using Codex, but just 17% of organizational subscribers and less than 1% of individual subscribers were using the agentic coding tool.",
+      "title": "采用率的巨大差距",
+      "narration": "这里提供了一个惊人的数据对比，揭示了OpenAI内部员工与外部用户在使用AI代理工具上的巨大差距，这成为理解全文挑战的关键证据。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-2.mp3"
+    },
+    {
+      "quote": "Every LLM requires what engineers call a \"harness\" — the software wrapped around a model that decides what information it sees, which tools it can use, and how it presents its answers back to you.",
+      "title": "Harness的重要性",
+      "narration": "这解释了AI代理的技术基础，点明了harness在决定AI能力边界中的关键作用，为理解不同产品差异提供了技术视角。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-3.mp3"
+    },
+    {
+      "quote": "OpenAI wouldn't say how many people used Work versus Codex, but the joint app is used by just 20 million people, compared to more than a billion users the company says are prompting ChatGPT online.",
+      "title": "用户规模的差距",
+      "narration": "这里提供了ChatGPT Work与普通ChatGPT的用户数量对比，进一步强调了AI代理工具在主流采用方面面临的挑战。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-4.mp3"
+    },
+    {
+      "quote": "I didn't trust OpenAI with access to my inbox, source interviews, or story drafts (fear not, AI haters) and wouldn't let it have access to my bank account, but I believe it would be more useful had I the faith.",
+      "title": "信任的缺失",
+      "narration": "作者坦诚了自己对AI代理的信任限制，这反映了普通用户对数据隐私和安全性的担忧，是AI代理广泛采用的重要障碍。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-5.mp3"
+    },
+    {
+      "quote": "For example, messing around on a $20-a-month subscription, I used more than 80 million tokens in four days, which cost $65, according to the model's analysis (there's no dashboard in the app).",
+      "title": "成本问题",
+      "narration": "这里提供了一个具体的使用案例，揭示了AI代理工具的实际成本可能远超订阅价格，这将成为大规模采用的主要障碍之一。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-6.mp3"
+    },
+    {
+      "quote": "I'm very optimistic that we can solve it, with the model and in a truly AI-native way.",
+      "title": "未来的展望",
+      "narration": "OpenAI产品工程负责人表达了对解决复杂性的乐观态度，认为可以通过模型和真正AI原生方式解决当前挑战，为全文提供了一个积极的收尾。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-7.mp3"
+    },
+    {
+      "type": "image",
+      "imageSelector": ".wp-block-image.size-large img[src*='Screenshot-2026-08-23']",
+      "title": "Codex使用率的三级分化",
+      "narration": "这张图把28天活跃用户中用Codex的比例分成了三类：OpenAI内部从2025年8月的40%左右一路爬升，2026年2月后加速，最终高达97.9%；组织用户只有17.3%，而个人用户几乎可以忽略，仅0.7%。它说明Codex目前高度集中在OpenAI自身和团队场景，个人端渗透率还非常低。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.5,
+          0.12,
+          1,
+          0.92
+        ],
+        "explanation": "图右侧同时呈现了橙色线的陡峭爬升和三条线的最终数值标签，97.9%、17.3%、0.7%的巨大差距一目了然。"
+      },
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/step-8.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a8a77e4504265570cf0252424c093c271d099ca8fb71fad3559c8ed847c22a72/default/outro.mp3"
+}

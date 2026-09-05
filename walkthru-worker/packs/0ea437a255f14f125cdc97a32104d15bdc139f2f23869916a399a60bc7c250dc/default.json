@@ -1,0 +1,26 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "0ea437a255f14f125cdc97a32104d15bdc139f2f23869916a399a60bc7c250dc-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:22:25.553Z",
+  "sourceUrl": "https://www.wired.com/story/teachers-deepfake-ai-students-content/",
+  "sourceTitle": "教师沦为 AI 深度伪造受害者",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了AI深度伪造技术在校园中的新威胁——教师成为受害者。文章通过四位教师的真实经历，揭示了AI生成的不当内容如何被学生用来骚扰教师，以及学校和平台在应对这一问题上的无力。这些事件不仅对教师造成心理创伤，也反映了数字时代师生关系的深刻变化，以及AI技术伦理教育的缺失。",
+  "essay": "在数字时代，AI深度伪造技术正以意想不到的方式影响着校园环境。教师们发现，自己已成为AI生成不当内容的新目标，这些内容通常将他们的脸移植到色情场景中或让他们做出不当行为。Luis DeSantiago的经历展示了这一问题的严重性——他发现学生使用他的照片制作了穿着内衣的AI图像，并在社交媒体上传播。这类事件不仅侵犯了教师的隐私和尊严，还造成了严重的心理创伤，迫使一些教师重新考虑自己的职业选择。\n\n这些AI深度伪造事件的传播速度和范围令人担忧。DeSantiago的案例中，图像不仅在TikTok上传播，还通过Snapchat和AirDrop在学生之间私下分享。更令人不安的是，当一位教师试图澄清真相时，许多学生真的相信这些虚假内容是真实的。这种认知混淆加剧了教师的困境，因为他们不仅要应对骚扰，还要面对学生对自己真实性的质疑。\n\n学校在应对这些事件时显得准备不足。虽然一些学校启动了调查并对涉事学生进行了纪律处分，但缺乏明确的处理流程和标准。法律层面也存在挑战，虽然联邦法律禁止发布未经同意的亲密视觉内容，但执行起来困难重重。此外，平台如TikTok和Snapchat虽有相关政策，但实际执行效果有限，许多虚假内容在被举报前就已经广泛传播。\n\n这些事件对师生关系产生了深远影响。一些教师变得更加警惕和疏远，减少了与学生进行深入交流的意愿。Alice的经历特别具有代表性，她曾为学生提供情感支持和建议，但在遭受AI深度伪造骚扰后，她开始质疑这些互动的边界。这种信任危机不仅影响个别教师，还可能改变整个教育环境的氛围，使师生关系变得更加紧张和疏远。\n\n面对这一新兴威胁，教育工作者和监管机构需要采取更积极的措施。这包括加强AI伦理教育，明确学校处理此类事件的程序，以及完善相关法律法规。同时，平台也需要承担更多责任，开发更有效的检测和删除机制。最重要的是，我们需要认识到AI深度伪造不仅是技术问题，更是社会问题，需要全社会的共同关注和解决。",
+  "outro": "AI深度伪造技术正在改变校园环境，教师成为新受害者。这不仅是技术问题，更是社会和教育挑战，需要加强数字伦理教育、完善法律法规和平台责任，以保护教育工作者尊严并维护健康师生关系。",
+  "steps": [
+    {
+      "quote": "One middle school teacher in her mid-twenties tells WIRED that she's seen so much AI-generated content used to harass teachers that she's bracing for the next wave.",
+      "title": "普遍现象",
+      "narration": "紧接着的反驳是，这并非孤立事件。一位匿名教师表示，她已目睹大量AI生成内容被用于骚扰教师，她正在为下一波攻击做准备。这表明问题已经蔓延，成为一种新兴的校园骚扰模式。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/0ea437a255f14f125cdc97a32104d15bdc139f2f23869916a399a60bc7c250dc/default/step-0.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/0ea437a255f14f125cdc97a32104d15bdc139f2f23869916a399a60bc7c250dc/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/0ea437a255f14f125cdc97a32104d15bdc139f2f23869916a399a60bc7c250dc/default/outro.mp3"
+}

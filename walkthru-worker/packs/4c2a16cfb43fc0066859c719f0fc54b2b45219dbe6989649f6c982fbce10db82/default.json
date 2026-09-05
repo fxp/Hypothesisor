@@ -1,0 +1,35 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "4c2a16cfb43fc0066859c719f0fc54b2b45219dbe6989649f6c982fbce10db82-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:41:41.149Z",
+  "sourceUrl": "https://arstechnica.com/tech-policy/2026/08/zlibrary-my-beloved-anthropic-staff-chats-extolling-piracy-cited-in-sony-suit/",
+  "sourceTitle": "Anthropic员工聊天记录曝光",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了一桩涉及AI公司Anthropic的版权诉讼案，核心矛盾在于：一家估值高达2万亿美元的AI巨头被指控通过大规模盗版书籍和音乐作品训练其AI模型，而音乐出版商认为此前1.5亿美元的和解金额远不足以阻止此类侵权行为。这背后反映了AI训练数据获取与版权保护之间的深刻冲突。",
+  "essay": "当Anthropic公司因盗版超过700万本书籍训练AI而向作者支付15亿美元和解金后，世界领先的音乐出版商们认为这一处罚远远不够。索尼、EMI和华纳查普尔等出版巨头联合提起诉讼，指控Anthropic不仅盗版书籍，还\"成千上万\"地盗用了他们的音乐作品。这些出版商认为，对于一家将大规模侵权转化为2万亿美元估值的公司而言，15亿美元的和解金额\"显然不足以阻止侵权行为\"。\n\n这场诉讼的核心在于Anthropic如何获取训练数据。据指控，Anthropic联合创始人本杰明·曼恩在2021年7月亲自使用BitTorrent从Library Genesis(LibGen)非法下载和上传了数百万本盗版书籍。当LibGen被FBI关闭后，Anthropic员工通过\"海盗图书馆镜像\"获取了这些数据，一名员工甚至兴奋地回复\"zlibrary my beloved\"，这表明公司内部对盗版持积极态度。\n\n更令人担忧的是，音乐出版商认为Anthropic的AI模型可能直接训练了热门歌曲。尽管Anthropic否认使用了盗版书籍训练其商业Claude模型，但出版商指出，AI开发通常包括\"预训练\"阶段，其中商业模型可能使用由非商业模型创建的\"合成数据\"，而这些非商业模型可能正是基于盗版数据训练的。此外，从已解封的文件中可以看出，Anthropic继续使用LibGen数据集来检查输出文本是否与源文本过于接近。\n\n这场诉讼的关键区别在于，与书籍作者不同，音乐出版商相信他们能够证明市场损害。他们指出，AI生成的歌曲已经登上音乐排行榜，直接与那些被用于训练AI的歌曲创作者竞争。美国版权局已经观察到，\"即使生成式AI模型的输出与特定版权作品没有实质性相似，但在同类作品的市场中竞争\"时，可能会稀释版税池。更具体的是，Anthropic的Claude模型被设计为能够直接生成歌词，甚至在没有明确要求的情况下也会这样做。\n\nAnthropic的回应是强调训练生成式AI模型是\"变革性合理使用\"，并指出这是同一律师发起的第三起诉讼。然而，音乐出版商强调，在书籍作者的案例中，法院的裁决关键在于作者无法证明市场损害或AI工具已经取代了他们在市场中的位置。对于音乐行业而言，情况可能有所不同，因为AI歌曲直接与人类创作的歌曲竞争，且Anthropic从未像其主要竞争对手那样寻求授权协议。\n\n这起诉讼的核心诉求是要求Anthropic提供更透明的训练数据和方法，让所有艺术家能够评估Anthropic如何获取他们的作品，哪些作品被纳入训练，以及这些作品对商业模型的影响有多大。出版商警告说，如果不加以遏制，Anthropic依赖盗版和未授权作品训练AI的做法，将使今天的歌曲创作者更难谋生，同时用低质量的AI复制品稀释市场，降低创作者投资、支持和扩展创意努力的积极性。",
+  "outro": "这起诉讼揭示了AI训练数据获取与版权保护之间的深刻冲突，也反映了当前法律在应对新技术挑战时的局限性。",
+  "steps": [
+    {
+      "quote": "\"$1.5 billion is obviously not a large enough settlement to deter infringing conduct by a company that has parlayed such mass infringement into a staggering $2-trillion-dollar valuation,\" music publishers said in a lawsuit filed Friday.",
+      "title": "出版商不满和解金额",
+      "narration": "这就引出了整个故事的核心矛盾：音乐出版商认为Anthropic通过大规模侵权获得了2万亿美元的估值，但为此支付的15亿美元和解金远不足以阻止这种行为。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Mann is accused of directing employees to torrent PiLiMi soon after it became available, messaging colleagues that the mirror dropped \"just in time!\" Responding, an Anthropic staffer wrote back, \"zlibrary my beloved.\"",
+      "title": "员工对盗版的积极态度",
+      "narration": "紧接着的反驳是，Anthropic员工对盗版持积极态度，一名员工兴奋地回复'zlibrary my beloved'，这表明公司内部文化对盗版的默许甚至鼓励。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Amodei testified during the book authors' litigation that Anthropic could have legally purchased copyrighted works but torrented them instead, because Anthropic wanted to avoid a \"legal/practice/business slog.\"",
+      "title": "公司故意规避合法途径",
+      "narration": "但作者提醒我们注意，Anthropic的CEO在证词中承认，他们本可以合法购买版权作品，但选择盗版是为了避免'法律/实践/业务的麻烦'，这表明公司是有意识地规避合法途径。",
+      "kind": "caveat"
+    }
+  ]
+}

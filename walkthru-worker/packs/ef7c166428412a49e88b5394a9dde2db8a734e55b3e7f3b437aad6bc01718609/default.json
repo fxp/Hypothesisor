@@ -1,0 +1,151 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "ef7c166428412a49e88b5394a9dde2db8a734e55b3e7f3b437aad6bc01718609-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 3,
+  "publishedAt": "2026-08-30T10:36:06.893Z",
+  "sourceUrl": "https://newsletter.semianalysis.com/p/agentx-inferencexv3-does-cuda-moat",
+  "sourceTitle": "CUDA 护城河与 AgentX 基准",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了AI推理领域的新基准AgentX，它专门针对多轮、长上下文、高预填充重用的代理工作负载。作者团队投入300万美元构建了这个基准，旨在更准确地衡量AI硬件和软件性能。文章不仅介绍了AgentX基准的设计理念和测试结果，还深入分析了不同硬件平台（如NVIDIA和AMD）在代理推理场景下的表现差异，以及由此引发的软件优化浪潮。",
+  "essay": "随着Claude Code在2025年11月的拐点出现，长上下文、多轮代理工作负载迅速增长，现在已成为生产推理流量的主导。传统上，AI性能测量基于固定序列长度的预填充和解码工作负载，但这无法准确反映真实场景。AgentX基准应运而生，它采用代理编码流量而非之前的单轮流量，构建了更贴近现实的测试环境。这个基准建立在超过1000个芯片组成的约2MW计算集群上，测试了从MI355X到B200等多种硬件平台。\n\nAgentX基准的真正价值不仅在于初始结果，更在于它对行业的深远影响。超过70个上游PR已经为优化实际生产代理工作负载而创建，涉及vLLM、SGLang、TensorRT-LLM等多个框架。这些优化大多可转移到生产流量中，展示了AgentX作为行业'北极星'基准的作用。值得注意的是，**代理工作负载的特性**使其本质上是一个系统级问题，而非仅仅是芯片/内核级别的问题。高预填充重用要求KV张量必须在节点/等级间高效传输，不同对话需要根据适当前缀位置路由到不同节点，以最大化缓存命中率。\n\n在测试结果方面，NVIDIA的GB300和GB200系列在大多数代理工作负载中表现优异，特别是在高吞吐量场景。AMD的MI355X在某些特定情况下表现出色，但整体上仍落后于NVIDIA。例如，在DeepSeek V4 Pro模型上，NVIDIA的B300 vLLM在每美元性能上与B200相当，但能通过增加50%的HBM容量'挤出'额外吞吐量。在Kimi K3模型上，AMD的MI355X在某些区间甚至超过了GB300 NVL72 vLLM，展示了其特定场景下的优势。\n\nAgentX基准催生了大量软件优化，这些优化针对代理工作负载的特性进行了改进。在vLLM中，优化包括改进混合注意力前缀缓存、支持CPU KV卸载、修复长寿命混合状态等问题。SGLang的优化解决了滑动窗口与前缀缓存冲突、引入HiCache卸载机制、改进调度器等问题。TensorRT-LLM实现了边界感知增量标记化和非阻塞上下文传输轮询等创新。AMD的ATOM引擎也进行了大量重构以支持多轮代理工作负载，包括智能使用稀疏检查点保留、处理循环状态等。\n\n这些优化共同推动了代理推理性能的显著提升。例如，vLLM的混合注意力前缀缓存实现了超过95%的缓存命中率；SGLang的HiCache在AMD上实现了92.4%的缓存命中率；ATOM的稀疏检查点保留将实际前缀命中率从5.6%提高到96.45%。这些改进不仅提升了性能，还解决了长期运行而非大规模运行时特有的故障模式。AgentX基准的开放性和全面性使其成为推动AI推理生态系统进步的关键力量，未来还将继续发展以反映不断变化的代理工作负载特性。",
+  "outro": "AgentX基准揭示了代理工作负载的复杂性和系统性，展示了软件优化对硬件性能的关键影响。NVIDIA在大多数场景下领先，但AMD在某些特定模型上表现出色。未来，随着代理工作负载特性的不断变化，AgentX将继续作为行业'北极星'基准，推动AI推理生态系统的持续进步。",
+  "steps": [
+    {
+      "quote": "Since the Claude Code inflection point in November 2025, long-context, multi-turn agentic workloads have grown rapidly. They now dominate traffic for production inferencing.",
+      "title": "代理工作负载崛起",
+      "narration": "这里点明了代理工作负载的快速增长趋势，从2025年11月的Claude Code拐点开始，长上下文、多轮代理工作负载已成为生产推理的主流，这直接推动了AgentX基准的必要性。",
+      "kind": "context"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"864512bf-1feb-445d-a03a-bbf9f4f1b791\"]",
+      "title": "智能体支出反超ChatGPT",
+      "narration": "这张图显示企业端 Agentic（Codex）的 token 用量从2025年8月几乎为零，一路增长到2026年6月占64%，反超了ChatGPT的36%。这说明智能体类工作负载已成为OpenAI企业支出的主力，是个重要拐点。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.55,
+          0.4,
+          1,
+          0.9
+        ],
+        "explanation": "曲线后段陡峭上升并标注了64%对36%的最终占比，是这张图最核心的信息所在。"
+      }
+    },
+    {
+      "quote": "In the past most measured performance based on fixed sequence length prefill and decode workloads, but this is an inaccurate way to measure workloads. Reality is multi-turn, long context, high prefill reuse, with sub agent bursts, KVCache offload, and numerous tool calls.",
+      "title": "传统测量局限",
+      "narration": "作者指出传统测量方法基于固定序列长度，无法准确反映真实工作负载。现实中的代理工作负载具有多轮、长上下文、高预填充重用等特点，这解释了为什么需要新的基准来准确评估AI性能。",
+      "kind": "claim"
+    },
+    {
+      "quote": "The most valuable thing AgentX produced in its first months was not the initial results. It was the massive industry impact the benchmark is already having. Over 70+ upstream PRs for optimizing real world production agentic workloads across vLLM, SGLang, TensorRT-LLM, ATOM, AITER, Dynamo, LMCache, and Mooncake, uses AgentX as the north star benchmark proxy.",
+      "title": "行业影响",
+      "narration": "这揭示了AgentX基准的真正价值不在于初始结果，而在于它对行业的深远影响。超过70个上游PR使用AgentX作为'北极星'基准代理，展示了它如何推动实际生产工作负载的优化。",
+      "kind": "insight"
+    },
+    {
+      "quote": "In terms of single node performance, MI355X open-source performance (vLLM) trails behind vendor specific ATOM (AMDs equivalent of TensorRT LLM). We think it's great that AMD is pushing the frontier quickly with ATOM, however we encourage them to make a higher priority of upstreaming these improvements into vLLM.",
+      "title": "AMD性能对比",
+      "narration": "作者指出AMD的MI355X在开源vLLM性能上落后于专有ATOM引擎，这反映了软件优化对硬件性能的关键影响。AMD虽然在ATOM上进展迅速，但作者鼓励他们将改进合并到上游vLLM中，这对用户更为重要。",
+      "kind": "evidence"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"6254047b-173b-4b1b-9f43-2057eb720b05\"]",
+      "title": "吞吐与首字延迟权衡",
+      "narration": "这张图是DeepSeek V4 Pro在AMD MI355X上的实测数据：每颗芯片的吞吐量对P90首字延迟的权衡曲线。并行策略从TP8一路换到1xDEP8+1xDEP8、并发从2拉到192，吞吐能冲到每芯片约2.3万token/秒，但代价是首字延迟涨到33秒——曲线越靠左上越理想，这正是推理部署最核心的取舍。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.06,
+          0.18,
+          0.74,
+          0.94
+        ],
+        "explanation": "红色曲线及其并行配置标注是全图核心，完整呈现了吞吐量随延迟上升的帕累托前沿。"
+      }
+    },
+    {
+      "quote": "With B200 concurrency 196 (all other parameters stay the same), we see only 73% HBM cache hit rate and rely more heavily on DRAM with an offload cache hit rate of nearly 20%. We observe that the HBM KV cache working set size is 22M tokens, roughly half that of B300.",
+      "title": "缓存差异",
+      "narration": "这里通过具体数据展示了B200和B300在HBM缓存命中率上的显著差异。B200的73%命中率远低于B300的91%，这直接影响了性能表现，突显了内存容量对代理工作负载的重要性。",
+      "kind": "evidence"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"c5396c3d-1823-4818-83de-d89cd8242451\"]",
+      "title": "NVIDIA大幅领先AMD",
+      "narration": "这张图对比了运行MiniMax M3时各款芯片的性价比：纵轴是每美元能买到的token数，横轴是用户交互速度，越靠左上越划算。NVIDIA的B300、GB300等配置（绿色曲线）高居上方，而AMD的MI35X（红色曲线）缩在左下角，成本效率和交互性都被甩开一大截。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.06,
+          0.62,
+          0.22,
+          0.88
+        ],
+        "explanation": "红色的MI35X曲线孤零零地压在图表左下角，最直观地展现了AMD与NVIDIA在性价比和交互速度上的巨大差距。"
+      }
+    },
+    {
+      "quote": "AgentX's real agentic traffic benchmarks not only the raw prefill and decode kernels, but also tests the entire end to end token generation process from KV cache lifecycle, hybrid-attention cache correctness, CPU KV offload, transfer progress, routing affinity, to incremental tokenization, request serialization, and scheduler bookkeeping.",
+      "title": "全面测试",
+      "narration": "这里强调了AgentX基准的全面性，它不仅测试原始预填充和解码内核，还测试整个端到端令牌生成过程，包括KV缓存生命周期、混合注意力缓存正确性等。这种全面性确保了基准能够反映真实生产环境的复杂性。",
+      "kind": "insight"
+    },
+    {
+      "quote": "vLLM improved hybrid-attention prefix caching so short-lived sliding-window allocations do not evict useful long-context checkpoints. Selective retention preserves sparse replay boundaries and reported a prefix-cache hit rate above 95% with fourteen concurrent requests and contexts up to one million tokens.",
+      "title": "vLLM优化",
+      "narration": "作者详细介绍了vLLM的混合注意力前缀缓存改进，通过选择性保留策略避免了短期滑动窗口分配驱逐有用的长上下文检查点，实现了超过95%的前缀缓存命中率，这对长上下文代理工作负载至关重要。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "SGLang's sliding-window work addresses the same conflict vLLM's retention policy does. Window pages and prefix pages are drawn from one pool, and the window is the greedier consumer: it turns over constantly while the prefix sits still and so, under pressure, the transient allocation displaces the durable one.",
+      "title": "SGLang优化",
+      "narration": "SGLang解决了与vLLM保留策略相同的冲突，即滑动窗口页面与前缀页面之间的资源竞争。窗口是更贪婪的消费者，频繁周转而前缀保持静止，在压力下临时分配会取代持久分配，这解释了为什么需要专门的优化策略。",
+      "kind": "evidence"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"ed24f1b9-b591-4674-bc94-06394962d03f\"]",
+      "title": "修复前后 KV 落点对比",
+      "narration": "这张图直观展示了 SGLang 前缀感知 staging 修复的核心：以前 staging 索引从 0 开始数，没算上已缓存的前缀，导致新数据落在 decode 侧 KV 的第 0~3 行，把已有的前缀缓存直接覆盖掉了；修复后（#30545）新的剩余部分会接在前缀后面放在第 4~7 行，缓存完好保留。理解了这张图，就理解了这个 bug 为什么会出现、修复为什么有效。",
+      "kind": "insight",
+      "region": {
+        "box": [
+          0,
+          0.52,
+          1,
+          0.92
+        ],
+        "explanation": "底部的 decode 侧 KV 布局是整张图的关键：左边红色块压在前缀上（错误落点），右边绿色块排在前缀之后（正确落点），前后差异一目了然。"
+      }
+    },
+    {
+      "quote": "ATOM's AgentX-relevant CPU path starts from the arithmetic that justifies offloading at all. Standalone LMCache offload reloads a 32,000-token prefix from CPU in about 0.32 seconds against roughly 2.5 seconds to recompute it, an eight-fold margin.",
+      "title": "ATOM优化",
+      "narration": "AMD的ATOM引擎优化了CPU路径，通过重新加载前缀而非重新计算实现了显著性能提升。从CPU重新加载32,000个token的前缀只需0.32秒，而重新计算需要2.5秒，实现了8倍的改进，这展示了KV卸载的价值。",
+      "kind": "evidence"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"d2f465f9-372c-4ee1-b42f-e79fa9fe352b\"]",
+      "title": "重放：轨迹→时间线→依赖图",
+      "narration": "这张三联图展示了AIPerf如何从一份原始trace日志还原出子代理的并发结构：左边是JSON轨迹，中间把它转成了时间线，能看到主代理同时派出4个子代理并行跑、再在join gate处汇合，右边进一步抽象成依赖图。它直观证明了工具能从原始日志重建出谁在什么时候spawn了谁、谁等谁完成。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.55,
+          0.02,
+          1,
+          0.5
+        ],
+        "explanation": "时间线部分最关键：四个子代理并行执行、先后汇合到主代理的join gate，一眼就能看清并发结构。"
+      }
+    }
+  ]
+}

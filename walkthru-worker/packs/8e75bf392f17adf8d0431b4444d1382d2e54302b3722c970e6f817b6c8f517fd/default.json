@@ -1,0 +1,47 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "8e75bf392f17adf8d0431b4444d1382d2e54302b3722c970e6f817b6c8f517fd-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:21:44.742Z",
+  "sourceUrl": "https://annas-archive.gl/blog/physical-destruction.html",
+  "sourceTitle": "AI 公司正在销毁实体稀有书籍",
+  "author": "xiaoping",
+  "intro": "这篇文章揭示了AI公司为训练模型而秘密购买、扫描并销毁实体书籍的现象，导致人类知识被永久锁在私人服务器中。这不仅是一场关于知识垄断的危机，也引发了关于人类文明保存的根本性问题。AI公司一面承诺'让人类知识更易获取'，一面却在摧毁知识的物质载体，这一矛盾构成了全文的核心线索。",
+  "essay": "AI公司正在悄悄进行一场书籍'大扫除'，通过中介机构购买大量二手书籍，扫描后销毁，以获取2022年前'未被机器触碰'的训练数据。Anthropic的'Project Panama'项目就是一个典型案例，该公司投入数千万美元购买数百万纸质书籍，扫描训练其Claude模型后全部销毁。这种行为在法律上可能是允许的，但在伦理上却是对人类文明的严重犯罪。**AI公司销毁书籍的背后是资本利益驱动的AI竞赛**，这样做可以防止竞争对手获取这些书籍数据，避免法律风险，甚至比无损扫描更省钱。\n\n然而，这一行为带来了一个令人深思的悖论：AI公司一面承诺'让人类知识更易获取'，一面却在摧毁知识的物质载体。随着AI生成内容占据互联网新增内容的一半以上，一个可怕的现实正在形成：如果未来的内容主要由AI生成，人类还能辨认出哪些是真实的人类创作吗？一旦AI吸收了人类写在纸上的最后一句原创内容，互联网上就只剩下AI自己的话语，人类文明将如何保存？\n\n面对这一危机，Anna's Archive作为全球最大的影子图书馆，正在发起一场全球性的书籍扫描行动。他们呼吁世界各地的志愿者扫描并上传来自全球图书馆和档案馆的材料，特别是那些容易丢失的珍贵书籍。通过集体努力，人类有望在出版商完全封锁知识、AI公司扫描销毁全球书籍之前，保存人类文明的全部财富。这不仅是一场与时间的赛跑，更是对知识垄断的挑战，关乎人类文明的未来。",
+  "outro": "这场与时间的赛跑关乎人类文明的存续。通过集体扫描和保存书籍，我们有机会在知识被完全垄断前，为人类文明保留一份完整的数字记忆。",
+  "steps": [
+    {
+      "quote": "AI companies are secretly buying, scanning, and destroying millions of physical books to train their models, permanently locking human knowledge inside private corporate servers.",
+      "title": "书籍销毁真相",
+      "narration": "这就引出了一个令人震惊的现象：AI公司正在秘密进行一场书籍'大扫除'，他们购买、扫描后销毁实体书籍，目的是获取未被数字化的训练数据，却将人类知识永久锁在了私人服务器中。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/8e75bf392f17adf8d0431b4444d1382d2e54302b3722c970e6f817b6c8f517fd/default/step-0.mp3"
+    },
+    {
+      "quote": "So why destroy physical books? Behind it lies the AI race and the interests of capital: It prevents these books from being scanned and used for training by competitors. It avoids legal risks. Destroying books is cheaper than lossless scanning.",
+      "title": "销毁背后的动机",
+      "narration": "这就带来一个问题——为什么AI公司要销毁这些书籍？答案在于AI竞赛和资本利益：防止竞争对手获取数据、规避法律风险，甚至因为销毁比无损扫描更便宜。这些动机揭示了科技巨头对知识的垄断本质。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/8e75bf392f17adf8d0431b4444d1382d2e54302b3722c970e6f817b6c8f517fd/default/step-1.mp3"
+    },
+    {
+      "quote": "Since the beginning of 2025, AI-generated content has accounted for more than half of newly published internet content. A frightening reality emerges: if much of the future content consists of AI-generated books and papers, will humans be able to distinguish them?",
+      "title": "AI内容主导的未来",
+      "narration": "紧接着，文章提出了一个更令人不安的警示：自2025年初以来，AI生成内容已占新增网络内容的一半以上。如果未来的内容主要由AI生成，人类还能辨认出哪些是人类原创的吗？这直接威胁到人类文明的传承。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/8e75bf392f17adf8d0431b4444d1382d2e54302b3722c970e6f817b6c8f517fd/default/step-2.mp3"
+    },
+    {
+      "quote": "If you want the memory of human civilization to no longer be monopolized, if you want future generations to be able to read all of humanity's wealth for free, if you don't want publishers making a fortune while authors receive little, then please help us.",
+      "title": "行动呼吁",
+      "narration": "因此，作者发出明确的行动呼吁：如果你希望人类文明记忆不再被垄断，希望后代能免费阅读人类全部知识财富，不希望出版商暴富而作者获益甚少，那么请加入他们的行动。这不仅是技术问题，更是关乎人类共同未来的道德责任。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/8e75bf392f17adf8d0431b4444d1382d2e54302b3722c970e6f817b6c8f517fd/default/step-3.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/8e75bf392f17adf8d0431b4444d1382d2e54302b3722c970e6f817b6c8f517fd/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/8e75bf392f17adf8d0431b4444d1382d2e54302b3722c970e6f817b6c8f517fd/default/outro.mp3"
+}

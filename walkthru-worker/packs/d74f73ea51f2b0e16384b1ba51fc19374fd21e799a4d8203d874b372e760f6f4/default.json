@@ -1,0 +1,65 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "d74f73ea51f2b0e16384b1ba51fc19374fd21e799a4d8203d874b372e760f6f4-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:45:23.328Z",
+  "sourceUrl": "https://www.slb.com/newsroom/press-release/2026/pr-2026-0831",
+  "sourceTitle": "SLB收购Kelvion",
+  "author": "xiaoping",
+  "intro": "这篇新闻稿讲述了能源技术服务公司SLB收购Kelvion的交易，这是一家专注于热管理和热交换技术的全球供应商。这次收购标志着SLB正积极扩展其在数据中心基础设施领域的业务，特别是在人工智能(AI)驱动的数据中心市场。交易背后反映了一个重要趋势：随着AI技术推动的算力需求爆炸式增长，数据中心正变得越来越复杂和能源密集，热管理技术成为确保系统高效可靠运行的关键环节。",
+  "essay": "SLB宣布收购Kelvion的交易，标志着这家能源技术巨头正积极扩展其在数据中心基础设施领域的业务版图。这次收购并非偶然，而是SLB对AI驱动下数据中心市场爆发式增长的战略回应。随着人工智能技术推动的算力需求激增，数据中心正变得越来越复杂和能源密集，热管理技术成为确保系统高效可靠运行的关键环节。Kelvion作为全球领先的热管理和热交换技术供应商，其产品组合涵盖了广泛的冷却和热传递应用，恰好处于AI基础设施和能源系统转型两大长期增长趋势的交汇点。\n\n这次收购对SLB的数据中心解决方案业务具有深远影响。SLB的数据中心业务近年来增长迅猛，2024至2026年的收入复合年增长率预计超过90%，到2026年底累计交付能力预计将超过2吉瓦。通过整合Kelvion的技术，SLB能够提供更全面的数据中心基础设施解决方案，结合其现有的模块化制造、异地建造和数字能力，可以减少现场施工复杂性，将运营时间缩短高达40%。这种整合使SLB能够直接应对数据中心日益复杂的能源管理挑战，为客户提供更集成的冷却解决方案，加速创新，优化热效率。\n\n从财务角度看，这次交易规模约为41亿美元（包括34亿美元现金和7亿美元债务），相当于约11倍2026年预计EBITDA（未考虑协同效应）。SLB预计交易将在完成后的12个月内提升每股收益和每股自由现金流，并在三年内实现约1.2亿美元的年度EBITDA协同效应。合并后的业务在2026年预计将产生超过20亿美元的数据中心收入和3亿美元的调整后EBITDA，SLB的目标是到2028年将该业务收入提升至45亿至50亿美元，EBITDA达到7亿至8亿美元。\n\n这次收购的意义远超出数据中心领域。Kelvion在热泵、可再生能源、碳捕获和处理解决方案等关键能源和工业市场也占据重要地位，这些领域热管理技术在提高效率、可靠性和性能方面发挥着越来越重要的作用。这反映了SLB更广泛的战略转型——从传统的石油和天然气服务提供商，向综合性能源技术公司转变，积极布局AI基础设施、能源转型和可持续发展等未来增长领域。通过这次收购，SLB不仅扩大了其数据中心业务规模，还强化了其作为工业技术合作伙伴的地位，能够更好地帮助客户应对AI扩展所需的基础设施复杂性挑战。",
+  "outro": "这次收购不仅扩大了SLB在数据中心市场的份额，还强化了其作为AI基础设施领域关键参与者的地位，反映了能源技术公司向数字化和可持续未来转型的战略方向。",
+  "steps": [
+    {
+      "quote": "SLB (NYSE: SLB) today announced it has signed an agreement to acquire Kelvion, a global provider of thermal management and heat exchange technologies. The acquisition strengthens SLB's Data Center Solutions business with critical thermal management technologies and expands the company's role in data center infrastructure, which is one of the world's fastest-growing industrial and technology markets.",
+      "title": "收购宣布",
+      "narration": "SLB正式宣布收购Kelvion，这是一家全球热管理和热交换技术供应商。这次交易将加强SLB在数据中心解决方案业务中的热管理技术能力，并扩大公司在数据中心基础设施领域的影响力，而数据中心是全球增长最快的工业和技术市场之一。",
+      "kind": "context"
+    },
+    {
+      "quote": "Founded more than 100 years ago, Kelvion provides thermal management and heat exchange technologies serving data center, energy and industrial markets. Its portfolio spans a broad range of cooling and heat-transfer applications, positioning the company at the intersection of two powerful long-term growth trends: AI infrastructure and energy system transformation.",
+      "title": "Kelvion背景",
+      "narration": "Kelvion拥有超过100年的历史，提供服务于数据中心、能源和工业市场的热管理和热交换技术。其产品组合涵盖广泛的冷却和热传递应用，使公司处于两大强劲长期增长趋势的交汇点：AI基础设施和能源系统转型。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "In 2026, Kelvion is expected to generate revenue of approximately $2.3 billion to $2.4 billion and adjusted EBITDA of approximately $350 million to $400 million. Data centers represent Kelvion's largest and fastest-growing end market, with revenue expected to reach between $1.2 billion and $1.3 billion in 2026.",
+      "title": "财务表现",
+      "narration": "Kelvion在2026年的预计收入约为23亿至24亿美元，调整后EBITDA约为3.5亿至4亿美元。数据中心是其最大且增长最快的目标市场，预计2026年收入将达到12亿至13亿美元，这突显了该业务对SLB的吸引力。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "SLB's Data Center Solutions business has grown rapidly over the past few years, with revenue expected to increase at a compound annual growth rate (CAGR) exceeding 90 percent between 2024 and 2026 and delivered capacity expected to surpass 2 gigawatts cumulatively by the end of the year.",
+      "title": "SLB数据中心增长",
+      "narration": "SLB的数据中心解决方案业务近年来增长迅速，预计2024至2026年的收入复合年增长率超过90%，到今年底累计交付能力预计将超过2吉瓦。这表明SLB已经在这个领域建立了强大的增长势头，为收购Kelvion奠定了基础。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "“Data centers are becoming more sophisticated and energy-intensive, and customers are increasingly looking for partners that can optimize how critical systems work together across the facility and help bring new capacity online faster,” said Gavin Rennick, president of SLB's New Energy and Industrial business.",
+      "title": "数据中心挑战",
+      "narration": "SLB新能源和工业业务总裁Gavin Rennick指出，数据中心正变得越来越复杂和能源密集，客户正在寻找能够优化关键系统协同工作并加速新容量上线的合作伙伴。这解释了为什么热管理技术对现代数据中心如此关键。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Under the terms of the agreement, SLB will acquire Kelvion from Apollo-managed funds – the majority owner – and funds advised by Triton, which holds a minority interest, for approximately $3.4 billion in cash and will assume approximately $0.7 billion of debt, representing a total transaction value of approximately 11 times estimated 2026 EBITDA before synergies, or approximately 8.5 times EBITDA including expected annual run-rate synergies.",
+      "title": "交易条款",
+      "narration": "根据协议条款，SLB将以约34亿美元现金收购Kelvion，并承担约7亿美元债务，总交易价值约为11倍2026年预计EBITDA（未考虑协同效应），或约8.5倍EBITDA（包括预期的年度协同效应）。这表明SLB对Kelvion价值的认可和对未来协同效应的信心。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "SLB expects the transaction to be accretive to both earnings per share and free cash flow per share in the first 12 months following closing. The company also expects to generate approximately $120 million in annual EBITDA synergies within three years from cost efficiencies and incremental revenue opportunities.",
+      "title": "财务预期",
+      "narration": "SLB预计交易完成后12个月内将提高每股收益和每股自由现金流，并预计三年内通过成本效率和增量收入机会实现约1.2亿美元的年度EBITDA协同效应。这表明SLB有信心快速实现收购的价值创造。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Together, SLB and Kelvion are expected to generate more than $2 billion in data center revenue and approximately $300 million in adjusted EBITDA on a pro-forma basis in 2026. Building on that foundation, SLB is targeting revenue of $4.5 billion to $5 billion and adjusted EBITDA of $700 million to $800 million for its combined data center solutions business in 2028.",
+      "title": "增长目标",
+      "narration": "合并后，SLB和Kelvion在2026年预计将产生超过20亿美元的数据中心收入和约3亿美元的调整后EBITDA。在此基础上，SLB的目标是到2028年将合并后的数据中心解决方案业务收入提升至45亿至50亿美元，EBITDA达到7亿至8亿美元。这显示了SLB对数据中心业务的长期雄心。",
+      "kind": "conclusion"
+    }
+  ]
+}

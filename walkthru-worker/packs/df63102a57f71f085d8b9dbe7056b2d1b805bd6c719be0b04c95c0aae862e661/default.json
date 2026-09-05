@@ -1,0 +1,75 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:12:37.103Z",
+  "sourceUrl": "https://www.latent.space/p/attention-interface",
+  "sourceTitle": "Agent Harness 的进化：从 Bolt-On 到注意力接口",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了AI代理系统(harness)的进化历程，从最初的外部附加组件到未来的注意力接口。文章核心观点是：模型不断吸收harness的功能，最终harness将从服务模型转变为服务人类注意力。这一进化过程经历了三个阶段：Bolt-On时代(1.0)、Co-Training时代(2.0)和未来的Attention Era(3.0)。2025年圣诞期间AI代理突然变得可用，正是因为模型能力与harness设计这两条曲线在那一刻相交。",
+  "essay": "2025年圣诞期间，AI工程师们注意到一个显著变化：AI代理突然开始真正工作了。这一变化难以精确归因，但作者认为关键在于模型能力与harness设计这两条曲线在那一刻相交。这一交叉点标志着AI代理系统进入了一个新时代，也揭示了AI系统进化的核心规律：模型不断吸收harness的功能，而harness则不断简化，最终将转变为人类注意力的接口。\n\n文章将harness进化分为三个阶段。第一阶段是\"Bolt-On Era\"，从2022年10月的ReAct开始，经过2023年春季的AutoGPT/BabyAGI尝试，到2023-2024年的Cursor/Copilot回退到人类在循环中。这一阶段的特点是harness能力曲线与模型能力曲线之间存在巨大差距，早期尝试给予模型完全自主权导致失败，因为模型可靠性不足。2024年底o1推理模型的出现首次使模型能力超过harness要求，为转折创造了条件。\n\n第二阶段是\"Co-Training Era\"，以2025年2月的Claude Code为代表。这一阶段两条曲线开始交织，强化学习被整合到harness中，模型开始吸收harness功能。GPT-5.1-Codex-Max成为首个原生训练以在多个上下文窗口中操作的模型，表明模型已经吸收了harness的核心功能。Anthropic团队甚至删除了80%的Claude Code系统提示，证明模型已经内化了这些功能。这一阶段的进化遵循\"训练-吸收-剥离-重复\"的循环模式。\n\n第三阶段是\"Attention Era\"，即未来。随着模型继续吸收更多功能，如多智能体编排、工具选择和记忆，harness将最终只剩下人类中心功能：权限、身份、信任和可解释性。harness的角色将从服务模型转变为服务人类注意力，成为\"注意力接口\"。这一新接口将管理何时可以打断用户、何时应继续工作、哪些决策可以自主做出以及哪些需要批准。正如Ryan Lopopolo所言，\"唯一真正稀缺的是团队同步的人类注意力\"。模型从\"缸中之脑\"开始，通过harness获得了\"身体\"，然后身体又溶解回大脑，留给我们的将是连接人类这一真正稀缺资源的接口。",
+  "outro": "AI代理系统的进化本质是模型不断吸收harness功能的过程，最终harness将转变为人类注意力的接口。这一进化遵循\"训练-吸收-剥离-重复\"的循环模式，而2025年圣诞期间的突破正是模型能力与harness要求曲线相交的结果。",
+  "steps": [
+    {
+      "quote": "What I'll argue in this post is that it was the confluence of the last two. The model and the harness improving together and then their curves of improvement crossing at the right moment.",
+      "title": "曲线相交时刻",
+      "narration": "这就带来一个关键问题——为什么2025年圣诞期间AI代理突然开始真正工作？作者认为答案在于模型能力与harness设计这两条曲线在那一刻相交，这是一个渐进过程而非离散事件。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-0.mp3"
+    },
+    {
+      "quote": "The agent harness is a way for the LLM to break free from that confinement and interact with real digital information space.",
+      "title": "harness的本质",
+      "narration": "于是我们需要理解harness到底是什么。它不仅是模型的包装，更是让LLM能够突破其\"缸中之脑\"限制、与真实数字信息空间互动的关键，相当于给模型心智提供了一个身体。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-1.mp3"
+    },
+    {
+      "quote": "The gap between these two curves is equal to the effectiveness of an agent, and the closing of that gap is what I'll argue led to the tangible improvement in agents that Lukasz Kaiser referenced.",
+      "title": "效能差距",
+      "narration": "注意这里，作者提出了一个关键框架：模型能力曲线与harness要求曲线之间的差距，直接决定了代理系统的效能。这一差距的缩小正是Lukasz Kaiser所观察到的代理显著改进的原因。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-2.mp3"
+    },
+    {
+      "quote": "A loop doesn't add capability to a model. A loop amplifies the capability a model has, and below some threshold the loop amplifies errors rather than reliability.",
+      "title": "自主权悖论",
+      "narration": "这就解释了为什么早期给予模型完全自主权的尝试会失败。循环不会增加模型能力，只会放大现有能力——当可靠性低于某个阈值时，放大的不是可靠性而是错误。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-3.mp3"
+    },
+    {
+      "quote": "Claude Code is the first coding agent built to seize that opportunity. It abandons the IDE for the terminal, gives the model bash and file read/write access, and replaces the need for human approval on every change with permission rules.",
+      "title": "转折点产品",
+      "narration": "紧接着的反驳是，当模型能力首次超过harness要求时，机会出现了。Claude Code成为首个抓住这一机会的产品，它放弃IDE转向终端，给予模型bash和文件访问权限，用规则替代每次变更的人工批准。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-4.mp3"
+    },
+    {
+      "quote": "The measure of the pace of agent harness evolution is how much of the harness you get to delete, while retaining the same capability level. This is the future we need to build towards as AI engineers.",
+      "title": "进化度量",
+      "narration": "这解释了为什么Anthropic团队能删除80%的Claude Code系统提示却不降低性能——模型已经吸收了这些功能。harness进化的速度恰恰体现在你能删除多少内容同时保持相同能力水平。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-5.mp3"
+    },
+    {
+      "quote": "The gap between the model and harness curve doesn't disappear when the model absorbs the harness. It migrates across the human boundary and creates a new pair of curves with a new gap.",
+      "title": "新差距出现",
+      "narration": "于是，当模型吸收harness后，差距并未消失，而是迁移到人类边界，形成新的曲线对：代理对人类的要求与人类能够回应的能力之间的差距。这标志着进化进入新阶段。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-6.mp3"
+    },
+    {
+      "quote": "The model began as a brain in a vat. The harness gave the brain a body, then the body started to dissolve into the brain. What's left for us to build is the thing no future model will ever absorb. The interface to the one true scarce resource: human attention.",
+      "title": "最终形态",
+      "narration": "最终，模型从\"缸中之脑\"开始，通过harness获得\"身体\"，然后身体又溶解回大脑。留给我们的将是连接人类这一真正稀缺资源的接口——人类注意力的界面。这是AI工程师需要构建的未来。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/step-7.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/df63102a57f71f085d8b9dbe7056b2d1b805bd6c719be0b04c95c0aae862e661/default/outro.mp3"
+}

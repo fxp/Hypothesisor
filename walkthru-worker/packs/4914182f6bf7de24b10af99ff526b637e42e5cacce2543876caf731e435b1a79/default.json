@@ -1,0 +1,89 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:08:55.135Z",
+  "sourceUrl": "https://developer.nvidia.com/blog/maximizing-ai-factory-performance-per-watt-with-nvidia-dsx-maxlps/",
+  "sourceTitle": "NVIDIA Vera Rubin 每瓦性能基准",
+  "author": "xiaoping",
+  "intro": "本文探讨了NVIDIA DSX MaxLPS技术如何通过优化动态电源分配、提高每瓦性能和45°C热效率，在固定电源预算下最大化AI工厂的产出。文章揭示了一个关键矛盾：传统数据中心采用静态机架供电方案导致大量电源闲置，而MaxLPS通过动态重新分配这些闲置电源，能在不增加总功耗的情况下显著提升AI计算能力。",
+  "essay": "AI工厂正面临电源限制的挑战，问题已不再是数据中心能容纳多少GPU，而是每可用兆瓦能产生多少AI输出。传统数据中心采用静态机架供电方案，为每个机架分配最大功耗以应对峰值需求，这导致大量电源闲置，就像每个机架都是一个孤立的电源岛，无法共享闲置电源。NVIDIA DSX MaxLPS通过动态电源分配解决了这一问题，它使用Dynamic Power Software监控GPU和机架功耗，将未使用的电源头重新分配给同一管理组中的其他GPU，使固定电源预算下的AI吞吐量最大化。\n\nMaxLPS不仅包括动态电源分配，还包括先进的每瓦性能技术。通过优化工作负载配置文件和应用程序性能与电源管理器(APPM)，MaxLPS使GPU配置与推理、训练和内存受限工作负载相匹配，提高了整个机队的每瓦输出。例如，对于NVIDIA Vera Rubin NVL72 AI工厂，MaxLPS结合数据中心电源规划，可在相同电源预算内支持高达40%的更多Rubin GPU容量，这意味着在100兆瓦AI工厂中，运营商可以部署40K个Rubin GPU，实现2 zettaflops的推理能力和1.4 zettaflops的训练能力。\n\nMaxLPS的第三个关键组成部分是45°C热效率和站点设计。Vera Rubin NVL72机架专为45°C液冷入口操作而设计，使设施能够更频繁地使用免费冷却，减少对冷却器的依赖，提高年度电源使用效率(PUE)。更高的冷却温度使设施能够在大多数情况下依赖\"免费冷却\"，仅在需要时使用能量密集型的冷却器，从而显著降低整体冷却功率和平均年度PUE。这种热效率的提升直接转化为相同固定电源包络内的更多计算能力。\n\n最后，MaxLPS还考虑了AI工厂的生命周期容量规划。它从固定的总设施电源包络开始，确定站点在MaxLPS操作点可支持的GPU机架位置最大数量。初始部署可能低于这个基础设施限制，但随着工作负载组合随时间演变，平均机架功率可能下降到MaxLPS平均操作点，从而在不增加设施电源包络的情况下为额外的机架位置创造空间。这种前瞻性设计使运营商能够根据工作负载演变增量地添加GPU和机架，而无需后期设施改造。",
+  "outro": "MaxLPS通过动态电源分配、优化每瓦性能和45°C热设计，在固定电源预算下显著提升AI工厂产出，为AI基础设施提供了新的运营范式。",
+  "steps": [
+    {
+      "quote": "AI factories are power-constrained industrial systems. The question is no longer how many GPUs fit in a data center, but how much AI output each available megawatt can deliver.",
+      "title": "电源限制的挑战",
+      "narration": "这就带来了一个根本转变：AI工厂面临的核心问题已不再是物理空间限制，而是电源效率问题。每个可用兆瓦能产生多少AI输出，成为了衡量AI工厂效率的关键指标。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-0.mp3"
+    },
+    {
+      "quote": "Static rack provisioning exacerbates this: an outdated approach to data center design allocates the maximum power draw per rack to meet worst-case peak demand, even though real workloads have different power needs and may leave some portion of that maximum power unused.",
+      "title": "静态供电的局限",
+      "narration": "这里指出了传统数据中心设计的关键缺陷：静态机架供电方案为每个机架分配最大功耗以应对最坏情况，导致大量电源闲置。这就解释了为什么在AI工厂中，这种方案会严重限制整体计算效率。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-1.mp3"
+    },
+    {
+      "quote": "In one representative power-budget view examined by NVIDIA, about 60% of delivered site power is allocated to compute for AI output.",
+      "title": "电源分配现状",
+      "narration": "注意这个关键数据：在典型AI工厂中，只有约60%的站点电力实际用于AI计算输出。这意味着40%的电力被设施开销、机架损耗和运营低效所消耗，这为MaxLPS的优化提供了明确目标。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-2.mp3"
+    },
+    {
+      "quote": "NVIDIA DSX MaxLPS is a suite of chip, thermal, system, and software technologies that maximizes AI factory throughput within a fixed power budget.",
+      "title": "MaxLPS解决方案",
+      "narration": "于是，NVIDIA提出了DSX MaxLPS这一综合解决方案，它通过芯片、热管理、系统和软件技术的组合，在固定电源预算下最大化AI工厂吞吐量。这标志着从静态供电向动态电源管理的范式转变。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-3.mp3"
+    },
+    {
+      "quote": "Dynamic power allocation: Continuously monitors and allocates unused power headroom to GPUs",
+      "title": "动态电源分配",
+      "narration": "MaxLPS的核心是动态电源分配功能，它持续监控并重新分配未使用的电源头给需要更多GPU。这解决了静态供电导致的电源闲置问题，使固定电源预算下的AI计算能力得到显著提升。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-4.mp3"
+    },
+    {
+      "quote": "Static provisioning strands 170 kW of power, while MaxLPS dynamic provisioning reclaims this headroom, enabling an additional rack deployment within the same 540 kW site power budget.",
+      "title": "电源回收效果",
+      "narration": "这个具体数据展示了MaxLPS的实际效果：在540kW的站点电源预算内，静态供电会闲置170kW功率，而MaxLPS动态供电则能回收这些闲置电源，额外部署一个机架。这就是动态电源分配带来的直接收益。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-5.mp3"
+    },
+    {
+      "quote": "For NVIDIA Vera Rubin NVL72 AI factories, NVIDIA projects that MaxLPS, combined with data center power planning, can enable up to 40% more Rubin GPU capacity within the same power budget.",
+      "title": "40%容量提升",
+      "narration": "这里揭示了一个惊人的潜力：MaxLPS结合数据中心电源规划，可在相同电源预算内支持高达40%的更多Rubin GPU容量。这意味着在100兆瓦AI工厂中，运营商可以部署40K个Rubin GPU，大幅提升计算能力。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-6.mp3"
+    },
+    {
+      "quote": "Vera Rubin NVL72 racks are designed for 45° C liquid-cooling inlet operation. Warmer liquid may sound counterintuitive, but the goal is to remove heat efficiently while meeting performance, reliability, and lifetime requirements.",
+      "title": "45°C液冷设计",
+      "narration": "但作者马上话锋一转：虽然45°C的冷却液温度听起来可能违反直觉，但这种设计实际上能在满足性能、可靠性和寿命要求的同时高效散热。这解释了为什么更高的冷却温度反而能提高整体效率。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-7.mp3"
+    },
+    {
+      "quote": "Operating the technology cooling system loop efficiently",
+      "title": "冷却系统优化",
+      "narration": "问题在于如何高效操作技术冷却系统(TCS)循环。传统PID控制是反应式的，而智能控制系统可以预测热行为，避免过度保守的冷却策略，从而释放更多电源用于计算。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-8.mp3"
+    },
+    {
+      "quote": "Facilities teams should engage NVIDIA early to validate site thermal design for 45° C inlet operation, MaxLPS rack-position optionality, and power distribution flexibility before infrastructure is fixed.",
+      "title": "早期验证的重要性",
+      "narration": "这就强调了规划阶段的关键点：设施团队应在基础设施确定前尽早与NVIDIA合作，验证45°C入口运行的热设计、MaxLPS机架位置选择性和电源分配灵活性。这种前瞻性规划对MaxLPS的成功至关重要。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/step-9.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/4914182f6bf7de24b10af99ff526b637e42e5cacce2543876caf731e435b1a79/default/outro.mp3"
+}

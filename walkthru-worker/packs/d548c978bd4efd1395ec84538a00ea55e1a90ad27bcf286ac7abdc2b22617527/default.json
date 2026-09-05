@@ -1,0 +1,40 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "d548c978bd4efd1395ec84538a00ea55e1a90ad27bcf286ac7abdc2b22617527-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:22:45.097Z",
+  "sourceUrl": "https://simonwillison.net/2026/Aug/22/more-than-just-code-review/",
+  "sourceTitle": "资深工程师如何重新定义 AI 编程技能",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了AI编程时代下工程师角色的转变，核心观点是：使用AI编程助手的关键能力不是写代码，而是如何指导AI修改代码并验证结果。文章挑战了传统代码审查的思维方式，提出了更高效的人机协作模式。",
+  "essay": "在AI编程助手日益普及的今天，工程师的核心技能正在发生根本性转变。过去，工程师的价值主要体现在编写高质量代码的能力上；而现在，**关键技能**转变为如何有效地指导AI进行代码修改，并验证这些修改是否正确实施。这一转变意味着工程师需要从代码的生产者转变为AI的指挥官和质检员。\n\n值得注意的是，作者明确指出，传统的逐行审查代码的方式从来就不是验证软件变更的最有效方法。这一观点挑战了许多资深工程师的工作习惯，暗示我们可能需要重新思考代码审查的流程和方法。随着AI工具的普及，这种转变将更加明显，工程师需要发展新的技能来适应这一变化。\n\n最终，文章暗示了AI编程时代下工程师角色的重新定义：不再是单纯的代码编写者，而是能够有效利用AI工具、指导AI工作并确保最终质量的专家。这种转变不仅提高了开发效率，也为工程师开辟了新的价值创造途径。",
+  "outro": "AI编程时代，工程师的核心价值已从写代码转变为指导AI和验证结果，这一转变将重塑软件开发流程。",
+  "steps": [
+    {
+      "quote": "The key skill required to make productive use of coding agents is being able to confidently instruct them on how to make changes and then confidently verify that those changes have been applied in the correct way.",
+      "title": "核心技能转变",
+      "narration": "这就引出了文章的核心观点：使用AI编程助手的真正关键能力不是写代码，而是如何指导AI修改代码并验证结果。这是一个根本性的角色转变，工程师从代码生产者变成了AI的指挥官和质检员。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/d548c978bd4efd1395ec84538a00ea55e1a90ad27bcf286ac7abdc2b22617527/default/step-0.mp3"
+    },
+    {
+      "quote": "Sometimes this involves reviewing every line of code they have written, but there are other ways to achieve that goal.",
+      "title": "",
+      "narration": "于是作者提出了一个重要转折：虽然有时确实需要审查AI生成的每一行代码，但实现验证目标的方法不止这一种。这暗示了传统代码审查方式可能不是最优解，为后面提出更高效的方法埋下伏笔。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/d548c978bd4efd1395ec84538a00ea55e1a90ad27bcf286ac7abdc2b22617527/default/step-1.mp3"
+    },
+    {
+      "quote": "Eyeballing every line of code has never been the most effective way to validate a change to a piece of software.",
+      "title": "",
+      "narration": "但作者马上话锋一转，直接挑战了行业惯例：逐行审查代码从来就不是验证软件变更的最有效方法。这一反直觉的观点打破了资深工程师的工作习惯，迫使我们重新思考代码审查的本质和目的。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/d548c978bd4efd1395ec84538a00ea55e1a90ad27bcf286ac7abdc2b22617527/default/step-2.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/d548c978bd4efd1395ec84538a00ea55e1a90ad27bcf286ac7abdc2b22617527/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/d548c978bd4efd1395ec84538a00ea55e1a90ad27bcf286ac7abdc2b22617527/default/outro.mp3"
+}

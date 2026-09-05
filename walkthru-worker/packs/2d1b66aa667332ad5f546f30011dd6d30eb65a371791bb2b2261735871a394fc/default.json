@@ -1,0 +1,59 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "2d1b66aa667332ad5f546f30011dd6d30eb65a371791bb2b2261735871a394fc-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:45:43.691Z",
+  "sourceUrl": "https://openclaw.ai/blog/openclaw-2-accidentally",
+  "sourceTitle": "OpenClaw 2.0发布",
+  "author": "xiaoping",
+  "intro": "OpenClaw 2.0是该项目史上最大更新，由933名贡献者完成，包含16,000多个合并请求。文章讲述了这次更新如何从简化安装和重建浏览器体验开始，最终演变成全面重构OpenClaw的过程。贯穿全文的核心线索是：一个看似简单的改进目标如何意外地催生了一次彻底的系统变革，以及这种变革如何改变了用户与软件的关系。",
+  "essay": "OpenClaw 2.0的发布标志着该项目的一次重大转折点。这次更新由933名贡献者共同完成，包含了超过16,000个合并请求，触及了OpenClaw的每一个方面。**最初的目标**是简化安装流程和重建浏览器体验，但这一简单的目标最终演变成了一次全面系统重构。值得注意的是，在这次更新前，OpenClaw团队在230天内发布了106个版本，平均每隔一两天就会发布一次新版本，而这次却花费了近七周时间，这种节奏的变化本身就暗示了这次更新的深度和广度。\n\n这次更新的核心在于降低用户的使用门槛。团队首先简化了安装过程，利用用户已有的ChatGPT或Claude订阅、API密钥和本地模型，减少了初始配置步骤。用户现在可以更快地与Claw进行第一次对话，然后在对话中完成设置。浏览器应用作为大多数用户首次接触OpenClaw的入口，被完全重建为一流体验，直接打开进入对话界面。这种设计理念体现了OpenClaw团队对用户体验的重新思考——**让工具适应人**，而不是让人去适应工具。\n\nOpenClaw 2.0的另一个重要突破是引入了共享云会话功能。这一功能解决了团队协作中的关键痛点——在没有共享会话的情况下，将团队成员引入工作会导致Claw丢失已有的上下文。现在，OpenClaw转变为多人协作体验，团队成员可以实时参与工作或交接任务，同时保持完整的上下文。这一功能不仅改变了团队内部的工作方式，也为用户提供了将Claw扩展到家庭或团队协作的可能性。\n\n最终，OpenClaw 2.0代表了一种软件范式的转变——将软件从被动接受的设计转变为主动塑造的工具。用户不再是被动地使用软件，而是能够根据自己的需求和工作流程来定制和拥有软件。由于OpenClaw是开源项目，这种转变不受单一公司或AI提供商的限制，真正属于使用和构建它的人们。这种从\"使用软件\"到\"拥有软件\"的关系转变，可能是这次更新最深远的影响。",
+  "outro": "OpenClaw 2.0展示了如何通过简化初始体验和自然扩展功能，创造出真正属于用户自己的工具，这种从'使用软件'到'拥有软件'的转变可能是未来软件发展的方向。",
+  "steps": [
+    {
+      "quote": "Today we released by far the largest update in the history of OpenClaw. It was built by 933 contributors, including 569 first-time contributors, and is composed of over 16,000 pull requests.",
+      "title": "最大更新",
+      "narration": "这就引出了第一个问题：为什么这次更新如此特殊？这篇文章将揭示一个看似简单的改进目标如何意外地演变成一次彻底的系统变革。",
+      "kind": "context"
+    },
+    {
+      "quote": "We started by simplifying installation and rebuilding the browser app as a first-class experience, but doing that properly meant carrying the cleanup through the rest of OpenClaw until it became OpenClaw 2.0.",
+      "title": "意外演变",
+      "narration": "这里揭示了关键转折点——最初的目标只是简化安装和重建浏览器，但为了做好这两件事，团队不得不对整个系统进行清理，最终演变成了OpenClaw 2.0。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Before this update, we had shipped 106 releases in 230 days, most within a day or two of the one before them, so going nearly seven weeks without shipping was not normal for us.",
+      "title": "节奏变化",
+      "narration": "这里提供了重要背景：团队之前保持着高频发布节奏，几乎每隔一两天就发布一次新版本，而这次却花费了近七周时间，这种反常的节奏本身就暗示了更新的深度和广度。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Installation was the first place we needed to make OpenClaw easier, so for first-time installs we are starting with what is already on someone's computer, including existing ChatGPT or Claude subscriptions, API keys, and local models.",
+      "title": "简化安装",
+      "narration": "于是，团队首先解决了安装问题——不再让用户从零开始配置，而是利用他们已有的资源，如ChatGPT或Claude订阅、API密钥和本地模型，大大降低了初始使用门槛。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Shared cloud sessions changed that and turned OpenClaw into a multiplayer experience our team now uses to build OpenClaw, bringing the right person into live work or handing it over with the context intact.",
+      "title": "协作突破",
+      "narration": "紧接着，团队解决了另一个关键问题——协作。共享云会话功能让OpenClaw转变为多人协作体验，团队成员可以实时参与工作或交接任务，同时保持完整的上下信息，这大大提高了团队协作效率。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Your OpenClaw starts with one useful workflow and grows as far as you want it to, with the possibility of reaching across more of your life and work or becoming multiplayer with your family or team when you want and how you want.",
+      "title": "成长路径",
+      "narration": "这里提出了一个重要洞见：OpenClaw的设计理念是从一个简单有用的功能开始，然后根据用户需求自然扩展，而不是一开始就提供复杂的功能集。这种渐进式扩展让工具能够真正适应每个人的独特需求。",
+      "kind": "insight"
+    },
+    {
+      "quote": "This has changed the relationship people have with software, turning it from something designed somewhere else that you have to accept into something you can tell what to do, shape around your life and work, and actually own.",
+      "title": "关系转变",
+      "narration": "最后，作者点出了这次更新最深远的影响——它改变了人与软件的关系，从被动接受设计转变为主动塑造工具，让软件真正成为用户生活和工作的一部分。",
+      "kind": "conclusion"
+    }
+  ]
+}

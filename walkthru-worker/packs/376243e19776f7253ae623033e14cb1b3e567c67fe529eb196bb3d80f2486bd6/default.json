@@ -1,0 +1,68 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:11:36.656Z",
+  "sourceUrl": "https://siliconangle.com/2026/08/26/z-ai-open-sources-ox-alpha-model-as-glm-5-3-flash/",
+  "sourceTitle": "Ox Alpha 真身揭晓：GLM-5.3-Flash 开源",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了Z.ai公司开源GLM-5.3-Flash模型的故事，这个模型最初以'Ox Alpha'的代号亮相，引发了行业猜测。文章不仅介绍了模型的技术特点，还探讨了其在成本效率和性能上的突破。值得关注的是，一个看似普通的模型发布背后，隐藏着AI领域关于开源与专有、效率与性能之间的微妙平衡。",
+  "essay": "Z.ai公司近日开源了GLM-5.3-Flash模型，这个模型最初以'Ox Alpha'的代号亮相，引发了行业对其开发者的广泛猜测。**GLM-5.3-Flash采用了混合专家架构，拥有3200亿参数，但每次只激活180亿参数来处理用户请求**，这种设计既保证了模型的强大能力，又控制了计算资源消耗。模型能够处理高达100万个token的文本、图像和视频输入，并生成最多131,072个token的输出。\n\n该模型的最大突破在于其创新的注意力机制。传统LLM在处理长文本时需要分析每个token，这会消耗大量计算资源。GLM-5.3-Flash引入了**稀疏注意力技术**，只关注最相关的token，大幅降低了硬件开销。此外，Z.ai还采用了线性注意力技术，使内存使用量随提示大小线性增长而非指数增长，这得益于用更高效的算法替代了传统的softmax函数。\n\n性能测试显示，GLM-5.3-Flash不仅比前代模型**成本低10倍**，还在多项基准测试中表现出色。它在GDPval-AA v2评估中击败了Claude Opus 4.8、GPT-5.6 Terra和Gemini 3.7 Flash等竞争对手，成为知识工作能力最强的模型。Z.ai使用30万亿token的数据集和mHC技术训练了该模型，后者有效降低了梯度在传播过程中的失真风险。\n\nGLM-5.3-Flash的开源标志着AI领域的一个重要趋势：**性能与成本的平衡**正在成为模型开发的核心考量。通过技术创新，Z.ai展示了如何在保持强大性能的同时大幅降低运行成本，这可能改变AI大模型的部署格局，使更多组织能够负担得起高质量的AI服务。",
+  "outro": "GLM-5.3-Flash不仅展示了技术创新，更代表了AI大模型从封闭走向开放、从追求规模转向注重效率的重要转变。",
+  "steps": [
+    {
+      "quote": "Z.ai Co. today released the code for GLM-5.3-Flash, a large language model that's 10 times more cost-efficient than its predecessor.",
+      "title": "模型发布",
+      "narration": "Z.ai公司开源了GLM-5.3-Flash模型，这个模型比前代产品成本效率提高了10倍，这是一个相当显著的进步，尤其是在AI大模型计算成本高昂的背景下。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/step-0.mp3"
+    },
+    {
+      "quote": "The algorithm made its original debut last week under the codename Ox Alpha. LLM marketplace operator OpenRouter Inc. launched a free hosted version of Ox Alpha and didn't disclose its developer, which drew a significant amount of industry attention.",
+      "title": "",
+      "narration": "这就带来一个问题——这个模型最初是以'Ox Alpha'的代号发布的，由OpenRouter提供免费托管服务但未披露开发者身份，引发了行业广泛关注。这种神秘感反而增加了GLM-5.3-Flash发布的戏剧性。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/step-1.mp3"
+    },
+    {
+      "quote": "GLM-5.3-Flash features a mixture of experts architecture with 320 billion parameters. It activates 18 billion parameters to answer prompts.",
+      "title": "",
+      "narration": "于是，我们看到了GLM-5.3-Flash的技术架构——它采用了混合专家架构，拥有3200亿参数，但每次只激活180亿参数来处理请求。这种设计就像一个庞大的专家库，只调用最相关的专家来回答问题，既保证了能力又控制了资源消耗。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/step-2.mp3"
+    },
+    {
+      "quote": "Z.ai further reduced the LLM's hardware footprint using a method called linear attention. Usually, doubling the size of a prompt quadruples the amount of memory that a model's attention mechanism consumes. When linear attention is enabled, RAM usage only doubles.",
+      "title": "",
+      "narration": "但作者马上话锋一转：GLM-5.3-Flash的关键创新在于线性注意力技术。通常情况下，提示文本翻倍会使内存消耗增加四倍，而线性注意力技术使内存使用量只翻倍。这解释了为什么模型能够处理长达100万个token的输入而不会耗尽资源。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/step-3.mp3"
+    },
+    {
+      "quote": "The company says that the model costs 10 times less to run than its previous-generation LLM. Furthermore, it demonstrated strong performance across a set of popular artificial intelligence benchmarks.",
+      "title": "",
+      "narration": "紧接着的证据是：Z.ai声称GLM-5.3-Flash的运行成本比前代模型低10倍，同时在多项AI基准测试中表现出色。这表明模型不仅在效率上有突破，在性能上也没有妥协，实现了效率与性能的双赢。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/step-4.mp3"
+    },
+    {
+      "quote": "Z.ai trained GLM-5.3-Flash on a dataset with 30 trillion tokens. It used a technology called mHC to optimize the workflow.",
+      "title": "",
+      "narration": "问题是，如此庞大的模型如何训练？Z.ai使用了30万亿token的数据集和mHC技术来优化工作流程，这确保了模型在训练过程中不会因为梯度失真而降低学习效果，展示了训练大型模型的工程挑战。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/step-5.mp3"
+    },
+    {
+      "quote": "GLM-5.3-Flash's weights are available on Hugging Face.",
+      "title": "",
+      "narration": "最后，GLM-5.3-Flash的权重已在Hugging Face上开源，这意味着研究人员和开发者可以自由使用和改进这个模型，这标志着AI大模型正朝着更加开放和协作的方向发展。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/step-6.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/376243e19776f7253ae623033e14cb1b3e567c67fe529eb196bb3d80f2486bd6/default/outro.mp3"
+}

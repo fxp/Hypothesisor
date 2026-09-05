@@ -1,0 +1,47 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "99acd73254864f628ab7771a9df317e5ad7ee5d219426cf639c9e1df0fc19b14-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T01:33:11.723Z",
+  "sourceUrl": "https://simonwillison.net/2026/Aug/23/anthropics-best-ai-model-struggles-to-attract-users-as-cheaper-t/",
+  "sourceTitle": "Anthropic's best AI model struggles to attract users as cheaper tools thrive",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了Anthropic公司最新AI模型的市场表现，揭示了一个看似矛盾的现象：尽管公司营收大幅增长，但其最新、最强大的模型Fable 5却未能获得用户青睐。这背后反映出一个关键问题：在AI模型竞争中，性能与成本之间的平衡点究竟在哪里？为什么用户宁愿选择较旧但更便宜的模型？",
+  "essay": "这篇文章揭示了一个有趣的商业现象：Anthropic公司尽管营收从5月的470亿美元增长到7月的650亿美元，并预计第三季度盈利，但其最新发布的Fable 5模型却出人意料地不受欢迎。根据Ramp AI指数的数据，在7月的模型支出中，Fable 5仅占8%，远低于Opus 4.8的28%。这表明用户更倾向于选择成本效益更高的模型，而非最新、最强大的版本。\n\n这一现象背后反映出一个更深层次的行业趋势：在AI模型市场，单纯追求性能已不再是制胜关键。Fable 5的高成本可能是其 adoption率低的主要原因，这解释了为什么较旧的Opus 4.8和Sonnet 4.6等模型仍然占据主导地位。用户似乎在寻找一个平衡点，既能满足需求又不会过度支付溢价。\n\n与此同时，OpenAI的表现也值得关注，其收入同比增长35%，超过400亿美元，这表明整个AI市场仍在快速增长。然而，这种增长并不意味着所有公司都能通过发布最新模型来获得成功。相反，文章暗示了一个更复杂的现实：用户对AI模型的选择越来越理性，更注重实际价值而非技术先进性。",
+  "outro": "这篇文章的核心启示是：在AI模型竞争中，性能与成本的平衡比单纯追求技术先进性更重要。用户越来越理性，更注重实际价值而非最新技术，这可能是未来AI市场的发展方向。",
+  "steps": [
+    {
+      "quote": "Anthropic's \"annualized revenue\" for July is up to $65bn - it was $47bn in May, and I collected more historic numbers here.",
+      "title": "营收大幅增长",
+      "narration": "这就带来一个问题——虽然Anthropic的营收从5月的470亿美元激增到7月的650亿美元，但这并不意味着其最新模型获得了相应认可。这暗示着公司可能通过其他途径实现了增长，而非仅仅依赖最新产品。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/99acd73254864f628ab7771a9df317e5ad7ee5d219426cf639c9e1df0fc19b14/default/step-0.mp3"
+    },
+    {
+      "quote": "OpenAI, \"annualised revenue has jumped 35 per cent in the quarter to date and is now over $40bn, with the launch of GPT 5.6 in July jolting the company's performance after a sluggish start to the year\"",
+      "title": "OpenAI强劲表现",
+      "narration": "但作者马上话锋一转：OpenAI的表现同样值得关注，其收入同比增长35%，这表明整个AI市场仍在快速增长。然而，这并不意味着所有公司都能通过发布最新模型来获得成功，市场可能正在经历某种结构性变化。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/99acd73254864f628ab7771a9df317e5ad7ee5d219426cf639c9e1df0fc19b14/default/step-1.mp3"
+    },
+    {
+      "quote": "supports the idea that Fable's cost has made it a less popular model",
+      "title": "成本影响选择",
+      "narration": "这解释了为什么Fable 5不受欢迎——价格因素可能成为决定性因素。在AI模型选择中，用户似乎更看重性价比，而非单纯的性能提升。这反映了市场从技术驱动向价值驱动的转变。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/99acd73254864f628ab7771a9df317e5ad7ee5d219426cf639c9e1df0fc19b14/default/step-2.mp3"
+    },
+    {
+      "quote": "Opus 4.8: 28.0%\nSonnet 4.6: 8.3%\nFable 5: 8.0%",
+      "title": "模型使用率对比",
+      "narration": "于是我们看到一个矛盾现象：最新的Fable 5模型仅占用户支出的8%，远低于旧版Opus 4.8的28%。这说明用户并不盲目追求最新技术，而是基于实际需求和价值做出选择。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/99acd73254864f628ab7771a9df317e5ad7ee5d219426cf639c9e1df0fc19b14/default/step-3.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/99acd73254864f628ab7771a9df317e5ad7ee5d219426cf639c9e1df0fc19b14/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/99acd73254864f628ab7771a9df317e5ad7ee5d219426cf639c9e1df0fc19b14/default/outro.mp3"
+}

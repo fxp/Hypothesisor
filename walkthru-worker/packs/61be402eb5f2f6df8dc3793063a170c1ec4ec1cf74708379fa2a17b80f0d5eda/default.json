@@ -1,0 +1,59 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "61be402eb5f2f6df8dc3793063a170c1ec4ec1cf74708379fa2a17b80f0d5eda-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:47:27.119Z",
+  "sourceUrl": "https://techcrunch.com/2026/09/02/u-s-government-sides-with-openai-on-issue-of-training-llms-on-copyrighted-material/",
+  "sourceTitle": "特朗普政府为OpenAI版权案公开辩护",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了特朗普政府在一桩重要AI版权案中公开支持OpenAI的事件。核心争议在于AI公司能否未经许可使用受版权保护的材料训练大语言模型。政府立场与出版商如《纽约时报》形成鲜明对立，背后折射出技术发展、法律创新与国家战略之间的复杂博弈。",
+  "essay": "特朗普政府最近在一桩关键AI版权案中采取了明确立场，公开支持OpenAI使用受版权保护材料训练其大语言模型的合法性。这一立场体现在政府向法院提交的一份20页简报中，其中强调美国有\"强烈兴趣继续发展强大且具有竞争力的人工智能产业\"，并引用特朗普去年签署的行政命令，指出美国需要\"保持全球人工智能领导地位\"。这一表态直接回应了《纽约时报》等出版商对AI公司未经许可使用其内容进行训练的法律挑战。\n\n这场争议的核心在于\"合理使用\"原则的适用性。AI公司辩称，他们对受版权保护材料的使用具有足够的\"转换性\"，因为AI模型不是简单地复制内容，而是通过学习创造新的输出。政府简报警告说，对合理使用原则的误解会阻碍\"科学进步\"，同时影响\"美国繁荣和经济流动性\"。这一论点与去年法官William Alsup在Anthropic案中的观点相呼应，他将AI训练比作人类阅读书籍——不是为了复制，而是为了创作新东西。\n\n然而，这并非最终裁决，政府简报本身不具法律约束力。尽管如此，这一官方立场无疑为AI行业提供了重要支持，表明在技术发展与版权保护的平衡中，国家战略正倾向于前者。这一立场也反映了AI技术已成为国家竞争的重要筹码，法律框架可能需要适应这种新现实。",
+  "outro": "这场版权争议反映了技术发展与法律框架之间的张力，国家战略正倾向于支持AI产业，但最终裁决将影响AI训练数据的未来边界。",
+  "steps": [
+    {
+      "quote": "In a lawsuit that The New York Times filed against OpenAI, the Trump administration has contributed a 20-page brief in defense of the ChatGPT maker's unlicensed use of copyrighted material to train its LLMs.",
+      "title": "政府立场",
+      "narration": "这就引出了整个事件的起点——特朗普政府公开支持OpenAI在一桩关键版权案中的立场，表明政府正在介入AI训练数据的法律争议。",
+      "kind": "context"
+    },
+    {
+      "quote": "The United States has a strong interest in continuing to develop a robust and competitive artificial intelligence industry that sets the standard for the practice and procedure of AI use globally… As such, it is critical for the United States to 'retain global leadership in artificial intelligence,'",
+      "title": "这里揭示了政府支持OpenA",
+      "narration": "这里揭示了政府支持OpenAI背后的深层动机——国家战略层面的人工智能领导地位竞争，这解释了为什么政府会站在版权争议的一方。",
+      "kind": "claim"
+    },
+    {
+      "quote": "The LLMs powering chatbots like ChatGPT, Claude, and Gemini are trained on incomprehensibly massive databases of published works, including copyrighted books, articles, and other media that AI companies feed into these databases without permission.",
+      "title": "紧接着，文章点明了争议的核心",
+      "narration": "紧接着，文章点明了争议的核心事实——AI公司确实在未经许可的情况下使用大量受版权保护的材料进行训练，这直接导致了与出版商的法律冲突。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "This question — can you use copyrighted material to train an AI? — isn't black and white, hence the extensive legal debate around the subject. These conversations often center on fair use, a carve out of copyright law that makes exceptions for certain scenarios when it can be ruled legal to use someone else's copyrighted work without permission.",
+      "title": "于是，问题转变为法律层面的核",
+      "narration": "于是，问题转变为法律层面的核心争议——\"合理使用\"原则是否适用于AI训练。这解释了为什么这场争论如此复杂且持续不断，因为版权法中的例外条款正在被重新解释。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Like any reader aspiring to be a writer, Anthropic's LLMs trained upon works not to race ahead and replicate or supplant them — but to turn a hard corner and create something different,",
+      "title": "但作者马上话锋一转，引用法官",
+      "narration": "但作者马上话锋一转，引用法官的观点将AI训练比作人类阅读——不是为了复制而是为了创作新东西。这为AI公司的立场提供了有力的类比支持，暗示AI训练确实具有\"转换性\"。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "This new Trump administration brief is not a ruling, as the case is being tried in the U.S. District Court for the Southern District of New York, and the authors of the brief do not have jurisdiction.",
+      "title": "然而，文章提醒我们，这并非最",
+      "narration": "然而，文章提醒我们，这并非最终裁决，政府简报本身不具法律约束力。这一局限点明了当前局势的不确定性，表明尽管政府支持，法律争议仍未完全解决。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "However, this intervention by the Trump administration could still carry weight.",
+      "title": "最后，文章指出尽管不具法律约",
+      "narration": "最后，文章指出尽管不具法律约束力，政府的这一干预仍可能产生重大影响。这暗示官方立场可能影响法院判决或未来政策走向，为整个事件画上一个问号而非句号。",
+      "kind": "conclusion"
+    }
+  ]
+}

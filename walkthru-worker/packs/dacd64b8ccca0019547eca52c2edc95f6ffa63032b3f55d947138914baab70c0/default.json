@@ -1,0 +1,41 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "dacd64b8ccca0019547eca52c2edc95f6ffa63032b3f55d947138914baab70c0-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-04T02:56:41.238Z",
+  "sourceUrl": "https://openai.com/index/our-decision-on-cursor-following-its-acquisition-by-spacex/",
+  "sourceTitle": "Our decision on Cursor following its acquisition by SpaceX",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了OpenAI决定终止与Cursor的合作关系，原因是担心SpaceX（已收购Cursor）可能违反其服务条款。这背后反映了OpenAI对合作伙伴合规性的担忧，尤其是基于与埃隆·马斯克公司过往的负面经验。文章揭示了一个核心矛盾：OpenAI希望技术广泛可用，但又必须确保其技术被负责任地使用。",
+  "essay": "OpenAI宣布将终止与Cursor的合作关系，这一决定源于对SpaceX可能违反服务条款的担忧。**基于与埃隆·马斯克公司过往的负面经验**，OpenAI无法确信SpaceX会遵守其使用条款。马斯克收购Twitter后，该公司违反了多项合同条款，包括与OpenAI的协议。更令人担忧的是，马斯克在宣誓作证时承认，其旗下公司xAI也违反了OpenAI的服务条款。\n\n这一决定展示了OpenAI在技术普及与安全合规之间的艰难平衡。尽管OpenAI珍视与Cursor近四年的合作关系，并尊重其团队和产品，但**AI能力的进步带来了新的问责要求**，特别是对于即将推出的Astra模型。因此，OpenAI选择在合同允许的最晚日期终止合作，同时不向Cursor提供未来的模型。\n\n这一决策对依赖Cursor的开发者产生了直接影响，OpenAI承诺将尽最大努力支持他们度过这一转型期。这个案例反映了AI行业面临的更广泛挑战：如何在推动技术创新的同时，确保这些技术被负责任地使用，特别是在与具有复杂商业历史的合作伙伴合作时。",
+  "outro": "OpenAI的决策展示了AI行业在推动技术创新与确保负责任使用之间的平衡挑战，特别是在与具有复杂商业历史的合作伙伴合作时。",
+  "steps": [
+    {
+      "quote": "Today, we notified SpaceX that we intend to wind down our contract providing OpenAI models to Cursor, with a proposed shutoff date of November 12, 2026.",
+      "title": "终止合作决定",
+      "narration": "OpenAI宣布将终止与Cursor的合作关系，给出的最晚终止日期是2026年11月12日。这就引出了一个问题：为什么OpenAI要做出这个艰难的决定？",
+      "kind": "claim"
+    },
+    {
+      "quote": "We are making this choice because we cannot be confident that SpaceX will use our technology within our terms of service, based on our experience with Elon Musk's companies violating contracts.",
+      "title": "决策原因",
+      "narration": "OpenAI做出这一决定的核心原因是基于与埃隆·马斯克公司过往的负面经验，他们无法确信SpaceX会遵守其服务条款。这就解释了为什么特别提到马斯克的公司，因为这不是第一次发生类似情况。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Given all of this, we've decided to hold the contract cancellation to the latest date we can while not providing future models to Cursor.",
+      "title": "平衡考量",
+      "narration": "考虑到所有因素，OpenAI选择在合同允许的最晚日期终止合作，同时不向Cursor提供未来的模型。这反映了OpenAI在技术普及与安全合规之间的艰难平衡，特别是对于即将推出的Astra模型。",
+      "kind": "insight"
+    },
+    {
+      "quote": "We've worked with Cursor for nearly four years and have enormous respect for their team, their product, and what they've built for the developer community.",
+      "title": "尊重与遗憾",
+      "narration": "尽管做出终止合作的决定，OpenAI表达了对Cursor团队的尊重和对其产品的认可。这表明OpenAI的决策是基于合规考量而非对Cursor的不满，同时也承认这一决定将对依赖Cursor的开发者产生影响。",
+      "kind": "caveat"
+    }
+  ]
+}

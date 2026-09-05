@@ -1,0 +1,65 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "ea981681c9e20cb5e31f71261f5de99273404e017bf4d043f6cc7f9fa1a5d533-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-04T02:57:34.090Z",
+  "sourceUrl": "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/",
+  "sourceTitle": "NVIDIA to Acquire Hugging Face",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了NVIDIA以近130亿美元收购Hugging Face的消息，这一交易将如何影响AI开源生态系统。表面上看，这是科技巨头对开源平台的收购，但背后隐藏着一个更深层次的矛盾：大型企业如何在不破坏开源精神的前提下，将开源项目商业化？这将成为我们理解这次收购的关键线索。",
+  "essay": "NVIDIA宣布以129亿美元收购Hugging Face，这一消息震惊了AI社区。Hugging Face作为全球最大的开源AI模型平台，拥有超过1800万开发者和300万个模型，已成为AI创新的核心枢纽。这次收购表面上是科技巨头对开源平台的投资，但背后隐藏着一个更深层次的矛盾：大型企业如何在不破坏开源精神的前提下，将开源项目商业化？\n\n值得注意的是，NVIDIA在公告中强调Hugging Face将保持开放性，开发者可以自由选择模型、框架、云服务和计算平台，NVIDIA的计算平台并非必需。这反映了NVIDIA的战略意图：通过提供基础设施和工程支持，增强Hugging Face的可靠性和安全性，同时保持其开放生态的本质。NVIDIA作为Hugging Face上最大的开源模型和数据贡献者，已经发布了500多个模型和250多个数据集，这表明其与开源社区有着深厚的联系。\n\n这次收购的转折点在于NVIDIA对开放模型的承诺。黄仁勋提到他最近与人共同撰写了一封关于开放模型重要性的公开信，强调开放模型能够扩大AI访问范围，确保AI领导力分布在各公司、机构和社区之间。这表明NVIDIA认识到开放模型对AI民主化的关键作用，以及它们如何使初创企业、企业和机构能够利用先进能力，无需从头开始训练每个模型。\n\n然而，这次收购也带来了潜在的风险和挑战。尽管NVIDIA承诺保持Hugging Face的开放性，但大型科技公司的介入是否会改变平台的本质？开源社区是否会因为商业利益而受到影响？这些问题将在未来几年逐渐显现。NVIDIA表示将帮助提高平台可靠性、安全性、模型评估和部署能力，同时保留使Hugging Face成为基础开放生态系统的特性，这将是平衡商业利益和开源精神的关键。\n\n最终，这次收购代表了一个新的篇章：大型企业如何与开源社区合作，推动AI技术的发展。NVIDIA拥有基础设施、工程能力和全球影响力，而Hugging Face拥有庞大的开发者社区和丰富的模型库。如果能够成功平衡商业利益和开源精神，这次收购可能会加速AI民主化的进程，使AI变得更加开放、更加强大、更加普及，惠及全球的开发者和机构。",
+  "outro": "这次收购标志着AI领域的一个重要转折点，大型企业与开源社区的融合将如何影响AI的未来发展，值得我们持续关注。",
+  "steps": [
+    {
+      "quote": "I'm excited to announce that NVIDIA has agreed to acquire Hugging Face for $12,930,300,000. Together, we will scale Hugging Face's platform, strengthen its infrastructure and expand access to AI for developers and institutions worldwide.",
+      "title": "重大收购宣布",
+      "narration": "NVIDIA宣布以近130亿美元收购Hugging Face，这是AI领域最大规模的收购之一，标志着两家公司在AI基础设施和开源模型平台上的战略整合。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Over the past decade, Clem, Julien, Thomas and the team at Hugging Face have built something remarkable: a vibrant home for the open model developer community.",
+      "title": "Hugging Face的成就",
+      "narration": "Hugging Face在过去十年里建立了令人瞩目的开源模型开发者社区，这为NVIDIA的收购提供了坚实的基础，也解释了为什么这个平台如此有价值。",
+      "kind": "context"
+    },
+    {
+      "quote": "More than 18 million developers, researchers and creators use Hugging Face to share more than 3 million models, 500,000 datasets and 1 million applications. More than 200,000 companies use the platform to discover, evaluate, customize and deploy AI.",
+      "title": "庞大的用户基础",
+      "narration": "Hugging Face拥有超过1800万用户和300万个模型，这显示了其在AI社区中的巨大影响力，也是NVIDIA看中的核心资产。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Hugging Face will remain an open platform for the entire AI ecosystem. Developers will choose the models they want, the frameworks they want, the clouds and inference service providers they want and the computing platforms they want. NVIDIA compute will not be required to build on or deploy through Hugging Face.",
+      "title": "开放平台承诺",
+      "narration": "NVIDIA强调Hugging Face将保持开放性，开发者可以自由选择各种技术和平台，这表明NVIDIA试图在不破坏开源精神的前提下整合这个平台。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Recently, I coauthored an open letter on the importance of open weights to the AI economy. Joined by leaders from across the industry, we made a simple point: open weights broaden access to AI and help ensure that AI leadership is distributed across companies, institutions and communities.",
+      "title": "开放模型的重要性",
+      "narration": "黄仁勋强调开放模型对AI经济的重要性，这解释了NVIDIA收购Hugging Face的深层动机——推动AI民主化，确保领导力分布广泛，而非集中在少数大公司手中。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "NVIDIA is the largest contributor of open models and data to Hugging Face, and our contributions continue to grow. NVIDIA has released more than 500 models on Hugging Face and more than 250 open datasets.",
+      "title": "NVIDIA的贡献",
+      "narration": "NVIDIA已经是Hugging Face上最大的开源模型和数据贡献者，这表明它与开源社区有着深厚的联系，收购后可能会进一步强化这种关系。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "As the opportunity for open models accelerates, Hugging Face can serve the global AI community at unprecedented scale. NVIDIA's infrastructure, engineering and global reach can help improve platform reliability, safety, model evaluation, inference and deployment capabilities, while preserving the open ecosystem that made Hugging Face foundational.",
+      "title": "协同效应",
+      "narration": "NVIDIA的收购将帮助Hugging Face扩展到前所未有的规模，同时保持其开放生态系统的本质，这可能是平衡商业利益和开源精神的关键。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Together, we will make AI more open, more capable and more accessible to people and institutions around the world.",
+      "title": "愿景与承诺",
+      "narration": "这次收购的最终目标是使AI更加开放、更加强大、更加普及，这反映了NVIDIA对AI民主化的承诺，也是对整个AI社区的承诺。",
+      "kind": "conclusion"
+    }
+  ]
+}

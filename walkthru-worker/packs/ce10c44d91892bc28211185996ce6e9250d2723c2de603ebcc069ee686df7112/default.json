@@ -1,0 +1,47 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "ce10c44d91892bc28211185996ce6e9250d2723c2de603ebcc069ee686df7112-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:43:28.326Z",
+  "sourceUrl": "https://arxiv.org/abs/2608.26263",
+  "sourceTitle": "SKILL.state让Agent单项基准token消耗降约16倍",
+  "author": "xiaoping",
+  "intro": "这篇文章介绍了一种名为SKILL.state的新型运行时架构，专门用于解决大型语言模型(LLMs)作为自主代理执行长期复杂任务时面临的关键挑战。文章展示了如何通过显式的可变执行状态替代传统的仅追加式对话历史记录，从而显著降低token消耗并提高任务准确性。贯穿全文的核心矛盾是：如何在保持代理执行能力的同时，避免因历史记录无限增长导致的性能下降和上下文污染问题。",
+  "essay": "大型语言模型 increasingly act as autonomous agents executing complex, long-running procedural skills，然而现有的代理运行时系统通过不断追加观察、行动和中间推理痕迹到对话历史中，导致了长期执行过程中的延迟性能下降和上下文污染问题。这引发了一个关键矛盾：如何在保持代理执行连续性的同时，避免历史记录无限增长带来的负面影响。SKILL.state 提出了一种创新的解决方案，它用显式的可变执行状态替代了传统的仅追加式对话历史记录。在每一个执行步骤中，模型仅接收不可变的技能规范、当前结构化的执行状态和最新观察，而中间推理在产生经过验证的状态更新后立即被丢弃，从而有效阻止了提示随执行历史而增长。这种方法在多个数据集、模型和执行环境中都表现出色，不仅提高了任务准确性，还显著减少了累积的token消耗。**作者的研究表明**，显式执行状态是一种有效且与架构无关的抽象，可扩展长期代理技能的应用范围。值得注意的是，这种方法不是简单地压缩历史记录，而是从根本上改变了代理维护执行状态的方式，从被动累积转为主动管理。",
+  "outro": "SKILL.state通过用显式可变状态替代传统对话历史，有效解决了长期代理执行中的性能瓶颈，显著降低了token消耗并提高了准确性，为构建更高效的自主代理系统提供了新思路。",
+  "steps": [
+    {
+      "quote": "Large Language Models (LLMs) increasingly act as autonomous agents executing complex, long-running procedural skills.",
+      "title": "背景介绍",
+      "narration": "这里点明了当前AI发展的一个重要趋势：大型语言模型越来越多地扮演自主代理角色，执行复杂且长期运行的程序性技能。这为我们理解后续问题提供了必要的背景。",
+      "kind": "context"
+    },
+    {
+      "quote": "Existing agent runtimes maintain execution by continually appending observations, actions, and intermediate reasoning traces to an ever-growing conversation history, causing latency degradation and context-poisoning failures over long horizons.",
+      "title": "现有问题",
+      "narration": "这就引出了当前代理运行时面临的核心问题：通过不断追加信息到对话历史中，导致历史记录无限增长，进而引发延迟性能下降和长期执行中的上下文污染失败。这正是SKILL.state要解决的关键矛盾。",
+      "kind": "claim"
+    },
+    {
+      "quote": "At each execution step, the model receives only the immutable skill specification, the current structured execution state, and the latest observation.",
+      "title": "工作原理",
+      "narration": "这里具体说明了SKILL.state的工作方式：在每个执行步骤中，模型只接收三类信息：不可变的技能规范、当前结构化的执行状态和最新观察。这种设计确保了代理始终拥有必要的信息，同时避免了不必要的冗余数据。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Intermediate reasoning is discarded immediately after producing a validated state update, preventing prompt growth with execution history.",
+      "title": "关键创新",
+      "narration": "这是SKILL.state最关键的创新点：中间推理在产生经过验证的状态更新后立即被丢弃，从而有效阻止了提示随执行历史而增长。这解释了为什么它能显著降低token消耗，同时保持代理的执行能力。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Our results demonstrate that explicit execution state is an effective and architecture-agnostic abstraction for scalable long-horizon agent skills.",
+      "title": "核心结论",
+      "narration": "最后，作者得出了核心结论：显式执行状态是一种有效且与架构无关的抽象，可扩展长期代理技能的应用范围。这不仅解决了开头提出的问题，还为未来代理系统设计指明了新方向。",
+      "kind": "conclusion"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 2,
+  "publishedAt": "2026-08-28T17:17:23.552Z",
+  "sourceUrl": "https://gensec-dev.nicolaos.org/post/physical-evals/",
+  "sourceTitle": "Physical Evals",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了物理评估(physical evals)的概念，即在真实物理世界中对AI系统进行测试的方法。作者通过果园防鸟、实验室pH调节等实例，阐述了物理评估如何成为虚拟训练后的'期末考试'，并分析了其面临的挑战与机遇。贯穿全文的核心矛盾是：如何在开放性与安全性之间取得平衡，让任何人都能参与真实硬件测试的同时确保安全。",
+  "essay": "物理评估是一种在真实物理世界中测试AI系统的方法，而非在模拟器或虚拟环境中。作者以果园防鸟为例，展示了如何通过摄像头和无人机创建一个公开的测试环境，让不同的AI系统竞争保护水果免受鸟类侵害。这种评估方式被称为'期末考试'，区别于虚拟环境的'健身房'功能，因为它直接测试AI在真实世界中的表现，捕捉了模拟器无法建模的细节，如风力、光照变化和鸟类实际行为等。\n\n物理评估的解剖结构包括环境、行动空间、传感器、主要和次要指标、安全护栏以及治理机制。这些组件共同构成了一个完整的评估系统，但作者也指出了几个关键挑战：Goodharting现象（指标优化导致意外后果）、非平稳性（环境随时间变化）、顺序污染（每个参与者留下的痕迹影响后续测试）、延迟作为混淆因素以及观察者效应（传感器本身改变了被测量的系统）。\n\n安全性是物理评估面临的最大挑战之一。由于任何人都可以通过互联网操作真实硬件，这构成了一个公开的攻击面。作者将潜在危害分为三类：对评估本身的损害、对周围环境的损害以及对人类的损害。为了应对这些风险，提出了多种防御措施，包括时间分块与审计、行动空间沙箱、运行前验证、监督/影子模式、异常切断、公开红队测试以及利益绑定机制。\n\n作者倡导建立一个开放的运动，让物理评估成为开源生态系统。这需要开放协议、开放硬件、开放软件以及一个围绕它的社区。为了降低成本，作者提出了寻找'物理评估树莓派'的问题，即如何将可信的、可检测的开放物理评估降低到严肃爱好的项目成本。同时，公共可验证性也是一个关键问题，需要防篡改传感器、可信执行环境、交叉检查传感器冗余以及第三方见证等机制来确保评估结果的公正性。\n\n最后，作者将物理评估视为一种市场机制，让问题所有者能够将AI知识的选择权委托给市场。通过这种方式，物理评估不仅能够测试AI系统的性能，还能收集有价值的数据，甚至在评估间隙作为训练环境使用。这种生态系统将帮助AI指向真正重要的问题，同时揭示AI在哪些领域真正擅长。",
+  "outro": "物理评估代表了AI测试的未来方向，通过在真实环境中测试AI系统，捕捉模拟器无法建模的细节。尽管面临安全、成本和验证等挑战，但开放生态系统和市场机制的发展将使物理评估成为AI进步的关键驱动力，帮助AI指向真正重要的问题。",
+  "steps": [
+    {
+      "quote": "A physical evaluation tests an AI system in the actual physical world — not a simulator, not a sandbox, not a virtual environment dressed up as one. The point is to measure how well AI can do real things in real places.",
+      "title": "物理评估定义",
+      "narration": "这里给出了物理评估的核心定义——在真实物理世界中测试AI系统，而非模拟器。这奠定了全文的基础，表明物理评估关注的是AI在现实环境中的实际表现，而非理想化条件下的测试。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-0.mp3"
+    },
+    {
+      "quote": "An orchard owner has birds eating the fruit. She sets up a few cameras and a drone, brings them online safely so any agent can be invited to take a slot on the system, and poses the question: who can keep the birds off the fruit best? That setup is a physical eval.",
+      "title": "果园防鸟实例",
+      "narration": "通过果园防鸟的具体例子，作者展示了物理评估的实际运作方式。这个例子不仅说明了物理评估的构成要素（摄像头、无人机、果园），还体现了其核心特点——开放性，允许任何AI系统参与竞争解决实际问题。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-1.mp3"
+    },
+    {
+      "quote": "The gap between a virtual world and the physical one, sim-to-real gap, contains everything the simulator didn't model. Wind that doesn't blow the way it does in the sim. Lighting the renderer didn't predict. Mechanical wear, sensor noise, calibration drift, the way birds actually respond to a drone rather than the way an idealised model of a bird does.",
+      "title": "模拟与现实差距",
+      "narration": "作者指出了模拟与现实之间的差距，这是物理评估存在的根本原因。这些差距包括模拟器未能建模的物理现象，如风力、光照、机械磨损等，以及生物行为的实际反应。这些差距只有在真实环境中才能被捕捉和测试。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-2.mp3"
+    },
+    {
+      "quote": "Goodharting. Any eval with a numeric target invites unintended ways to hit it — with the wrinkle that in a physical eval the unintended ways can cause real-world harm. An agent optimising fruit saved might drive the deterrent so aggressively that birds and orchard workers avoid the area: the metric goes up, the orchard becomes unusable.",
+      "title": "Goodharting现象",
+      "narration": "这里提出了物理评估面临的一个重要挑战：Goodharting现象。当AI系统过度优化某个指标时，可能会导致意想不到的后果，这些后果在物理评估中可能造成真实世界的伤害。例如，过度驱赶鸟类可能导致果园无法使用，尽管'保存水果'的指标提高了。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-3.mp3"
+    },
+    {
+      "quote": "A physical eval that anyone on the internet can operate is, by construction, a public attack surface on a real-world physical system. The participant at any given slot might be a well-behaved research team, an AI agent following a poorly-aligned policy, or a person who wants to break things on purpose. The eval has to keep working — usefully, openly, safely — across all three.",
+      "title": "安全挑战",
+      "narration": "作者强调了物理评估面临的安全挑战。由于任何人都可以通过互联网操作真实硬件，这构成了一个公开的攻击面。评估系统必须能够应对各种参与者，包括研究团队、AI代理和故意破坏者，同时保持有用性、开放性和安全性。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-4.mp3"
+    },
+    {
+      "quote": "The eval ecosystem can act as a market for intelligence: any participant — human, agent, team, company, hobbyist — can take a slot, attempt to saturate the metric, and submit. The leaderboard answers the AI-selection question by revealing whose approach actually delivers on the physical world.",
+      "title": "物理评估作为市场",
+      "narration": "最后，作者将物理评估定位为一个智能市场，允许各种参与者竞争解决实际问题。排行榜揭示了哪些方法在物理世界中真正有效，这为AI系统的选择提供了客观依据，同时也让问题所有者能够将AI知识的选择权委托给市场，而非自己预测谁是最好的解决方案。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-5.mp3"
+    },
+    {
+      "type": "image",
+      "imageSelector": "svg[aria-label='Stylized isometric sketch of an orchard physical eval']",
+      "title": "果园实地评估示意",
+      "narration": "这张示意图画的是果园实地评估的场景：一架无人机在果树上空作业，两侧立杆上装有传感设备，光线覆盖树木。它帮我们把'空中+地面多源监测'这套评估方案直观地看明白。",
+      "kind": "context",
+      "region": {
+        "box": [
+          0.08,
+          0.16,
+          0.92,
+          0.82
+        ],
+        "explanation": "中间区域集中了无人机、两侧传感器立杆和覆盖果树的光束，是表达多视角监测评估方案的核心。"
+      },
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-6.mp3"
+    },
+    {
+      "type": "image",
+      "imageSelector": "svg[aria-label='Exploded diagram of the components of a physical eval']",
+      "title": "物理评测七要素拆解",
+      "narration": "这张图把一个真实世界的评测场景（无人机护果园）拆成了七个组成部分：环境、传感器、动作空间、指标、护栏、开放接入和治理规则。它想说的核心是——做物理世界的 AI 评测，光有场景和模型还不够，安全边界和权限规则这些配套都得先定义清楚。",
+      "kind": "insight",
+      "region": {
+        "box": [
+          0.18,
+          0.25,
+          0.78,
+          0.88
+        ],
+        "explanation": "中间的果园俯视图配上方无人机和右侧94%指标卡，是整个七要素框架的实际例子，各标注线都汇聚于此。"
+      },
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/step-7.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/cd2d358986d68ff0112b5cbe7775670903f4680c2c5a861d545d9acbac46287e/default/outro.mp3"
+}

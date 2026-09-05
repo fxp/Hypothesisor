@@ -1,0 +1,53 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "9e09ba6ac93ca82e169a1cd3c4a4b2b34cb6b631250a74458d5c9c4f64b8bf1a-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:43:52.535Z",
+  "sourceUrl": "https://arxiv.org/abs/2507.10524",
+  "sourceTitle": "Mixture-of-Recursions：循环Transformer的地基论文",
+  "author": "xiaoping",
+  "intro": "这篇论文介绍了一种名为Mixture-of-Recursions (MoR)的新型模型架构，旨在解决大型语言模型计算和内存需求高昂的问题。MoR巧妙地将参数共享和自适应计算两种效率提升方法结合在一个Recursive Transformer框架中，通过动态分配递归深度来优化每个token的计算量。论文的核心矛盾在于：如何在保持模型质量的同时，同时实现参数效率和计算效率的双重提升？",
+  "essay": "大型语言模型虽然表现出色，但其巨大的计算和内存需求使得训练和部署成本高昂。现有效率提升方法通常只关注参数共享或自适应计算中的一个方面，而MoR框架创新性地将两者结合。通过共享层堆栈实现参数效率，同时使用轻量级路由器为每个token动态分配不同的递归深度，MoR能够在保持模型质量的同时显著降低计算和内存需求。**关键突破**在于MoR只在当前递归深度仍活跃的token之间执行二次注意力计算，并通过选择性缓存键值对进一步提高内存访问效率。论文还提出了KV共享变体，进一步减少内存占用。在135M到1.7B参数规模的模型上，MoR在相同训练FLOPs和更小模型尺寸下，显著降低了验证困惑度并提高了少样本准确率，同时比普通和现有递归基线模型提供了更高的吞吐量。这表明MoR是实现高质量大模型而不承担高成本的有效路径。\n\nMoR架构的核心创新在于其递归设计。与传统的Transformer不同，MoR允许模型根据每个token的复杂度动态决定计算深度。简单token可能只需要少量递归步骤就能处理，而复杂token则可以获得更多计算资源。这种**动态深度分配**机制使得模型能够自适应地分配计算资源，避免了为所有token使用相同深度带来的资源浪费。论文通过实验证明，这种设计不仅提高了计算效率，还保持了甚至提升了模型性能，特别是在处理复杂任务时。\n\n论文还详细探讨了MoR的内存优化策略。通过只在当前递归深度缓存活跃token的键值对，MoR大幅减少了内存访问开销。更进一步的KV共享变体通过复用第一次递归的键值对，进一步降低了内存占用。这些优化使得MoR在保持模型性能的同时，显著降低了内存需求，使其在实际应用中更具可行性。实验结果表明，MoR在模型规模从135M到1.7B的范围内都形成了新的Pareto前沿，即在相同计算资源下提供更好的性能。\n\n最后，论文通过大量实验验证了MoR的有效性。与多种基线模型相比，MoR在多个任务上都表现出色，特别是在需要深度推理的任务中优势更为明显。作者还分析了MoR在不同模型规模下的表现，证明了其方法的可扩展性。这些实验结果不仅验证了MoR的理论优势，也为未来高效大模型的设计提供了重要参考。MoR的出现标志着大型语言模型效率研究的一个重要进展，为构建高质量、低成本的语言模型开辟了新途径。",
+  "outro": "MoR通过动态递归深度分配和选择性缓存，实现了参数效率和计算效率的完美平衡，为构建高质量低成本的语言模型开辟了新途径。",
+  "steps": [
+    {
+      "quote": "Scaling language models unlocks impressive capabilities, but the accompanying computational and memory demands make both training and deployment expensive. Existing efficiency efforts typically target either parameter sharing or adaptive computation, leaving open the question of how to attain both simultaneously.",
+      "title": "效率困境",
+      "narration": "这里提出了大语言模型面临的核心矛盾：虽然模型规模扩大带来了能力提升，但计算和内存成本也随之飙升。现有效率方法只能解决参数共享或自适应计算中的一个方面，无法同时兼顾两者。",
+      "kind": "context"
+    },
+    {
+      "quote": "We introduce Mixture-of-Recursions (MoR), a unified framework that combines the two axes of efficiency inside a single Recursive Transformer. MoR reuses a shared stack of layers across recursion steps to achieve parameter efficiency, while lightweight routers enable adaptive token-level thinking by dynamically assigning different recursion depths to individual tokens.",
+      "title": "MoR框架",
+      "narration": "这就引出了MoR的核心创新——它巧妙地将参数共享和自适应计算两种效率提升方法结合在一个Recursive Transformer框架中。通过共享层堆栈实现参数效率，同时使用轻量级路由器为每个token动态分配不同的递归深度。",
+      "kind": "claim"
+    },
+    {
+      "quote": "This allows MoR to focus quadratic attention computation only among tokens still active at a given recursion depth, further improving memory access efficiency by selectively caching only their key-value pairs.",
+      "title": "动态计算优化",
+      "narration": "于是，MoR实现了关键的计算优化：它只在当前递归深度仍活跃的token之间执行二次注意力计算，并通过选择性缓存键值对进一步提高内存访问效率。这解决了传统Transformer对所有token进行相同深度计算的资源浪费问题。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Beyond these core mechanisms, we also propose a KV sharing variant that reuses KV pairs from the first recursion, specifically designed to further decrease memory footprint.",
+      "title": "内存优化",
+      "narration": "但作者马上话锋一转，提出了进一步的优化策略：KV共享变体通过复用第一次递归的键值对，专门设计用于进一步减少内存占用。这表明MoR团队不仅关注计算效率，还致力于全面解决内存瓶颈问题。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Across model scales ranging from 135M to 1.7B parameters, MoR forms a new Pareto frontier: at equal training FLOPs and smaller model sizes, it significantly lowers validation perplexity and improves few-shot accuracy, while delivering higher throughput compared with vanilla and existing recursive baselines.",
+      "title": "实验结果",
+      "narration": "紧接着，论文展示了令人信服的实验结果：在135M到1.7B参数规模的模型上，MoR形成了新的Pareto前沿——在相同训练FLOPs和更小模型尺寸下，它显著降低了验证困惑度并提高了少样本准确率，同时比普通和现有递归基线模型提供了更高的吞吐量。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "These gains demonstrate that MoR is an effective path towards large-model quality without incurring large-model cost.",
+      "title": "结论",
+      "narration": "最后，作者总结道，这些收益证明了MoR是实现大模型质量而不承担大模型成本的有效路径。这句话完美呼应了开头提出的效率困境，表明MoR成功解决了如何同时实现参数效率和计算效率的双重挑战。",
+      "kind": "conclusion"
+    }
+  ]
+}

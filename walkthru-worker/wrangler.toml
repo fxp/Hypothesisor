@@ -1,0 +1,7 @@
+name = "walkthru-worker"
+main = "src/index.js"
+compatibility_date = "2026-08-28"
+
+# No R2 binding — pack content lives in git (walkthru-worker/packs/) and is
+# read back from raw.githubusercontent.com. Audio clips (TTS) still live on
+# R2's public bucket URL directly (pub-*.r2.dev), unrelated to this Worker.

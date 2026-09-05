@@ -1,0 +1,47 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "20fe6bc31450b5b8f194df43fce6e1f46d25969e1f9b7e8b15fe2a5a356ed7b0-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:46:05.886Z",
+  "sourceUrl": "https://www.oasis.security/blog/openclaw-vulnerability",
+  "sourceTitle": "OpenClaw漏洞链",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了一个名为OpenClaw的开源AI代理软件中发现的严重安全漏洞。该漏洞允许任何网站完全控制开发者的AI代理，无需插件或用户交互。OpenClaw在短短五天内获得了超过10万GitHub星标，已成为许多开发者的默认个人助手。这个漏洞的发现揭示了AI代理工具普及过程中被忽视的安全风险，特别是那些绕过IT监管的'影子AI'工具。",
+  "essay": "OpenClaw是一款开源AI代理，最初名为Clawdbot后改为MoltBot，最近在开发者社区中迅速走红，成为历史上增长最快的开源项目之一。它的增长甚至引起了OpenAI的注意，2月15日，OpenAI首席执行官Sam Altman宣布其创建者Peter Steinberger已加入公司，称他为'对未来智能代理有很多惊人想法的天才'。用户通过网页仪表板或终端与OpenClaw交互，使其能够自主发送消息、运行命令、管理跨平台工作流程，甚至形成新兴的AI社交网络。\n\n然而，这种强大的功能也带来了安全风险。Oasis Security研究人员发现了一个漏洞链，允许任何网站完全控制开发者的AI代理，无需任何插件、扩展或用户交互。这个漏洞存在于OpenClaw的核心系统中，而不是在社区市场或用户安装的扩展中。对于许多组织来说，OpenClaw安装代表了一个日益增长的'影子AI'类别：开发者采用的工具在IT的可见范围之外运行，通常对本地系统和凭证有广泛访问权限，且没有集中治理。\n\n攻击利用了OpenClaw网关对本地连接的信任。默认情况下，OpenClaw网关绑定到localhost，基于本地访问 inherently 可信的假设。然而，任何网站都可以通过WebSocket连接到localhost，因为浏览器不阻止这些跨域连接。攻击者可以以每秒数百次的速度暴力破解网关密码，且没有速率限制。一旦密码被破解，攻击者可以静默注册为受信任设备，获得完全控制权，包括与AI代理交互、转储配置数据、枚举连接设备和读取日志。\n\nOpenClaw团队在收到漏洞报告后，将其归类为高危严重性，并在不到24小时内发布了修复程序。对于组织而言，建议首先获得AI工具的可见性，更新OpenClaw实例至2026.2.25或更高版本，审查AI代理的访问权限，并为非人类身份建立治理。随着AI代理成为每个开发者工作流程中的标准工具，问题不在于是否采用它们，而在于能否有效治理它们。",
+  "outro": "这个漏洞揭示了AI代理工具普及过程中被忽视的安全风险，特别是那些绕过IT监管的'影子AI'工具。组织需要获得对这些工具的可见性，实施严格的访问控制，并为非人类身份建立适当的治理框架。",
+  "steps": [
+    {
+      "quote": "OpenClaw, the open-source AI agent that rocketed to over 100,000 GitHub stars in five days, has become the default personal assistant for thousands of developers.",
+      "title": "OpenClaw的崛起",
+      "narration": "这就引出了我们故事的主角——OpenClaw，一个在短短五天内就获得超过10万GitHub星标的开源AI代理，已经成为众多开发者的默认个人助手。",
+      "kind": "context"
+    },
+    {
+      "quote": "Users interact with OpenClaw through a web dashboard or terminal, allowing it to autonomously send messages, run commands, manage workflows across platforms, and even form an emergent AI social network.",
+      "title": "强大功能",
+      "narration": "于是，开发者们通过网页仪表板或终端与OpenClaw交互，让它能够自主执行各种任务，从发送消息到管理工作流程，甚至形成了一个新兴的AI社交网络。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Our vulnerability lives in the core system itself—no plugins, no marketplace, no user-installed extensions —just the bare OpenClaw gateway, running exactly as documented.",
+      "title": "核心漏洞",
+      "narration": "但问题来了，我们发现的漏洞存在于OpenClaw的核心系统中，而不是在插件、市场或用户安装的扩展中——这恰恰是最危险的地方，因为它影响的是按文档正确运行的裸露网关。",
+      "kind": "claim"
+    },
+    {
+      "quote": "The gateway binds to localhost by default, based on the assumption that local access is inherently trusted.",
+      "title": "信任假设",
+      "narration": "这就带来一个关键问题：OpenClaw网关默认绑定到localhost，基于本地访问 inherently 可信的假设。这个看似合理的假设，恰恰是整个安全链条的薄弱环节。",
+      "kind": "insight"
+    },
+    {
+      "quote": "As AI agents become standard tools in every developer's workflow, the question isn't whether to adopt them, it's whether you can govern them.",
+      "title": "治理挑战",
+      "narration": "这就引出了整个故事的深层含义：随着AI代理成为开发者工作流程中的标准工具，问题不在于是否采用它们，而在于能否有效治理这些新型非人类身份，确保它们的安全和合规。",
+      "kind": "conclusion"
+    }
+  ]
+}

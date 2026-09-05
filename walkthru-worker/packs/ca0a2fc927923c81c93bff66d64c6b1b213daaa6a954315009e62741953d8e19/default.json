@@ -1,0 +1,29 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "ca0a2fc927923c81c93bff66d64c6b1b213daaa6a954315009e62741953d8e19-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:48:16.352Z",
+  "sourceUrl": "https://techcrunch.com/2026/09/02/openais-new-reasoning-technique-alarms-ai-safety-experts/",
+  "sourceTitle": "OpenAI首席科学家回应Astra循环深度报道",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了OpenAI新推出的Astra模型中使用的'循环深度'推理技术及其引发的AI安全担忧。这一技术使AI能够绕过传统的线性思维链，引发专家对AI行为监控能力的担忧。文章呈现了一场关于AI透明度与安全之间平衡的辩论，揭示了行业内部对AI发展方向的分歧。",
+  "essay": "OpenAI最新推出的Astra模型采用了一种名为'循环深度'的推理技术，这一技术允许AI模型摆脱传统推理模型的顺序思维模式。这一变化引起了AI安全专家的强烈关注，因为这种技术可能会使模型的思维链更难被监控。Redwood CEO Buck Shlegeris对此表示极度担忧，认为如果OpenAI进一步推广这种技术，可能会完全破坏思维链的可监控性。\n\n传统的推理模型通过思维链提供解决问题的顺序步骤，尽管这种表示并不完美，但仍然是监控不良行为或不对齐的重要工具。然而，在循环深度技术中，模型采用更非线性的方法，通过循环多次处理同一查询，留下的可追踪痕迹更少， effectively绕过了传统的思维链记录。这一技术引发了关于AI透明度和安全性的根本性问题。\n\n面对担忧，OpenAI首席科学家Jakub Pachocki强调公司致力于保持思维链的可读性，并表示这是其研究计划的核心目标。然而，专家们担心这种技术可能被过度扩展，导致AI模型几乎完全在潜在空间中推理。更令人担忧的是，Anthropic和Google DeepMind据说已经在讨论类似技术，这可能引发一场'向底线竞争'，危及整个行业的AI安全标准。",
+  "outro": "这场辩论揭示了AI发展中的核心矛盾：透明度与能力提升之间的权衡。循环深度技术代表了AI推理的重大突破，但也带来了前所未有的监控挑战。",
+  "steps": [
+    {
+      "quote": "In opaque recurrence, the model takes a less linear approach, processing the same query several times in a loop. The result leaves fewer legible traces, effectively side-stepping a conventional chain-of-thought record.",
+      "title": "技术原理",
+      "narration": "但作者马上话锋一转，揭示了这种新技术的核心问题：在循环深度技术中，模型采用更非线性的方法，通过循环多次处理同一查询，留下的可追踪痕迹更少，实际上绕过了传统的思维链记录。这种'不透明回归'正是引发担忧的关键。",
+      "kind": "insight"
+    },
+    {
+      "quote": "OpenAI has already announced plans for extensive chain-of-thought monitoring systems as part of its forward-looking safety plans. In a post on X, OpenAI chief scientist Jakub Pachocki emphasized the lab's commitment to legible chains of thought.",
+      "title": "OpenAI回应",
+      "narration": "然而，OpenAI对此做出了回应，强调他们致力于保持思维链的可读性，并已宣布计划建立广泛的思维链监控系统。这表明公司意识到了安全担忧，并试图平衡创新与透明度之间的关系。",
+      "kind": "caveat"
+    }
+  ]
+}

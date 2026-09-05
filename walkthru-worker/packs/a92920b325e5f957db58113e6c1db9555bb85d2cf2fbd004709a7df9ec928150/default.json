@@ -1,0 +1,41 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "a92920b325e5f957db58113e6c1db9555bb85d2cf2fbd004709a7df9ec928150-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:39:13.596Z",
+  "sourceUrl": "https://www.cnbc.com/2026/08/29/openai-cursor-spacex-model-access.html",
+  "sourceTitle": "OpenAI宣布断供Cursor（CNBC报道）",
+  "author": "xiaoping",
+  "intro": "这篇报道讲述了OpenAI决定终止向Cursor提供AI模型访问权限的事件，背后是科技巨头之间日益紧张的竞争关系。核心矛盾在于：OpenAI担忧马斯克旗下的SpaceX可能违反其服务条款，而马斯克则长期指责OpenAI背离了其非营利初衷。这场商业决策背后，实际上是AI行业巨头间关于技术控制、商业伦理和竞争策略的深层博弈。",
+  "essay": "OpenAI宣布将终止向Cursor提供AI模型访问权限，这一决定直接源于SpaceX对Cursor的收购。**OpenAI明确表示，基于与马斯克公司过往的合同纠纷经验，他们无法相信SpaceX会遵守其服务条款**。这一决定将于2026年11月12日正式生效，虽然OpenAI模型仅占Cursor用户流量的约5%，但这一举措标志着科技巨头间竞争的进一步升级。\n\n这场冲突的根源可以追溯到OpenAI与马斯克之间的长期恩怨。马斯克曾是OpenAI的联合创始人和早期资助者，但于2018年离开董事会，理由包括从公司挖走人才、停止承诺捐款以及对公司发展方向的不满。此后，OpenAI转型为盈利企业并推出了ChatGPT等成功产品，而马斯克则成为其最激烈的批评者之一，甚至提起诉讼指控OpenAI违反了其非营利承诺。\n\n值得注意的是，AI行业内部的合作与竞争正在形成复杂格局。就在Anthropic宣布将继续支持Cursor的同时，该公司去年曾阻止Windsurf访问其Claude AI模型。这种选择性合作反映了AI企业在市场竞争中寻求战略联盟的复杂性，同时也暴露了行业内部的不确定性和风险。\n\n这场纠纷不仅仅是两家公司之间的商业冲突，更是反映了AI行业在快速发展过程中面临的深层问题：如何平衡技术创新与商业利益、如何处理创始愿景与现实发展之间的矛盾、以及如何建立健康的行业竞争生态。随着OpenAI计划明年上市，而Anthropic估值可能高达2万亿美元，这场巨头间的博弈还将继续影响整个AI行业的发展方向。",
+  "outro": "这场OpenAI与Cursor的断供事件，表面上是商业决策，实质是AI巨头间关于技术控制、商业伦理和竞争策略的深层博弈，反映了行业快速发展中面临的复杂挑战。",
+  "steps": [
+    {
+      "quote": "OpenAI announced late Friday that it is ending developers' access to its models on Cursor, following the acquisition of the AI coding startup by Elon Musk's SpaceX earlier this month.",
+      "title": "断供决定",
+      "narration": "OpenAI宣布终止向Cursor提供模型访问，这一决定直接发生在SpaceX收购Cursor之后，标志着两家科技巨头关系的新转折点。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Musk sued OpenAI, Altman and Brockman in 2024 after co-founding and helping to fund the AI company as a non-profit research lab in 2015.",
+      "title": "法律纠纷",
+      "narration": "马斯克在2024年对OpenAI提起诉讼，指控这家他共同创立并资助的非营利研究实验室后来转型为营利企业，违反了其创始承诺。这就解释了OpenAI为何对马斯克的公司如此警惕。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Musk left OpenAI's board in 2018 after hiring talent away from the company, cutting off donations he had promised to OpenAI, and clashing with fellow board members over its direction.",
+      "title": "决裂经过",
+      "narration": "2018年马斯克离开OpenAI董事会的经过揭示了两人关系恶化的具体原因：他从公司挖走人才、停止承诺捐款、与董事会成员在公司发展方向上产生分歧。这些历史事件为今天的冲突埋下了伏笔。",
+      "kind": "context"
+    },
+    {
+      "quote": "Last June, Anthropic — which is now partnering with SpaceX and renting compute capacity from Musk's company — blocked Windsurf access to its Claude AI models.",
+      "title": "历史先例",
+      "narration": "值得注意的是，Anthropic去年也曾阻止Windsurf访问其Claude AI模型，而如今Anthropic正与SpaceX合作并租用其计算资源。这表明AI企业在处理与竞争对手的关系时存在策略性考量，并非简单的商业逻辑。",
+      "kind": "caveat"
+    }
+  ]
+}

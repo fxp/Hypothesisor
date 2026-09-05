@@ -1,0 +1,68 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-08-29T02:20:14.355Z",
+  "sourceUrl": "https://www.latent.space/p/simile",
+  "sourceTitle": "模拟是新 Scaling Law：Simile AI",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了Simile AI公司如何从2023年的突破性论文《Generative Agents》发展到如今构建人类行为基础模型，再到创建80亿人的数字孪生的故事。文章探讨了模拟技术如何成为新的扩展定律，以及它如何改变我们理解人类行为、预测社会趋势和做出决策的方式。核心矛盾在于：虽然大型语言模型在许多任务上表现出色，但它们往往无法准确捕捉人类行为的真实本质，尤其是那些非理性的、有偏见的行为，而这正是模拟技术的价值所在。",
+  "essay": "Simile AI的创始人Joon Sung Park从艺术背景转向AI研究，带来了独特的视角。2023年，他的团队发表了里程碑式的《Generative Agents》论文，展示了AI角色能够记忆、计划、社交并展现涌现行为。这一研究源于一个简单而大胆的想法：\"如果我们能创造一个我们生活的世界会怎样？\"这引出了他们更大的雄心——构建人类行为的基础模型。\n\nSimile的核心洞察在于，当前的前沿模型虽然强大，但往往无法准确捕捉人类行为的真实本质。这些模型通常被训练得过于理性，而忽略了人类决策中的偏见、非理性和情感因素。为了解决这个问题，Simile采用了三种数据类型：深入访谈数据、观察性行为数据（如交易记录）以及描述因果机制的数据，特别是随机对照试验（RCTs）。这些数据帮助他们创建能够\"像人一样犯错\"的模型，而不是追求完美理性的机器。\n\n最引人注目的是Simile在数字孪生方面取得的成就。他们的研究显示，通过创建1000人的数字孪生，能够以85%的准确率复制这些人的行为和态度，这比传统方法显著提高。这一成就的关键在于模型不仅学习人们说什么，更学习他们实际做什么——所谓的\"黑暗知识\"，即人类行为中难以捉摸但真实的部分。\n\nSimile的愿景远不止于市场研究。他们设想构建能够模拟整个社会的系统，帮助解决气候变化、民主不稳定等复杂问题。这让人联想到阿西莫夫的《基地》系列中的\"心理史学\"——通过大规模模拟预测社会发展趋势。Simile认为，模拟的价值不在于预测未来，而在于理解如何塑造未来，找到通向期望结果的非直观路径。\n\n然而，这一愿景面临着巨大的挑战，包括数据获取、模型扩展和经济可行性。Simile已经与CVS、Gallup等公司合作，展示了模拟技术在商业和政策分析中的价值。随着计算能力的提升和数据积累，模拟技术可能会成为理解人类和社会的关键工具，甚至可能需要整个数据中心规模的计算资源来实现全球80亿人口的模拟。这一技术的发展不仅关乎商业价值，更可能对社会产生深远影响，为我们提供前所未有的洞察力来应对复杂挑战。",
+  "outro": "模拟技术正在成为理解人类行为和社会的新范式，通过捕捉人类决策中的非理性和偏见，提供比传统预测更有价值的洞察。随着数据积累和计算能力提升，模拟可能帮助我们应对气候变化、民主不稳定等复杂挑战，成为塑造未来的关键工具。",
+  "steps": [
+    {
+      "quote": "So when I got into research, it was back in 2020 when I started my PhD program at Stanford, and that was the year, when we were about to get GPT-3 to be available. So we already had GPT-2, and you could sense that there was this new class of models that was just becoming available in the market, and the team got very intrigued.",
+      "title": "研究起点",
+      "narration": "Joon的研究始于2020年，正值GPT-3问世之际。这让他意识到一种全新的模型类型正在出现，这些模型不针对特定任务训练，却能够做任何事情和一切事情，这激发了他对'杀手级应用'的思考。",
+      "kind": "context",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/step-0.mp3"
+    },
+    {
+      "quote": "But it was interesting for us, right, in that the reason why, we decided to go with the idea of simulation, one, I was a huge science fiction nerd, and this idea of creating simulation, I was personally really just fascinated. I loved the idea. It's really cool to see, like, a game town like this and just see these agents live in it.",
+      "title": "科幻启发",
+      "narration": "Joon对科幻的热爱启发了模拟方向，他渴望看到AI角色在虚拟世界中生活。同时，他认为真正有用的个人助手首先需要对其用户有深入理解，这促使他们先专注于创建准确的个人模型。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/step-1.mp3"
+    },
+    {
+      "quote": "My intuition behind the actual when do you train or even post-train a model versus just prompt a model is if the model has to learn the underlying physics of the world that it's operating in. So it has to learn new social physics.",
+      "title": "社会物理学",
+      "narration": "Joon解释了何时需要训练模型而非仅通过提示：当模型需要学习其操作世界的基本物理规律时，即需要学习'社会物理学'。当前模型缺乏对人类行为深层本质的理解，而这正是Simile试图捕捉的'黑暗知识'。",
+      "kind": "insight",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/step-2.mp3"
+    },
+    {
+      "quote": "But the part that was particularly striking to us, especially as we improved this technology even further, was the generative AI models like ChatGPT, Claude that's coming out, it does give you the right foundation. However, what they do not consider is the true attitudinal and behavioral aspect of people, especially in the population that you care about.",
+      "title": "模型局限",
+      "narration": "Joon指出，前沿模型如ChatGPT虽然提供了良好的基础，但无法考虑人们真实的情感和行为方面，特别是在特定人群中。这些模型往往过于理性，而忽略了人类决策中的偏见和非理性因素。",
+      "kind": "caveat",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/step-3.mp3"
+    },
+    {
+      "quote": "But if you talk about the ambition of simulation as a whole, it's not merely about building a model. It's about building a model, then creating the agents that become the individuals in a much larger ecosystem. So they're creating this multi-agent simulation.",
+      "title": "多智能体模拟",
+      "narration": "模拟的雄心不止于构建模型，而是创建多智能体模拟系统，让这些智能体在更大的生态系统中互动。这种系统可以模拟整个社会的涌现行为，为解决复杂问题提供新视角。",
+      "kind": "claim",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/step-4.mp3"
+    },
+    {
+      "quote": "So that's really the ambition of this field. And, I also think, yes, I think there's a Nobel Prize to be won there, which wouldn't be surprising. And I think there's some amazing societal impact that we can have to help people make better decisions.",
+      "title": "社会影响",
+      "narration": "Joon认为模拟领域有潜力赢得诺贝尔奖，特别是在经济学领域，因为它可以帮助解决气候变化、民主不稳定等复杂社会问题，为决策提供前所未有的洞察力。",
+      "kind": "conclusion",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/step-5.mp3"
+    },
+    {
+      "quote": "So the canonical example of the work that he's done was he was one of the creators of agent-based modeling. So this was, like, in the 1970s and 80s. It's very early days, but this was truly one of the first exemplars of simulations.",
+      "title": "谢林模型",
+      "narration": "Joon提到了托马斯·谢林的工作，他是基于智能体建模的先驱者之一。谢林的种族隔离模型展示了微小的个人偏好如何导致社会层面的完全隔离，这说明了模拟在理解复杂社会现象中的价值。",
+      "kind": "evidence",
+      "audioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/step-6.mp3"
+    }
+  ],
+  "introAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/intro.mp3",
+  "outroAudioUrl": "https://pub-cd6c0de855c94946bb5ba4f14c160d9c.r2.dev/packs/a0c2a274821518693e40667523d0e5ccc4251ffc44dea277351ed27f5fbe6cc0/default/outro.mp3"
+}

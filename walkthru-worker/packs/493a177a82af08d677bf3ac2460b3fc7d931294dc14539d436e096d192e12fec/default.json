@@ -1,0 +1,47 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "493a177a82af08d677bf3ac2460b3fc7d931294dc14539d436e096d192e12fec-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-03T14:40:07.752Z",
+  "sourceUrl": "https://techcrunch.com/2026/08/31/nvidias-3-5b-mediatek-bet-reveals-its-plan-for-tackling-big-techs-ai-chip-buildout/",
+  "sourceTitle": "Nvidia斥资35亿美元投资联发科",
+  "author": "xiaoping",
+  "intro": "这篇文章讲述了英伟达投资35亿美元与联发科合作的故事，表面看是芯片巨头间的商业合作，实则揭示了英伟达面对大科技公司自研AI芯片浪潮的应对策略。英伟达正在从单纯的芯片供应商转型为AI基础设施平台提供商，通过开放生态系统来维持其行业主导地位。",
+  "essay": "英伟达向联发科投资35亿美元，表面看是一次简单的商业投资，实则反映了芯片行业格局的深刻变化。**随着亚马逊、谷歌、微软等科技巨头纷纷投入巨资自研AI芯片**，以减少对英伟达GPU的依赖，英伟达面临着前所未有的挑战。面对这一趋势，英伟达没有选择硬碰硬，而是采取了更聪明的策略——通过投资联发科，允许其为客户设计可直接插入基于英伟达数据中心的自定义芯片。\n\n这一合作揭示了英伟达的战略转型：从纯计算芯片公司转变为AI基础设施提供商。正如英伟达高级总监Dion Harris所言：\"英伟达是一家AI基础设施公司，我们几年前就已扩展到纯计算芯片之外。\"英伟达通过开放其NVLink Fusion生态系统，让非英伟达芯片也能快速通信，从而在保持数据中心架构主导地位的同时，允许定制芯片的存在。\n\n英伟达的策略本质上是一种\"平台化\"思维。通过与联发科合作，英伟达将其技术扩展到更广泛的客户群，同时确保这些客户仍依赖其基础设施。这种\"既让步又主导\"的策略使英伟达能够在不失去市场控制权的情况下适应行业变化。正如黄仁勋所说，这是在\"将加速计算带入新市场，同时给予客户在巨大规模上创建差异化AI系统的自由\"。\n\n这一合作还体现了英伟达的生态系统思维。联发科在智能手机、智能家居等领域的专业知识，与英伟达的AI技术形成互补，双方将在DGX Spark、RTX Spark以及AI汽车等领域继续合作。这种跨领域合作不仅扩大了英伟达的市场覆盖，也使其技术能够渗透到更多应用场景。\n\n最终，英伟达与联发科的合作代表了芯片行业未来的发展方向：从单纯的硬件竞争转向生态系统竞争。英伟达通过开放其平台，将竞争对手转化为合作伙伴，从而在AI芯片的军备竞赛中保持了领先地位。这种策略不仅解决了眼前的挑战，也为未来可能的行业变化做好了准备。",
+  "outro": "英伟达通过与联发科的合作，成功将挑战转化为机遇，从芯片供应商转型为AI基础设施平台提供商，在保持行业领导地位的同时适应了行业变化。",
+  "steps": [
+    {
+      "quote": "Nvidia is investing $3.5 billion into Taiwanese chipmaker MediaTek. As part of the deal, MediaTek will adopt Nvidia's technology that will help it design custom chips for AI companies and hyperscalers that can be plugged directly into Nvidia-based data centers.",
+      "title": "巨额投资",
+      "narration": "英伟达向联发科投资35亿美元，这不仅仅是一笔财务投资，更是一次战略布局，允许联发科为客户设计可插入英伟达数据中心的定制芯片。",
+      "kind": "context"
+    },
+    {
+      "quote": "The deal comes as a growing number of AI companies and major cloud providers like Amazon, Google, Microsoft, OpenAI and Anthropic invest in building their own chips so they can be less reliant on Nvidia's GPUs.",
+      "title": "行业挑战",
+      "narration": "这笔投资正是在大科技公司纷纷自研AI芯片以减少对英伟达依赖的背景下进行的，英伟达面临着前所未有的挑战。",
+      "kind": "claim"
+    },
+    {
+      "quote": "The partnership underscores the circular nature of Nvidia's financing efforts over the past few years, which have often seen the chip giant investing in companies that flow back into its own ecosystem.",
+      "title": "生态战略",
+      "narration": "这一合作展示了英伟达过去几年融资努力的循环性质——投资那些最终会回流到其生态系统的公司，这是一种聪明的平台化策略。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "So by MediaTek being able to offer this extension to its customers, it allows them to standardize on the rack-scale infrastructure across their AI factories… and also deploy their [custom chips] right alongside those using the same standard platform.",
+      "title": "双赢模式",
+      "narration": "英伟达通过让联发科为其客户提供扩展，使客户能够在AI工厂中标准化机架级基础设施，同时部署自定义芯片，这是一种既让步又主导的双赢模式。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Together, we're building platforms that bring NVIDIA accelerated computing to new markets and give customers the freedom to create differentiated AI systems at enormous scale.",
+      "title": "未来愿景",
+      "narration": "黄仁勋的这句话总结了英伟达的最终目标——将加速计算带入新市场，同时给予客户在巨大规模上创建差异化AI系统的自由，这体现了英伟达的生态系统思维。",
+      "kind": "conclusion"
+    }
+  ]
+}

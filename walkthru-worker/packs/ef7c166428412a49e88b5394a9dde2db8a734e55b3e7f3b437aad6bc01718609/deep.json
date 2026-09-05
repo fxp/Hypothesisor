@@ -1,0 +1,830 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "ef7c166428412a49e88b5394a9dde2db8a734e55b3e7f3b437aad6bc01718609-deep",
+  "variant": "deep",
+  "variantLabel": "完整版",
+  "contentVersion": 2,
+  "publishedAt": "2026-08-30T00:46:45.000Z",
+  "sourceUrl": "https://newsletter.semianalysis.com/p/agentx-inferencexv3-does-cuda-moat",
+  "sourceTitle": "CUDA 护城河与 AgentX 基准",
+  "author": "xiaoping",
+  "intro": "这篇文章探讨了AI推理领域的新基准AgentX，它针对多轮代理工作负载进行了全面测试，挑战了NVIDIA CUDA护城河的绝对优势。文章详细分析了不同硬件平台（NVIDIA和AMD）在真实代理工作负载下的性能表现，揭示了软件优化对硬件性能的关键影响，以及分布式推理系统的复杂性。核心矛盾在于：虽然NVIDIA硬件在传统基准测试中占据主导地位，但在真实的代理工作负载下，AMD通过软件优化在某些场景下实现了超越，这挑战了人们对硬件性能的固有认知。",
+  "essay": "随着Claude Code在2025年11月的转折点出现，长上下文、多轮代理工作负载迅速增长，现已主导生产推理流量。2026年4月，OpenAI的企业级代理支出已超过ChatGPT支出，这一转变促使行业重新思考如何准确评估AI硬件性能。传统基准测试基于固定序列长度的工作负载，但这无法真实反映现实世界中的代理工作负载特点：多轮交互、长上下文、高预填充重用、子代理突发以及大量工具调用。\n\nAgentX基准应运而生，它不仅是一个开源数据集，更是一个全新的评估框架，价值超过300万美元。与传统8k1k、1k1k、1k8k等固定序列长度场景不同，AgentX基于真实的代理编码流量，模拟了真实世界中的复杂工作负载。这一转变意义重大，因为它揭示了AI性能评估的根本性转变：从单纯的硬件性能测试转向系统级性能评估，包括KV缓存生命周期、混合注意力缓存正确性、CPU KV卸载、传输进度、路由亲和性等整个端到令牌生成过程。\n\n在性能对比方面，文章呈现了令人惊讶的结果。NVIDIA的GB300和B200系列在大多数模型上表现优异，但AMD的MI355X在某些场景下实现了超越。特别是在Kimi K3模型上，MI355X ATOM在40到60秒端到端延迟区间内，性能每美元甚至超过了GB300 NVL72 vLLM。这一发现挑战了人们对硬件性能的固有认知，证明软件优化可以弥补硬件差距。\n\n最引人注目的是AgentX对行业的实际影响。超过70个上游PR为优化真实生产代理工作负载而创建，涉及vLLM、SGLang、TensorRT-LLM等多个框架。这些优化包括混合注意力前缀缓存、CPU KV卸载、增量标记化、请求序列化等，它们不仅提高了性能，还解决了分布式推理系统中的关键挑战。\n\n文章深入分析了分布式推理系统的复杂性，包括路由策略、KV缓存管理、数据传输库等组件的协同工作。特别值得注意的是上下文并行技术（PCP/DCP），它通过在GPU间分割查询令牌来优化长上下文处理。这一技术最初由NVIDIA研究发明，但AMD的实现尚未完全优化，这反映了CUDA护城河不仅在于硬件，更在于软件生态系统的完整性。\n\n最终，AgentX基准揭示了AI性能评估的新范式：硬件性能必须与软件优化相结合，才能在真实工作负载中实现最佳表现。AMD通过ATOM引擎的持续改进，在某些场景下实现了对NVIDIA的超越，这表明在AI领域，没有绝对的赢家，只有不断演进的竞争格局。",
+  "outro": "AgentX基准揭示了AI性能评估的新范式：硬件性能必须与软件优化相结合，才能在真实工作负载中实现最佳表现。AMD通过软件优化在某些场景下实现了对NVIDIA的超越，这表明在AI领域，没有绝对的赢家，只有不断演进的竞争格局。",
+  "steps": [
+    {
+      "quote": "Since the Claude Code inflection point in November 2025, long-context, multi-turn agentic workloads have grown rapidly. They now dominate traffic for production inferencing. In April 2026, OpenAI's Enterprise agentic spending overtook ChatGPT spending.",
+      "title": "代理工作负载崛起",
+      "narration": "这就带来一个问题——为什么代理工作负载突然变得如此重要？从2025年11月的Claude Code转折点开始，长上下文、多轮代理工作负载快速增长，并在2026年4月超越了ChatGPT的企业支出，这标志着行业工作负载的重大转变。",
+      "kind": "context"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"864512bf-1feb-445d-a03a-bbf9f4f1b791\"]",
+      "title": "智能体Token反超ChatGPT",
+      "narration": "这张图展示从2025年8月到2026年6月，企业输出Token中Agentic（Codex）的占比从几乎为零一路攀升到64%，反超了ChatGPT的36%。而且每次里程碑——GPT-5、Codex上架macOS和Windows、GPT-5.4/5.5发布——都对应曲线的一次跳升，说明企业用AI正在从'聊天'转向'让智能体干活'。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.5,
+          0.35,
+          1,
+          0.95
+        ],
+        "explanation": "2026年2月后曲线陡升并在右端定格为64%对36%的反转结局，是整张图最核心的信息。"
+      }
+    },
+    {
+      "quote": "In the past most measured performance based on fixed sequence length prefill and decode workloads, but this is an inaccurate way to measure workloads. Reality is multi-turn, long context, high prefill reuse, with sub agent bursts, KVCache offload, and numerous tool calls.",
+      "title": "传统方法的局限",
+      "narration": "于是作者指出，过去基于固定序列长度的性能测量方法存在根本性缺陷。现实中的工作负载是多轮的、长上下文的、高预填充重用率的，包含子代理突发、KVCache卸载和大量工具调用，这解释了为什么需要一种全新的基准测试方法。",
+      "kind": "claim"
+    },
+    {
+      "quote": "The full matrix runs on ~2MW of continuously operated compute across over 1000 chips spanning a wide range of SKUs, featuring the MI355X, GB300 NVL72, GB200 NVL72, B300, B200, MI325, MI300X, H200, and RTX Pro Servers.",
+      "title": "广泛的硬件测试",
+      "narration": "紧接着，作者展示了测试的规模和范围——在超过1000个芯片上运行约2MW的持续计算，涵盖多种SKU。这确保了基准测试的全面性，能够评估不同硬件平台在代理工作负载上的表现，为比较NVIDIA和AMD等不同厂商的产品提供了基础。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "NVIDIA does very good on a lot of frontier models while AMD also does well on some frontier models for specific comparsions.",
+      "title": "厂商表现对比",
+      "narration": "但作者马上话锋一转：这揭示了一个关键洞见——在代理工作负载中，NVIDIA在许多前沿模型上表现出色，而AMD在某些特定比较中也表现良好。这挑战了NVIDIA在AI领域不可撼动的地位，暗示CUDA护城河可能正在被侵蚀。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The most valuable thing AgentX produced in its first months was not the initial results. It was the massive industry impact the benchmark is already having. Over 70+ upstream PRs for optimizing real world production agentic workloads across vLLM, SGLang, TensorRT-LLM, ATOM, AITER, Dynamo, LMCache, and Mooncake, uses AgentX as the north star benchmark proxy.",
+      "title": "行业影响力",
+      "narration": "于是，作者进一步强调，AgentX最宝贵的价值不是初始结果，而是它已经产生的巨大行业影响。已有70多个上游PR用于优化实际生产代理工作负载，这表明AgentX已成为行业优化的北极星基准，其影响远超单纯的性能测试。",
+      "kind": "insight"
+    },
+    {
+      "quote": "InferenceX is 100% committed to being open-source - this would not be possible without the contributions and support from our OSS partners.",
+      "title": "开源承诺",
+      "narration": "最后，作者重申InferenceX对开源的坚定承诺，并感谢众多开源合作伙伴的贡献。这不仅是技术分享，更是构建开放AI生态系统的努力，为行业提供透明、可复现的基准测试标准，推动整个AI社区的发展。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "Long context: system prompts, tool definitions, and the large number of turns make context accumulate quickly.",
+      "title": "长上下文挑战",
+      "narration": "于是带来了第二个关键挑战——长上下文。随着系统提示、工具定义和大量对话轮次的累积，上下文窗口迅速扩大，这对系统的内存管理和处理能力提出了更高要求。",
+      "kind": "context"
+    },
+    {
+      "quote": "Sub-agent bursts: a session launches multiple short-lived sub-agents with fresh context, which create bursty KVCache patterns.",
+      "title": "子代理爆发",
+      "narration": "不过，智能工作负载还引入了一个复杂因素——子代理爆发。在一次会话中启动多个具有独立上下文的短生命周期子代理，会产生突发的KV缓存访问模式，给系统带来不稳定的负载。",
+      "kind": "caveat"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"72b64a02-8a1f-4a19-929c-85c0ed4803cd\"]",
+      "title": "多轮对话前缀缓存增长",
+      "narration": "这张图展示了多轮工具调用对话中，上下文如何像滚雪球一样一轮轮变大：每轮的输入都要带上之前所有内容。绿色标注的就是能直接复用上一轮缓存的前缀部分，可以看到它随轮数越来越多，说明前缀缓存能省掉大量重复计算。",
+      "kind": "insight",
+      "region": {
+        "box": [
+          0.75,
+          0.05,
+          0.94,
+          0.9
+        ],
+        "explanation": "Turn 4 的绿色区域最大，直观展示了累积缓存的前缀随轮数增长到覆盖几乎整个输入。"
+      }
+    },
+    {
+      "quote": "benchmarking these workloads is fundamentally different from the existing fixed sequence length benchmarks. Namely, agentic inference is inherently a systems problem.",
+      "title": "系统问题本质",
+      "narration": "这就解释了为什么智能工作负载的基准测试与传统固定序列长度基准有本质区别。智能推理本质上是一个系统问题，需要考虑缓存管理、节点间通信和内存分层等复杂因素，而非简单的芯片性能测试。",
+      "kind": "claim"
+    },
+    {
+      "quote": "In an attempt to make the AgentX workloads as realistic as possible, we collected an initial corpus of 393 internal SemiAnalysis anonymous Claude Code traces to replay.",
+      "title": "真实数据收集",
+      "narration": "为了确保AgentX基准测试的真实性，研究人员收集了393个内部SemiAnalysis匿名Claude Code代码轨迹进行回放，这种基于实际使用场景的数据收集方法为基准测试提供了更可靠的依据。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "When looking at inference coding performance, OpenAI, Anthropic, xAI, and other frontier labs focus on three things. They look at performance per dollar versus interactivity (TPOT), TTFT (time to first token), and overall end-to-end task completion.",
+      "title": "性能指标",
+      "narration": "前沿AI实验室主要关注三个核心指标：每美元性能(TPOT)、首令牌时间(TTFT)和端到端任务完成时间。这构成了整个推理性能分析的基础框架。",
+      "kind": "context"
+    },
+    {
+      "quote": "Performance per megawatt is also important, considering that terrestrial datacenter power is a critical constraint (money is a social construct and it appears the labs have an unlimited supply, but power is physically hard to come by in this day and age).",
+      "title": "能耗考量",
+      "narration": "除了性能指标外，每兆瓦性能同样关键。因为资金看似无限，但电力供应却是物理限制，这成为了AI实验室面临的实际瓶颈。",
+      "kind": "context"
+    },
+    {
+      "quote": "DeepSeek V4 Pro 0813 is an ultra popular frontier open weight model from China. It has ~1.6 Trillion parameters with 49 Billion active parameters.",
+      "title": "DeepSeek模型",
+      "narration": "DeepSeek V4 Pro 0813是中国热门的前沿开源模型，拥有约1.6万亿参数，但活跃参数只有490亿，这种参数效率值得关注。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "In general, it is important to consider both tokens per second per user (TPS - also known as interactivity) and TTFT, since these often come at the expense of one another.",
+      "title": "性能权衡",
+      "narration": "这里揭示了一个关键矛盾：每用户每秒令牌数(TPS/交互性)和首令牌时间(TTFT)往往相互制约，优化一方可能会牺牲另一方。",
+      "kind": "insight"
+    },
+    {
+      "quote": "In terms of single node performance, MI355X open-source performance (vLLM) trails behind vendor specific ATOM (AMDs equivalent of TensorRT LLM).",
+      "title": "AMD性能差距",
+      "narration": "单节点性能方面，MI355X的开源实现(vLLM)落后于AMD的专有ATOM引擎，这表明AMD的优化尚未完全开源。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "AMD's distributed inference (DI) team has made great progress on 8k1k scenarios over the past six months. The team still has some way to go before DI is a viable solution for realistic workloads.",
+      "title": "分布式进展",
+      "narration": "AMD的分布式推理团队在过去六个月中在8k1k场景上取得显著进步，但要成为实际工作负载的可行方案仍有距离。",
+      "kind": "claim"
+    },
+    {
+      "quote": "To make matters worse, any increase in throughput at the middle-to-high interactivity configs is overshadowed by the significant spike in p90 TTFT.",
+      "title": "TTFT代价",
+      "narration": "更糟糕的是，在中高交互性配置下增加吞吐量，却被p90 TTFT的显著飙升所抵消，这揭示了AMD优化的一个关键缺陷。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "Before August 21, 2026, AMD's MI355X strong SGLang development team was matching B200 vLLM on performance per dollar on end to end (e2e) performance.",
+      "title": "短暂领先",
+      "narration": "在2026年8月21日前，AMD的MI355X SGLang团队在端到端性能每美元方面已经匹配了B200 vLLM，这表明AMD曾一度达到NVIDIA水平。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "After August 21, 2026, due to optimizations in vLLM from Inferact and Nvidia, the performance per dollar of Nvidia's B200 has surpassed that of the MI355X.",
+      "title": "NVIDIA反超",
+      "narration": "但随后NVIDIA通过vLLM优化实现了反超，这展示了AI硬件竞争中软件优化的重要性，以及领先地位的短暂性。",
+      "kind": "insight"
+    },
+    {
+      "quote": "With B200 concurrency 196 (all other parameters stay the same), we see only 73% HBM cache hit rate and rely more heavily on DRAM with an offload cache hit rate of nearly 20%.",
+      "title": "缓存差异",
+      "narration": "B200在196并发时HBM缓存命中率仅为73%，严重依赖DRAM，这解释了为什么B300在高并发场景下表现更好。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "H200 SGLang FP8 is able to serve DeepSeek v4 at low concurrency, and is even competitive with B200/MI355X SGLang from a perf/$ standpoint.",
+      "title": "H200竞争力",
+      "narration": "H200 SGLang FP8在低并发时能很好地服务DeepSeek v4，甚至在性能每美元方面与B200/MI355X SGLang相当，展示了H200的价值。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Kimi K3 is another frontier open weight model from China that has 2.8 Trillion total parameters. This is in the same range in terms of number of parameters vs Claude's Mythos/Fable5 model architecture.",
+      "title": "Kimi K3规模",
+      "narration": "Kimi K3是另一个拥有2.8万亿参数的中国前沿开源模型，参数规模与Claude的Mythos/Fable5相当，是测试大模型性能的理想选择。",
+      "kind": "context"
+    },
+    {
+      "quote": "MI355X ATOM beats even GB300 NVL72 vLLM on performance per dollar.",
+      "title": "ATOM优势",
+      "narration": "在特定场景下，MI355X ATOM甚至超过了GB300 NVL72 vLLM的性能每美元，这展示了AMD专有引擎的潜力。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Nvidia absolutely destroys all competitors on MiniMax M3 432B. AMD software performance is horrible on MiniMax especially at high context length due to AMD engineering leadership incentivizing tuning only for short context single turn workloads",
+      "title": "NVIDIA主导",
+      "narration": "在MiniMax M3 432B上，NVIDIA完全击败所有竞争对手，而AMD软件表现糟糕，特别是在高上下文长度下，这暴露了AMD工程团队的策略缺陷。",
+      "kind": "evidence"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"c5396c3d-1823-4818-83de-d89cd8242451\"]",
+      "title": "GPU性价比差距一目了然",
+      "narration": "这张图横轴是P90交互速度（每秒token数），纵轴是每美元能买到的token数，越靠右上角越划算。绿色代表NVIDIA各家芯片，红色是AMD MI355X——AMD整个缩在左下角，无论吞吐还是交互速度都被NVIDIA甩开一大截，说明推理性价比上差距非常悬殊。",
+      "kind": "evidence",
+      "region": {
+        "box": [
+          0.06,
+          0.21,
+          0.74,
+          0.95
+        ],
+        "explanation": "绿色NVIDIA曲线一路延伸到右上角的高性价比高交互区，而红色AMD MI355X缩在左下角，两者差距在这片区域对比最直观。"
+      }
+    },
+    {
+      "quote": "B300 TRT-LLM TP2 owns the M3 crown. There is a lack of DP-attention points as it is non-optimal on M3 since KV cache locality becomes a routing constraint.",
+      "title": "TRT-LLM优势",
+      "narration": "B300 TRT-LLM TP2在M3上占据主导地位，缺乏DP-attention点是因为KV缓存局部性成为路由约束，这解释了特定优化的必要性。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "All of Nvidia's Pareto optimal points include KV offload above concurrency 20, but for AMD none of the Pareto optimal points use KV offload to DRAM.",
+      "title": "缓存策略差异",
+      "narration": "NVIDIA的所有帕累托最优点在并发超过20时都使用KV卸载到DRAM，而AMD则没有，这揭示了两者架构设计理念的根本差异。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Qwen3.5 397B is a strong hold for NVIDIA on SGLang versus SGLang, with over 20x better performance at 90 tok/s/user.",
+      "title": "压倒性优势",
+      "narration": "在Qwen3.5 397B上，NVIDIA的SGLang相比AMD有超过20倍的性能优势，特别是在90 tok/s/user时，这展示了NVIDIA的统治地位。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Compared to H100, on Qwen3.5, B300 FP4 has 12x better performance per dollar.",
+      "title": "B300性价比",
+      "narration": "相比H100，B300 FP4在Qwen3.5上的性能每美元高出12倍，这展示了NVIDIA新一代架构的显著优势。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "We take a moment to introduce an experimental metric which we call E2E Normalized Interactivity. At a high level, this metric is supposed to evaluate how fast a user experiences responsiveness when considering both TTFT as well as TPS.",
+      "title": "新指标尝试",
+      "narration": "文章提出了一个实验性指标—E2E标准化交互性，试图综合考虑TTFT和TPS来评估用户响应速度，反映了评估标准的演进。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Please note that this metric is experimental and is not perfect. For instance, it heavily penalizes high TTFT and doesn't capture all the nuances of certain optimizations such as PD disaggregation.",
+      "title": "指标局限",
+      "narration": "这个指标虽然创新，但并不完美，它过度惩罚高TTFT，无法捕捉某些优化的细微差别，如PD解耦，反映了评估AI性能的复杂性。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "AgentX Industry Impact - Optimizations for Agentic WorkloadsThe most impactful result from AgentX in its first months was not producing open source datasets, instead, it has been the industry impact of 50+ upstream PRs created by AgentX partners to optimize real world agentic workloads using AgentX as the north star.",
+      "title": "行业影响超越数据集",
+      "narration": "这就引出了一个有趣的现象：AgentX最显著的影响并非来自其开源数据集，而是通过50多个上游PR，让合作伙伴以AgentX为标准优化真实世界的代理工作负载。这表明基准测试的实际应用价值远超理论产出。",
+      "kind": "context"
+    },
+    {
+      "quote": "AgentX's real agentic traffic benchmarks not only the raw prefill and decode kernels, but also tests the entire end to end token generation process from KV cache lifecycle, hybrid-attention cache correctness, CPU KV offload, transfer progress, routing affinity, to incremental tokenization, request serialization, and scheduler bookkeeping.",
+      "title": "全链路基准测试",
+      "narration": "于是，AgentX的独特之处在于它不仅测试基础的预填充和解码内核，还涵盖了从KV缓存到调度簿记的整个端到端令牌生成过程。这种全面性确保了每个生产代理部署的关键环节都能得到优化，解决了行业长期忽视的全链路性能问题。",
+      "kind": "claim"
+    },
+    {
+      "quote": "All of these steps matter for every production agentic deployment.",
+      "title": "每个步骤都至关重要",
+      "narration": "这句话强调了AgentX基准测试的实用价值——它关注的是每个生产环境中实际存在的性能瓶颈点，而非理论上的理想情况。这种以生产为导向的测试方法，使得优化成果能够直接转化为实际部署中的性能提升。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "This is just a continuation of our ongoing mission to help the ecosystem accelerate improvement and deliver light speed improvement in software.",
+      "title": "加速生态系统改进",
+      "narration": "但作者话锋一转，指出这不仅仅是AgentX的成就，而是他们长期使命的一部分——帮助整个行业实现软件的'光速改进'。这揭示了AgentX背后的更大愿景：通过建立高标准基准，推动整个技术生态系统的协同进化。",
+      "kind": "insight"
+    },
+    {
+      "quote": "As mentioned, agentic inference is inherently a system-wide problem as opposed to just a chip/kernel level problem. Additionally, when there are large distributed systems handling hundreds of thousands of agentic requests, the scheduling of requests and management of KV cache becomes non-trivial and has legitimate performance implications.",
+      "title": "系统级挑战",
+      "narration": "这就引出了分布式推理的核心问题：它本质上是一个系统级问题，而非单纯的芯片或内核级别问题。当系统需要处理数十万代理请求时，请求调度和KV缓存管理变得复杂且对性能有实质性影响。",
+      "kind": "context"
+    },
+    {
+      "quote": "For example, sub-agents give bursty KVCache patterns where not properly optimizing, it will improperly evict the main agents cache.",
+      "title": "缓存管理难题",
+      "narration": "这里举了一个具体例子：子代理会产生突发的KV缓存模式。如果不进行适当优化，会导致主代理的缓存被错误驱逐，这解释了为什么缓存管理如此关键。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "At the top, routers (sometimes referred to as \"frontends\") route requests to different workers. For instance, in the case a server is running data parallel attention, there are separate KV caches for each DP rank. In order not to thrash any one of the KV caches, requests are routed according to different policies such as consistent hash, where requests in the same session/subagent are routed by their unique ID.",
+      "title": "路由策略",
+      "narration": "于是，系统引入了路由器作为前端组件，负责将请求分配给不同的工作节点。特别的是，为了防止KV缓存抖动，系统采用一致性哈希等策略，确保同一会话或子代理的请求被路由到同一节点，这解决了前面提到的缓存管理问题。",
+      "kind": "claim"
+    },
+    {
+      "quote": "For most routing policies, there is nothing significantly different about each router implementation. Some are separate components such as vLLM router and llm-d router while others are integrated in the engine such as SGLang model gateway and ATOM Mesh.",
+      "title": "路由实现差异",
+      "narration": "但作者马上话锋一转指出，尽管路由策略多样，但不同路由器实现本身并没有显著差异。有些是独立组件，有些则集成在引擎中，这表明路由功能相对标准化，而真正的差异化可能在于其他组件。",
+      "kind": "insight"
+    },
+    {
+      "quote": "A simple deployment, used in the current AgentX results, runs Mooncake alongside vLLM on the same node. Each vLLM worker embeds a Mooncake Store client and contributes a portion of host DRAM to the external KV-cache pool. vLLM connects to this pool through the MooncakeStoreConnector interface which loads reusable KV blocks into GPU memory and saves newly computed blocks back to host memory.",
+      "title": "Mooncake部署实例",
+      "narration": "这就解释了为什么KV缓存管理器如此重要。以AgentX基准测试中使用的Mooncake为例，它与vLLM在同一节点上运行，每个vLLM工作节点嵌入Mooncake Store客户端，贡献主机DRAM到外部KV缓存池，通过MooncakeStoreConnector接口连接，实现了可重用KV块的加载和新计算块的保存。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Different KV cache managers may use different transfer engines to physically move bytes between memory tiers or machines, such as between prefill and decode workers. Mooncake Store, for example, uses Mooncake Transfer Engine to move KV blocks between GPU memory, host DRAM, and remote nodes.",
+      "title": "传输引擎多样性",
+      "narration": "紧接着的反驳是：不同的KV缓存管理器可能使用不同的传输引擎来在内存层级或机器间物理移动数据。例如，Mooncake Store使用Mooncake Transfer Engine在GPU内存、主机DRAM和远程节点间移动KV块，这表明系统设计需要考虑多种数据传输需求。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "The ecosystem consists of many independent components, including inference engines, routers, KV-cache managers, data-transfer libraries, and cluster controllers. Platforms such as Nvidia Dynamo, llm-d, and AMD Infera \"package\" selected combinations of these components into complete software distributions.",
+      "title": "生态系统组件",
+      "narration": "这解释了为什么分布式推理生态系统如此复杂。它由许多独立组件组成，包括推理引擎、路由器、KV缓存管理器、数据传输库和集群控制器。Nvidia Dynamo、llm-d和AMD Infera等平台将这些组件的选定组合打包成完整的软件分发，试图提供一站式解决方案。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "Long context benefits parallelism techniques that a fixed 8k prompt cannot strongly exercise, because at 8k there is little to divide and TTFT is already short. Moreover, parallelism strategies like TP and DP attention are not optimal at longer context lengths, TP can result in the full KV being replicated on each rank. Although KV is shared for DP attention, it can get hung up on longer contexts, as long context workloads also result in a higher variance of possible context lengths.",
+      "title": "并行技术局限",
+      "narration": "这就带来一个问题——固定8k的提示长度限制了并行技术的发挥，因为在这种长度下可分割的内容有限，且TTFT已经很短。同时，TP和DP注意力等并行策略在更长上下文下并不理想，要么导致KV完全复制，要么在处理长上下文时出现瓶颈。",
+      "kind": "context"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"1e2801db-53ff-4029-8b55-01b3c1a7037d\"]",
+      "title": "TP与DP注意力的局限",
+      "narration": "这张图对比了两种并行方案在长上下文下的痛点：上面是TP方案，MLA的KV缓存没法按头切分，结果每张GPU都完整复制一份200k的KV，显存直接翻四倍；下面是DP attention，整个请求被钉死在一张卡上，GPU 0扛着20万上下文时，其他三张卡只能干等。所以长上下文场景下，这两种方案都会明显拖累整体效率。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "This parallelism technique was invented partially by Nvidia Research. Nvidia Research is great at fundamental research like this while for end to end training research, they are embarrassing America with their horrible Nemotron3 Ultra model which is currently getting massively beaten by even tiny Qwen3.8 27B model.",
+      "title": "NVIDIA研究对比",
+      "narration": "但作者话锋一转：虽然NVIDIA研究所在基础研究方面表现出色，但在端到端训练研究上却相对落后，其Nemotron3 Ultra模型甚至被小型Qwen3.8 27B模型击败。这种反差凸显了NVIDIA在基础研究和实际应用之间的策略差异。",
+      "kind": "insight"
+    },
+    {
+      "quote": "vLLM improved hybrid-attention prefix caching so short-lived sliding-window allocations do not evict useful long-context checkpoints. Selective retention preserves sparse replay boundaries and reported a prefix-cache hit rate above 95% with fourteen concurrent requests and contexts up to one million tokens.",
+      "title": "前缀缓存优化",
+      "narration": "这就带来了一个关键问题——在长上下文场景中，短生命期的滑动窗口分配会意外驱逐重要的长上下文检查点。vLLM通过选择性保留机制解决了这个问题，在保持稀疏重放边界的同时，实现了超过95%的缓存命中率，即使在高并发和极长上下文的情况下也能保持高效。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Agentic Workloads for high concurrent agents require offloading. Thanks to the aforementioned influence of AgentX, there are already workstreams on vLLM that aim to allow CPU KV offload for hybrid models rather than only for uniform full-attention models.",
+      "title": "混合模型卸载",
+      "narration": "于是，作者话锋一转，指出高并发Agent工作负载需要CPU KV卸载支持。这一需求源于AgentX的影响，促使vLLM扩展其卸载功能，从仅支持统一全注意力模型扩展到支持混合模型，解决了长期会话模型最需要的卸载功能。",
+      "kind": "claim"
+    },
+    {
+      "quote": "A uniform model has one KV layout per token, so a connector can describe what to save with a single block geometry. A hybrid model carries several cache groups at once, each with a different shape and a different lifetime, and a connector that assumes one uniform layout cannot express which group a given block belongs to.",
+      "title": "混合模型挑战",
+      "narration": "这里解释了为什么混合模型卸载如此困难。与统一模型不同，混合模型同时携带多个具有不同形状和生命周期的缓存组，这使得传统的单一块几何描述方法无法表达每个块所属的组，因此无法实现有效的卸载。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The general SimpleCPU connector came first, was enabled on ROCm, and was then extended to DeepSeek-V4 hybrid attention, reporting 81.7% higher output throughput and 46.6% lower mean e2e latency against recomputing the prefix once it no longer fits in HBM.",
+      "title": "SimpleCPU连接器",
+      "narration": "紧接着，作者介绍了SimpleCPU连接器的解决方案。这一创新首先在ROCm上启用，然后扩展到DeepSeek-V4混合注意力，实现了显著的性能提升：输出吞吐量提高81.7%，端到端延迟降低46.6%，这证明了混合模型卸载的可行性。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "During offload, the cost moved to the store path, which was writing too much and too often. Three new fixes have now addressed this issue: A store is now skipped while an identical transfer is already in flight, so concurrent sessions sharing a prefix pay for it once rather than once each.",
+      "title": "存储路径优化",
+      "narration": "但作者马上指出，卸载过程中成本转移到了存储路径，存在写入过多且过于频繁的问题。通过跳过正在进行中的相同传输，共享前缀的并发会话只需支付一次费用，而不是每个会话都支付，这显著优化了存储效率。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "Making lookups asynchronous in the scheduler path keeps the connector off the step's critical path, so a step no longer waits on CPU-side cache queries before it can admit work.",
+      "title": "异步查找优化",
+      "narration": "于是，团队对加载路径进行了单独优化，使查找在调度器路径中异步进行，从而将连接器从关键路径中移除。这一改变使得步骤不再需要等待CPU端缓存查询就能接受工作，进一步提高了整体效率。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "A companion change routes full-graph attention projections through tuned AITER GEMMs and reached a 2.3% gain on fixed sequences at low concurrency. This shows a kernel-level change can show a clean gain on uniform shapes and then be swamped, on an agentic trace, by the cache and scheduling variance that the trace introduces.",
+      "title": "内核优化挑战",
+      "narration": "这解释了一个重要洞见——内核级别的优化在固定形状序列上可能显示出干净的增益，但在Agent追踪中，由于缓存和调度方差的影响，这些增益可能会被淹没。这表明优化工作需要考虑实际工作负载的复杂性，而不仅仅是理论上的最佳情况。",
+      "kind": "insight"
+    },
+    {
+      "quote": "A pending change turns that shape sensitivity into the dispatch criterion itself: it replaces the DeepSeek V4 C4A selector's ROCm top-k bottleneck with a hybrid AITER/native path on gfx950, routing short and medium contexts through AITER and long contexts through a graph-safe tuned native fallback.",
+      "title": "动态路径选择",
+      "narration": "最终，作者介绍了一个待定变更，将形状敏感性转化为调度标准本身。通过根据上下文长度动态选择AITER或本机路径，这一优化实现了1.21倍到1.76倍的端到端选择器加速，解码内核的几何平均值达到1.2倍到2.9倍，展示了如何通过智能调度来应对不同形状的工作负载。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "SGLang's sliding-window work addresses the same conflict vLLM's retention policy does. Window pages and prefix pages are drawn from one pool, and the window is the greedier consumer: it turns over constantly while the prefix sits still and so, under pressure, the transient allocation displaces the durable one.",
+      "title": "内存池冲突",
+      "narration": "这里解释了SGLang面临的核心问题：滑动窗口和前缀页面共享同一个内存池，导致频繁变化的窗口会挤占稳定的前缀页面，造成内存竞争。这解释了为什么需要优化内存分配策略。",
+      "kind": "context"
+    },
+    {
+      "quote": "Three design improvements attack this problem that from different angles. One proactively frees pages as they leave the window rather than waiting for eviction pressure to find them, so dead window state stops competing for pages it can no longer use. Another caps compute locks to a single window, bounding how much of the pool an in-flight request can hold pinned at once. A third removes stale full-KV entries that outlive their usefulness.",
+      "title": "三种改进方案",
+      "narration": "针对上述内存冲突，SGLang提出了三种不同角度的改进：主动释放离开窗口的页面、限制计算锁、移除过时的完整KV条目。这些改进从不同方向解决了内存池竞争问题。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Proactive freeing has a fork-shaped blind spot, though: a request branching from a shared prefix can still hold reusable full-KV while the window state at the branch point has already been released, and the whole prefix gets recomputed for want of the cheap half.",
+      "title": "主动释放的盲点",
+      "narration": "然而，主动释放方法存在一个分支盲点：从共享前缀分支出的请求可能仍持有可重用的完整KV，而分支点的窗口状态已被释放，导致整个前缀因缺少廉价部分而被重新计算。这揭示了优化中的潜在问题。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Open work preserves the SWA state at those branch points so forks inherit the window instead of rebuilding it.",
+      "title": "分支状态保留",
+      "narration": "为了解决分支盲点，SGLang通过保留分支点的SWA状态，使分支能够继承窗口而非重建它。这一改进直接回应了前述问题，展示了优化的针对性。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "HiCache is SGLang's first class in-tree offloading mechanism. It faced the same hybrid problem vLLM's connectors did, and solved it with an asymmetry: offload the full-attention cache and reconstruct the short sliding-window tail on the way back.",
+      "title": "HiCache卸载机制",
+      "narration": "HiCache作为SGLang的一级卸载机制，采用非对称策略解决混合问题：卸载完整注意力缓存并在返回时重建短滑动窗口尾部。这解释了为什么只转移昂贵的部分而非全部缓存。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Recurrent state was the remaining gap, because it cannot be rebuilt from neighbouring tokens the way a window tail can; FlashInfer GDN checkpoints let it participate in prefix reuse at all, and raised throughput from 47,771 to 53,004 tok/s/GPU at a 92.4% cache-hit rate.",
+      "title": "递归状态优化",
+      "narration": "递归状态是剩余的瓶颈，因为它无法像窗口尾部那样从相邻令牌重建。FlashInfer GDN检查点技术使其能够参与前缀重用，在92.4%的缓存命中率下将吞吐量从47,771提升到53,004 tok/s/GPU。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "A naive runtime that specializes on length will compile a fresh kernel for nearly every request it sees. SGLang maintainers solved this by passing context length as a runtime scalar instead collapsing it into one compilation, improving AgentX concurrency 384 output throughput by 26.75% and mean TTFT by 36.25%, by removing compilation, not from computing anything faster.",
+      "title": "可变长度处理",
+      "narration": "针对可变长度流量导致的频繁内核编译问题，SGLang将上下文长度作为运行时标量处理，避免了为每个请求编译新内核。这通过消除编译而非加速计算，将AgentX并发输出吞吐量提升26.75%，平均TTFT降低36.25%。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "A configurable decode interval after prefill forces decode rounds between prefills; on AgentX DSv4 Pro, output throughput rose 141% and p99 inter-token latency fell 97.3%, at the cost of median TTFT rising from 36.5 to 59 seconds, trading off first-token wait for stream smoothness.",
+      "title": "解码间隔优化",
+      "narration": "通过在预填充后配置解码间隔，强制在预填充之间插入解码轮次。在AgentX DSv4 Pro上，这使输出吞吐量提升141%，p99令牌间延迟降低97.3%，代价是中位TTFT从36.5秒增加到59秒，实现了首令牌等待与流平滑性的权衡。",
+      "kind": "insight"
+    },
+    {
+      "quote": "SGLang added DP cache affinity, so a session is sticky to the rank holding its cache. In this PR, DP-aware prefill and decode routing is both implemented so that both halves of a disaggregated deployment make that decision consistently, and cache balance as a routing signal so affinity does not degenerate into one hot worker.",
+      "title": "缓存亲和路由",
+      "narration": "SGLang添加了DP缓存亲和性，使会话粘附在持有其缓存的rank上。同时实现了DP感知的预填充和解码路由，确保分布式部署的两个半部分一致地做出决策，并将缓存平衡作为路由信号，防止亲和性退化为单个热worker。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "A 127,500-token shared-prefix test went from 2 correct needles out of 128 to 128 out of 128, meaning the cache had been silently landing in the wrong places, which a throughput benchmark would have scored as a fast, confident, but wrong answer.",
+      "title": "缓存正确性问题",
+      "narration": "一个127,500令牌共享前缀测试显示，缓存曾错误地放置在错误位置，导致128次测试中只有2次正确。这种问题在吞吐量基准测试中会被误判为快速、自信但错误的结果，揭示了性能优化中的正确性风险。",
+      "kind": "caveat"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"ed24f1b9-b591-4674-bc94-06394962d03f\"]",
+      "title": "修复前后KV摆放对比",
+      "narration": "左边是修复前：解码侧把新 KV 从第 0 格开始摆，结果压在了已缓存前缀的位置上；右边修复后（#30545），剩余部分被接到解码侧已持有的前缀后面。一张图就讲清了这个 bug 的本质和修法。",
+      "kind": "insight",
+      "region": {
+        "box": [
+          0.01,
+          0.5,
+          0.5,
+          0.88
+        ],
+        "explanation": "红色 new 块落在 0~3 行、盖住已有前缀的位置，最直观地展示了修复前错误摆放的 bug 本质。"
+      }
+    },
+    {
+      "quote": "Dropping that unused prompt transfer is the largest single win, driving +18.0% per-user output throughput and +12.7% decode throughput per GPU on AgentX GB300.",
+      "title": "提示传输优化",
+      "narration": "移除未使用的提示传输是最大的单一改进，在AgentX GB300上使每用户输出吞吐量提升18.0%，每GPU解码吞吐量提升12.7%。这表明优化不必要的操作比加速计算本身更有效。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The HiSparse work should be read as a capacity and correctness enabler for long contexts rather than as a throughput win at high concurrency, which it is not yet.",
+      "title": "HiSparse的定位",
+      "narration": "HiSparse工作应被视为长上下文容量和正确性的使能者，而非高并发吞吐量的提升手段，后者目前尚未实现。这表明优化需要明确其适用场景和预期效果，避免过度承诺。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "Every turn of a conversation re-sends the entire history plus a little more, and the naive implementation re-tokenizes all of it. Tokenization is cheap per kilobyte, but is ruinous when the same 100,000 tokens are tokenized again on every turn.",
+      "title": "重复tokenization问题",
+      "narration": "这就引出了多轮对话场景的第一个关键瓶颈——每次对话回合都要重新处理整个历史记录，导致大量重复工作。虽然分词本身每千字节成本不高，但当相同的10万令牌在每轮都被重新分词时，累积成本变得极其高昂。",
+      "kind": "context"
+    },
+    {
+      "quote": "TRTLLM implements Boundary-aware incremental tokenization which handles this by finding the rendered-text common prefix, rolling back one complete token so any merge that spans the join is recomputed, and tokenizing only the changed suffix from there. On the Qwen3.5 AgentX trace, it matched full tokenization on all 1,087 transitions — the correctness claim, tested rather than assumed — and reduced mean processing time from 185.1 ms to 11.3 ms.",
+      "title": "边界感知增量分词",
+      "narration": "于是TensorRT-LLM提出了边界感知的增量分词解决方案，通过找到渲染文本的公共前缀，回退一个完整令牌以重新计算跨越连接的合并，然后仅从那里对变化的后缀进行分词。这一创新不仅将平均处理时间从185.1毫秒降至11.3毫秒，还在1,087次转换中保持了完全正确性，验证了这一方法的可靠性。",
+      "kind": "insight"
+    },
+    {
+      "quote": "When prefill and decode do not agree on head layout, the KV for one logical request stops being a few large contiguous regions and becomes thousands of small strided pieces, each of which turns into its own transfer descriptor. The bytes moved are unchanged; the per-descriptor overhead is what explodes, and it explodes in the worst way on exactly the long prompts that matter!",
+      "title": "KV传输粒度问题",
+      "narration": "但问题不仅限于分词。长上下文处理面临另一个关键挑战：当预填充和解码阶段对头部布局不一致时，单个逻辑请求的KV数据会从少数几个大连续区域变成数千个小片段，每个片段都成为自己的传输描述符。字节移动量不变，但每个描述符的开销爆炸式增长，而这恰恰发生在最重要的长提示上。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Corrected multi-pool mapping and a chunked NIXL bounce path coalesce those pieces through a bounded reusable arena, trading an extra staging copy for orders of magnitude fewer descriptors. Its AgentX diagnostic reduced request-critical KV p99 from 26.74 seconds to 125 ms at concurrency five, and from 10.15 seconds to 288 ms at concurrency forty.",
+      "title": "多池映射与分块路径",
+      "narration": "于是MiniMax-M3通过修正的多池映射和分块NIXL反弹路径，通过有界可重用区域合并这些片段，用额外的暂存副本换取数量级更少的描述符。在AgentX诊断中，这一改进将请求关键KV的p99延迟在并发度为五时从26.74秒降至125毫秒，在并发度为四十时从10.15秒降至288毫秒，实现了数量级的性能提升。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Nonblocking context-transfer polling protects the same path by reaping completed transfers even when scheduling stalls. This breaks a feedback loop in which finished KV blocks stay pinned and prevent new admissions.",
+      "title": "非阻塞传输轮询",
+      "narration": "但问题并未完全解决。非阻塞上下文传输轮询通过在调度停滞时回收已完成传输来保护同一路径，打破了已完成KV块保持固定状态并阻止新请求的反馈循环。这解决了系统中的一个关键死锁问题，确保了资源的及时释放和重用。",
+      "kind": "insight"
+    },
+    {
+      "quote": "AgentX also exposed kernel-selection and scheduler-lifetime failures that only appear at scale and duration. Two are about which kernel gets picked. MiniMax-M3 added CuTeDSL choices to MXFP8 autotuning, widening the candidate set and improving output throughput per GPU by roughly 7 to 10% at low-concurrency aggregate points.",
+      "title": "内核选择优化",
+      "narration": "然而，AgentX基准测试还暴露了仅在规模和持续时间下才显现的更深层次问题。内核选择失败是其中之一，MiniMax-M3通过向MXFP8自动调优添加CuTeDSL选择，扩大了候选集，在低并发聚合点将每GPU输出吞吐量提高了约7到10%。这表明即使看似微小的内核选择变化也能带来显著性能差异。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Sequence-slot headroom and consistent slot-indexed buffer sizing handle the transient overlap where a completing request and a newly admitted one both need a slot, a window that a steady stream of arrivals and departures hits constantly and a fixed batch never hits at all.",
+      "title": "序列槽余量管理",
+      "narration": "但更严重的是调度器生命周期问题。序列槽余量和一致的槽索引缓冲区大小处理了完成请求和新请求之间的瞬时重叠，这是持续到达和离开的请求流不断遇到而固定批次永远不会遇到的情况。这种动态管理确保了系统在高负载下的稳定性和可靠性。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Its follow-up retrieves only the block IDs belonging to the current chunk rather than the whole prompt's block list each time. For a 128,000-token prompt split into 1,024-token chunks, that is the difference between building a 4,096-entry list once and rebuilding it 128 times for every layer group.",
+      "title": "块ID检索优化",
+      "narration": "于是后续改进仅检索当前块的块ID而非整个提示的块列表。对于分割为1,024个令牌块的128,000令牌提示，这相当于构建一次4,096条目列表与为每个层组重建128次之间的区别。这一优化解决了流水线传输引入的新瓶颈，确保了性能提升不会被随提示长度缩放的成本所抵消。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "AMD's ATOM engine was originally designed only for single turn workloads instead of real world agentic multi-turn production workloads, so there were a lot of changes needed to the core fundamental ATOM engine and kernels to enable good support for long context multi turn workloads.",
+      "title": "设计初衷",
+      "narration": "这就引出了ATOM面临的根本性挑战——它最初是为单轮任务设计的，而现实中的智能体工作负载需要处理多轮对话，这要求ATOM进行大量核心改造来支持长上下文多场景。",
+      "kind": "context"
+    },
+    {
+      "quote": "The first optimization we will chat about that ATOM implemented is smartly using sparse checkpoint retention for DeepSeek-V4 paged sliding-window attention.",
+      "title": "稀疏检查点",
+      "narration": "于是ATOM的第一个关键优化是针对DeepSeek-V4的滑动窗口注意力机制，采用智能稀疏检查点保留策略，这直接解决了长上下文处理中的核心瓶颈问题。",
+      "kind": "claim"
+    },
+    {
+      "quote": "on the same AgentX trace at concurrency 48, the actual prefix hit rate rose from 5.6% to 96.45%, and losses at the sliding-window gate fell from 91.35% to 0.16%.",
+      "title": "性能提升",
+      "narration": "这一优化带来了惊人的效果——在并发48的情况下，前缀命中率从5.6%大幅提升到96.45%，而滑动窗口门控的损失从91.35%降至0.16%，几乎消除了所有不必要的缓存丢弃。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Hybrid models also carry a recurrent or compressor state, which differs from ordinary KV in one decisive way: it cannot be reconstructed from the tokens around it.",
+      "title": "状态管理挑战",
+      "narration": "但问题远不止于此，混合模型还携带递归或压缩状态，这种状态与普通KV缓存有本质区别——它无法从周围令牌重建，这给状态管理带来了全新挑战。",
+      "kind": "insight"
+    },
+    {
+      "quote": "ATOM gave this per-request state a content-addressed checkpoint lifecycle, letting generated turns leave reusable resume points without reserving a separate protected cache for them.",
+      "title": "检查点生命周期",
+      "narration": "面对这一挑战，ATOM为每个请求状态实现了内容寻址检查点生命周期，允许生成的回合留下可重用的恢复点，而无需为它们单独保留受保护缓存，巧妙解决了状态恢复问题。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The distributed path repeats, in a different codebase, and the pattern is already visible in SGLang and Dynamo: routing has to know where state lives.",
+      "title": "分布式路由",
+      "narration": "然而，随着系统规模扩大，分布式环境下的状态管理变得更加复杂，路由器必须知道状态的位置才能正确工作，这导致了ATOMesh路由器的诞生。",
+      "kind": "claim"
+    },
+    {
+      "quote": "ATOM gained KV lifecycle events for cache-aware routers, so the router can know where state lives at all. It also gained multi-node prefill and decode routing, and session-sticky data-parallel routing.",
+      "title": "路由功能增强",
+      "narration": "为此，ATOM增加了KV生命周期事件，使路由器能够始终知道状态的位置，同时实现了多节点预填充和解码路由，以及会话粘性数据并行路由，确保状态在分布式环境中得到高效管理。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "PCP reported 35 to 43% lower mean TTFT, with total throughput gains of up to about 49% at a 64,000-token input - a gain that grows with input length rather than with batch size.",
+      "title": "最终性能",
+      "narration": "这些综合优化最终带来了显著的性能提升，PCP报告显示平均TTFT降低35%到43%，在64,000令词输入下总吞吐量增益高达49%，且这种增益随输入长度增加而增长，而非随批量大小变化。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "ATOM/AMD vLLM/AMD SGLang's long-context execution depends on matching lower-level AITER kernels, because a parallelism strategy at the engine layer is only real if the kernels can express it.",
+      "title": "内核依赖关系",
+      "narration": "这就带来一个根本问题：引擎层的并行化策略必须由底层内核实际支持才能实现。这意味着长上下文推理的性能瓶颈往往在于内核能否正确表达所需的并行化策略，而不只是高层架构的设计。",
+      "kind": "context"
+    },
+    {
+      "quote": "Prefill context-parallel process groups provide the extra query-sharding dimension that prefill context parallelism needs, and also widen fused-kernel row indexing for prompts above 131,000 tokens.",
+      "title": "预填充并行优化",
+      "narration": "于是，作者提出了具体的解决方案：预填充上下文并行处理组提供了额外的查询分片维度，这不仅满足了预填充上下文并行化的需求，还扩展了融合内核的行索引，支持超过131,000 tokens的大规模提示处理。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Large caches also exposed a class of failure that short fixed requests essentially never reach: address width. A 32-bit offset is entirely adequate until a single cache pool crosses the boundary, at which point the arithmetic wraps and the kernel addresses the wrong row without any error being raised.",
+      "title": "地址宽度问题",
+      "narration": "但作者马上话锋一转，指出大缓存暴露了一个短固定请求几乎不会遇到的故障类别：地址宽度问题。当单个缓存池跨越边界时，32位偏移量会导致算术回绕，内核会错误地访问行而不会引发任何错误，这是一个隐蔽但严重的问题。",
+      "kind": "insight"
+    },
+    {
+      "quote": "AITER added runtime 64-bit dispatch for batch prefill above 4 GB, 64-bit MLA offsets above 2 GB, and 64-bit addressing throughout DeepSeek-V4's unified cache paths, the last preventing silent reads and writes to the wrong row in pools of roughly 150 million rows.",
+      "title": "64位解决方案",
+      "narration": "这解释了为什么需要64位解决方案：AITER添加了运行时64位调度，用于处理超过4GB的批量预填充、超过2GB的MLA偏移，并在DeepSeek-V4的统一缓存路径中使用64位寻址，防止在约1.5亿行的池中静默读写错误的行。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "DeepSeek-V4 decode also gained a persistent MLA kernel for 64-head and 128-head MTP packings. Those two head counts are what ordinary decoding and speculative verification actually produce, so this gives the engine a dedicated long-context path for its common shapes instead of treating them as incidental variants of a kernel written for short contexts.",
+      "title": "专用解码内核",
+      "narration": "紧接着，作者介绍了另一个关键优化：为64头和128头的MTP打包创建了持久的MLA内核。因为这两种头数是普通解码和推测验证实际产生的，这为引擎提供了针对常见形状的专用长上下文路径，而不是将它们视为为短上下文编写的内核的偶然变体。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "A good chunk of Nvidia submissions use the Dynamo Inference Orchestration and Router Systems. Dynamo's AgentX series shows that the distributed serving layer can become the bottleneck once engine kernels improve.",
+      "title": "路由层瓶颈",
+      "narration": "这就引出了另一个重要观察：随着引擎内核的改进，分布式服务层可能成为新的瓶颈。Dynamo的AgentX系列表明，当底层引擎优化后，路由系统可能成为限制整体性能的关键因素，这揭示了系统优化的层次性挑战。",
+      "kind": "claim"
+    },
+    {
+      "quote": "The router's work is proportional to the number and length of live prefixes rather than to the number of tokens generated, so a workload of many long, overlapping, long-lived sessions loads it in a way that fixed-shape traffic never does.",
+      "title": "路由器工作特性",
+      "narration": "于是，作者解释了路由器的工作特性：它的工作量与活跃前缀的数量和长度成正比，而非生成的token数量。这意味着许多长重叠会话的工作负载会以固定形状流量从未有过的方式加载路由器，这是代理工作负载特有的挑战。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The first series of PRs reduced the cost of each routing decision: less work on the lookup hot path, no redundant suffix invalidation, and finally batched KV matching, registration, ownership, and terminal dereferences, which reported a 22.2% median output-throughput gain at concurrency 512.",
+      "title": "路由决策优化",
+      "narration": "这解释了为什么需要优化路由决策：通过减少查找热路径的工作量、消除冗余后缀失效，以及批量处理KV匹配、注册、所有权和终端解引用，Dynamo实现了在并发512时22.2%的中位输出吞吐量增益，证明了这些优化的有效性。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The second series of PRs changed how ownership is represented, which is the harder problem underneath. Every cached block needs to be attributed to the requests relying on it, so it is not freed while still in use and not pinned after everyone has finished.",
+      "title": "所有权表示改进",
+      "narration": "但作者指出，更深层次的问题是所有权表示方式的改变。每个缓存块需要归依赖于它的请求所有，这样它就不会在被使用时被释放，也不会在所有人都完成后仍被固定。在数千个并发会话共享重叠前缀的情况下，簿记本身变得非常关键。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Dynamo moved from shared block chains to arena-level ownership counts and finally to backend-specific request leases, each step coarsening the unit being tracked. The lease design reduced AgentX replay time by 23.7% for the vLLM backend and 22.0% for SGLang, and lowered peak memory at the same time, a sign that the previous representation was the problem rather than the traffic.",
+      "title": "租约设计优势",
+      "narration": "于是，作者介绍了从共享块链到区域级所有权计数，再到后端特定请求租约的演进过程。租约设计将vLLM后端的AgentX重放时间减少了23.7%，SGLang减少了22.0%，同时降低了峰值内存，这表明之前的表示方式才是问题的根源，而非流量本身。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "LMCache is an open-source KV cache layer that sits under inference engines like vLLM, storing reusable KV chunks keyed by prefix hash across CPU DRAM, local NVMe, and remote backends (Mooncake, Redis, S3).",
+      "title": "LMCache架构",
+      "narration": "接下来，作者转向LMCache缓存层的介绍，这是一个位于vLLM等推理引擎下方的开源KV缓存层，通过前缀哈希键在CPU DRAM、本地NVMe和远程后端（Mooncake、Redis、S3）上存储可重用的KV块，为长上下文推理提供了灵活的缓存解决方案。",
+      "kind": "context"
+    },
+    {
+      "quote": "When each of many requests with contexts above 100,000 tokens reserves the blocks for its whole load before starting, the pool is exhausted by requests that are all waiting and none progressing. Chunked external-cache loading reserves per chunk instead, so loads interleave and drain.",
+      "title": "缓存死锁问题",
+      "narration": "这就揭示了一个关键问题：当许多上下文超过100,000 tokens的请求在启动前为其整个负载预留块时，池会被所有等待的请求耗尽，而没有任何请求能够进展。通过分块外部缓存加载，改为按块预留，实现了负载交错和排空。",
+      "kind": "insight"
+    },
+    {
+      "quote": "At concurrency 32, the validation completed 120 requests where the old path deadlocked after 28, and concurrency 48 kept running with the KV pool 98.5 percent full.",
+      "title": "并发性能提升",
+      "narration": "这一优化的效果非常显著：在并发32的情况下，新路径完成了120个请求，而旧路径在28个请求后死锁；在并发48的情况下，新路径在KV池98.5%满的情况下仍能继续运行，证明了分块加载的有效性。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Storing only the useful portions of DeepSeek-V4's hybrid groups cut storage per token by almost twenty times, and sliding-window prefetch now loads only the live window rather than window state that will never be read, the same reachability argument vLLM applied to offload, approached from the storage side.",
+      "title": "存储优化",
+      "narration": "于是，作者介绍了存储优化的具体措施：仅存储DeepSeek-V4混合组的有用部分将每个token的存储减少了近二十倍，滑动窗口预取现在只加载活动窗口而非从未读取的窗口状态，这与vLLM应用于卸载的可达性论点相同，但从存储角度实现。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "CacheBlend's non-prefix reuse depended on flashinfer, which is CUDA-only, so a Triton block-sparse attention backend reimplements the three kernels it needs: block-sparse attention with CSR indices and log-sum-exp output, causal prefill, and log-sum-exp output blending.",
+      "title": "AMD兼容性",
+      "narration": "但作者指出，CacheBlend的非前缀重用依赖于CUDA专有的flashinfer，这限制了AMD平台的使用。为了解决这个问题，通过Triton块稀疏注意力后端重新实现了三个必需的内核：具有CSR索引和log-sum-exp输出的块稀疏注意力、因果预填充和log-sum-exp输出混合。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "It then routes to them automatically when ROCm is detected or flashinfer is missing. ROCm Dockerfiles mirror the CUDA build and lightweight images. An AMD hipFile backend extends the GDS L1 slab-file tier, which reached storage only through NVIDIA cuFile, by binding ROCm's hipFile through ctypes and dispatching on torch.version.hip; the cuFile path is unchanged.",
+      "title": "自动路由与扩展",
+      "narration": "这解释了如何实现自动路由：当检测到ROCm或flash缺失时，自动路由到这些重新实现的内核。ROCm Dockerfile镜像CUDA构建并使用轻量级图像。AMD hipFile后端通过ctypes绑定ROCm的hipFile并基于torch.version.hip进行调度，扩展了仅通过NVIDIA cuFile才能达到存储的GDS L1 slab-file层，同时保持cuFile路径不变。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Registering GPU memory for RDMA on Nvidia either uses the nvidia-peermem kernel module or exports a dmabuf file descriptor. AMD has no nvidia-peermem equivalent, so GPU-direct RDMA had no path at all and deployments fall back to staging KV through host DRAM.",
+      "title": "RDMA注册挑战",
+      "narration": "接下来，作者转向Mooncake传输引擎的AMD支持挑战，特别关注RDMA注册问题：在NVIDIA上，GPU内存的RDMA注册要么使用nvidia-peermem内核模块，要么导出dmabuf文件描述符。AMD没有nvidia-peermem等效模块，导致GPU直接RDMA完全无法实现，部署不得不回退到通过主机DRAM暂存KV。",
+      "kind": "insight"
+    },
+    {
+      "quote": "A HIP dmabuf registration branch adds the mirror of the existing CUDA dmabuf path, exporting through ROCm instead of the CUDA handle call, and resolving the true allocation base first because caching allocators pack tensors at an offset inside a larger allocation. Host memory still registers directly.",
+      "title": "HIP dmabuf解决方案",
+      "narration": "于是，作者介绍了HIP dmabuf注册分支的解决方案：它添加了现有CUDA dmabuf路径的镜像，通过ROCm而非CUDA句柄调用导出，并首先解析真实的分配基址，因为缓存分配器在更大的分配内部以偏移量打包张量。主机内存仍直接注册。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Support that cannot be installed is not support. Mooncake published CUDA and MUSA wheels but no ROCm package, so AMD users built the engine from source inside every image. A ROCm wheel, CI, and release path publishes mooncake-transfer-engine-rocm to PyPI alongside them.",
+      "title": "可安装包的重要性",
+      "narration": "这解释了为什么可安装包如此重要：无法安装的支持不是真正的支持。Mooncake发布了CUDA和MUSA wheel但没有ROCm包，导致AMD用户在每个镜像中从源代码构建引擎。通过ROCm wheel、CI和发布路径，将mooncake-transfer-engine-rocm发布到PyPI，解决了这一问题。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The transfer engine has no device kernels and does not depend on torch, so one architecture-agnostic wheel covers gfx942 and gfx950, and the ROCm runtime is bound at load time rather than vendored, which means the same wheel works unmodified in both the upstream vLLM ROCm image and the SGLang ROCm image.",
+      "title": "架构无关设计",
+      "narration": "接着，作者介绍了传输引擎的架构无关设计：该传输引擎没有设备内核且不依赖torch，因此一个架构无关的wheel覆盖gfx942和gfx950，ROCm运行时在加载时绑定而非打包，这意味着相同的wheel可以在上游vLLM ROCm镜像和SGLang ROCm镜像中无修改工作。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "MiniMax-M3 tested whether that ROCm work compounds into day-zero readiness, and the Advancing AI writeup draws the comparison directly: AMD's first public disaggregated recipe, MI355X FP4, reached InferenceX in January months behind Nvidia, while M3 FP4 disaggregation landed on day zero.",
+      "title": "零日就绪测试",
+      "narration": "最后，作者介绍了MiniMax-M3的测试结果，验证ROCm工作是否转化为零日就绪：AMD首次公开的去聚合配方MI355X FP4在1月才达到InferenceX，比NVIDIA晚了几个月，而M3 FP4去聚合在发布当天就实现了，这标志着显著的改进。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "AgentX is a massive shift in open source real world long context multi turn agentic trace replaying and we collected traces over $3M worth of tokens within our own dataset consisting of real world traffic from Claude Code, OpenAI Codex, etc.",
+      "title": "AgentX项目概述",
+      "narration": "AgentX代表了开源代理基准测试的重大转变，它基于真实世界的长上下文多轮代理轨迹重放。团队收集了价值超过300万美元的代币数据，这些数据来自Claude Code、OpenAI Codex等真实流量来源，确保了基准测试的真实性和代表性。",
+      "kind": "context"
+    },
+    {
+      "quote": "When initially designing AgentX, our north star goal was to make the benchmark as realistic as possible in terms of KV workload shape and KV reuse patterns.",
+      "title": "设计目标",
+      "narration": "在设计AgentX时，团队的首要目标是使基准测试在KV工作负载形状和重用模式方面尽可能真实。这反映了现代代理应用的核心特征，也是评估推理系统性能的关键指标。",
+      "kind": "claim"
+    },
+    {
+      "quote": "At the time, these datasets did not include significant use of subagents, 1M context, compactions, dynamic workflows, or many other of the recent defining characteristics of an agentic trace.",
+      "title": "现有数据集局限",
+      "narration": "团队发现现有数据集缺乏代理轨迹的许多关键特征，如子代理使用、百万级上下文、动态工作流等。这促使他们决定自行收集更全面、更真实的数据，以准确反映现代代理应用的工作负载特征。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "To collect a large number of traces, we created a proxy that intercepts HTTP requests to Claude / Codex. Then, users that wished to upload traces simply changed the base URL in their Claude / Codex setup to point to the proxy.",
+      "title": "数据收集方法",
+      "narration": "团队创建了一个代理来拦截Claude/Codex的HTTP请求，用户只需将Claude/Codex设置中的基础URL指向这个代理，就可以上传他们的轨迹。这种方法允许在不干扰用户正常使用的情况下收集大量真实数据。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "At the time of writing, we have collected over 8,000 sessions, 3.4 million requests, and 610 billion tokens. Together these represent more than $3M USD in spend.",
+      "title": "数据规模",
+      "narration": "截至撰写时，团队已收集了超过8,000个会话、340万个请求和6100亿个代币，总价值超过300万美元。这一大规模数据集为AgentX基准测试提供了坚实的基础，确保了统计显著性和代表性。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "To protect employee privacy, the replay dataset contains no original prompts, source code, tool arguments, or tool results. Instead, we tokenize each requests' content and then group it into 64-token blocks, finally replacing each block with a session-scoped chained hash.",
+      "title": "数据匿名化处理",
+      "narration": "为了保护员工隐私，团队对数据进行了匿名化处理。他们将每个请求的内容标记化，分组为64个代币的块，然后用会话范围的链式哈希替换每个块。这种方法保留了原始工作负载的上下文增长和KV重用模式，同时隐藏了敏感内容。",
+      "kind": "insight"
+    },
+    {
+      "quote": "This process is necessarily imperfect, mostly due to the fact that when using a frontier model provider's API, much of the content that the end LLM server actually sees is hidden.",
+      "title": "数据收集的限制",
+      "narration": "尽管团队尽力确保数据真实性，但这个过程必然存在不完美之处。使用前沿模型提供商的API时，许多实际被LLM服务器看到的内容是隐藏的，例如思考/推理内容现在被加密在HTTP请求中。这限制了完全重现原始工作负载的能力。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "After these are applied, we get the following dataset. Note that not all X-axes are the same.",
+      "title": "数据集特点",
+      "narration": "经过清理和处理后，团队得到了最终的数据集。值得注意的是，不同指标的X轴并不相同，这反映了代理工作负载的多维特性。这个数据集包含了各种长度和复杂度的会话，为全面评估推理系统提供了基础。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The dataset also has 175 sessions with at least one subagent (~44% of all sessions). There are 1,697 total subagent rollouts in the dataset, with a median of 4 per session.",
+      "title": "子代理使用情况",
+      "narration": "数据集中有175个会话包含至少一个子代理(约占所有会话的44%)，总共1697个子代理执行，每个会话的中位数为4个子代理。这表明子代理是现代代理应用的重要组成部分，需要在基准测试中得到充分体现。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Rather than build a replay solution from the ground up, we decided to partner with AIPerf, a vendor agnostic HTTP replayer tool from Nvidia that is adopted by many in the industry including tenstorrent, AWS, AMD, etc.",
+      "title": "重放工具选择",
+      "narration": "团队选择与NVIDIA的AIPerf合作，而不是从头构建重放解决方案。AIPerf是一个供应商无关的HTTP重放工具，被行业许多公司采用，包括tenstorrent、AWS、AMD等。这一选择确保了基准测试的广泛适用性和行业认可度。",
+      "kind": "claim"
+    },
+    {
+      "quote": "An agentic session is naturally described as a directed acyclic graph (DAG). Each request is a node, and an edge means the request at its head cannot be issued until the one at its tail has completed.",
+      "title": "代理会话的DAG模型",
+      "narration": "代理会话可以自然地描述为有向无环图(DAG)，其中每个请求是一个节点，边表示请求之间的依赖关系。这种模型准确捕捉了代理工作负载的复杂交互模式，包括请求的顺序执行和条件依赖。",
+      "kind": "insight"
+    },
+    {
+      "quote": "In agentic traces, subagents can also be spawned. A subagent is a separate stream of requests that has its own context, typically to do a focused task.",
+      "title": "子代理的概念",
+      "narration": "在代理轨迹中，可以生成子代理。子代理是一个独立的请求流，有自己的上下文，通常用于执行特定任务。这种设计允许代理并行处理多个子任务，提高整体效率和灵活性。",
+      "kind": "evidence"
+    },
+    {
+      "type": "image",
+      "imageSelector": "img[src*=\"d2f465f9-372c-4ee1-b42f-e79fa9fe352b\"]",
+      "title": "子代理会话重放三联图",
+      "narration": "这张图把一次多代理会话的记录与重放画成了三联：左边是原始轨迹 JSON，右上角时间线显示主代理并行派出四个子代理、在 join gate 处会合，还有一个不等待的后台任务；右下角的依赖图则把生成与汇合关系编码成有向图，保证重放时的时序一致。它是理解 AIPerf 如何忠实复现子代理并发的核心证据。",
+      "kind": "insight",
+      "region": {
+        "box": [
+          0.55,
+          0.03,
+          0.97,
+          0.5
+        ],
+        "explanation": "时间线部分一眼就能看出主代理与四个子代理的并行执行、各段时长以及 join gate 汇合点，是整张图信息最浓缩的地方。"
+      }
+    },
+    {
+      "quote": "We believe interactivity (TPS - tokens per second) and time-to-first-token (TTFT) are still important, and these are the industry standard for evaluating SLOs.",
+      "title": "关键评估指标",
+      "narration": "团队认为交互性(TPS-每秒代币数)和首代币时间(TTFT)仍然是评估代理工作负载的重要指标，也是评估SLO(服务水平目标)的行业标准。这些指标直接关系到用户体验和系统性能。",
+      "kind": "claim"
+    },
+    {
+      "quote": "When viewing AgentX results, it is extremely important to consider both TPS and TTFT together, since there are inference optimizations that can improve one at the cost of the other.",
+      "title": "综合评估指标",
+      "narration": "查看AgentX结果时，同时考虑TPS和TTFT至关重要，因为存在一些推理优化可以改善一个指标但损害另一个指标。这种权衡关系需要全面评估，不能只关注单一指标。",
+      "kind": "insight"
+    },
+    {
+      "quote": "We are currently working on defining a new metric that combines TPS and TTFT in a meaningful way. This should also take into account that in agentic workloads, people often care more about the end-to-end speed at which a task finishes rather than how fast they receive tokens or TTFT.",
+      "title": "新指标开发",
+      "narration": "团队正在开发一种新的指标，有意义地结合TPS和TTFT。这种方法还需要考虑到在代理工作负载中，人们通常更关心任务完成的端到端速度，而不是接收代币的速度或TTFT。这反映了实际应用中的性能关注点。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The goal of AgentX is to benchmark systems that are already in a steady state. With agentic workloads, this means that profiling should start from a point where some context trajectories are already cached.",
+      "title": "稳态基准测试",
+      "narration": "AgentX的目标是评估已经处于稳定状态的系统。对于代理工作负载，这意味着profiling应该从某些上下文轨迹已经被缓存的点开始。这种方法更接近实际生产环境，其中系统通常已经预热并建立了缓存状态。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Warmup proceeds in two stages. First, AIPerf uses a fixed random seed to select a wall-clock point between 25% and 75% of each conversation. At that point, it identifies every active request stream, including the main agent and any active subagents, and sends the most recent request before the selected point for each stream.",
+      "title": "预热机制",
+      "narration": "预热分为两个阶段。首先，AIPerf使用固定的随机种子选择每个会话时间轴的25%到75%之间的一个点，识别所有活动请求流，并发送每个流在该点之前的最新请求。这种方法有效地重建了会话状态，模拟了稳定状态下的缓存环境。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "For reproducibility, AIPerf accepts a seed that ensures each run samples conversations deterministically, conversations start at the same point, and that each conversation is reconstructed with the same synthetic content run-to-run.",
+      "title": "可重复性设计",
+      "narration": "为确保可重复性，AIPerf接受一个种子，确保每次运行都能确定性地采样会话，会话从同一点开始，并且每次运行都使用相同的合成内容重建会话。这种设计使得不同配置之间的比较更加公平和可靠。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Our goal is to show the best production performance available from each hardware and software stack, rather than creating a separate curve for every possible combination of optimizations.",
+      "title": "性能曲线设计",
+      "narration": "团队的目标是展示每个硬件和软件堆栈可用的最佳生产性能，而不是为每种可能的优化组合创建单独的曲线。这种方法简化了比较过程，突出了最佳实践，同时仍保留了底层配置的详细信息。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The detailed point view provides a much deeper look into the selected AgentX run. It includes input and output sequence length distributions, interactivity and TTFT over time, KV cache utilization, request queue depth, prefix cache hit rate, input and decode throughput, prompt-token source breakdown, and unique input tokens over time.",
+      "title": "详细性能分析",
+      "narration": "详细点视图提供了所选AgentX运行的深入分析，包括输入和输出序列长度分布、交互性和TTFT随时间变化、KV缓存利用率、请求队列深度、前缀缓存命中率等指标。这种全面的分析有助于理解系统在不同条件下的行为和性能特征。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "As a fast follow, we will add SSD/NVMe KV offloading. This will allow an even larger KV cache working set size than DRAM allows, which will allow the high throughput left side of the pareto curve.",
+      "title": "未来发展方向",
+      "narration": "团队计划快速跟进添加SSD/NVMe KV卸载功能，这将允许比DRAM更大的KV缓存工作集大小，从而支持Pareto曲线左侧的高吞吐量需求。这一改进将进一步扩展AgentX基准测试的能力，更好地评估现代推理系统的性能。",
+      "kind": "conclusion"
+    }
+  ]
+}
