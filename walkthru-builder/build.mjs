@@ -13,8 +13,7 @@
 //     [--author "Xiaoping"] [--variant default] [--variant-label "标准版"] \
 //     [--depth quick|full] [--chapters N] \
 //     [--model glm-4-plus] [--base-url https://open.bigmodel.cn/api/paas/v4] \
-//     [--key-env BIGMODEL_API_KEY] [--lang zh|en|bilingual|auto] \
-//     [--worker https://walkthru-worker.fxp007.workers.dev] [--out ./out] \
+//     [--key-env BIGMODEL_API_KEY] [--lang zh|en|bilingual|auto] [--out ./out] \
 //     [--tts] [--tts-key-env VOLCENGINE_API_KEY] \
 //     [--tts-base-url https://openspeech.bytedance.com/api/v3/plan/tts/unidirectional] \
 //     [--tts-resource-id seed-tts-2.0] [--tts-speaker zh_female_xiaohe_uranus_bigtts] \
@@ -78,7 +77,6 @@ const baseUrl = (args["base-url"] || "https://open.bigmodel.cn/api/paas/v4").rep
 const keyEnv = args["key-env"] || "BIGMODEL_API_KEY";
 const apiKey = process.env[keyEnv];
 const genLanguage = args.lang || "zh";
-const workerUrl = (args.worker || "https://walkthru-worker.fxp007.workers.dev").replace(/\/+$/, "");
 const outDir = args.out || "./out";
 // --chapters N splits the source into ~N natural chapters (LLM-segmented,
 // not a mechanical char split) so each slice gets its own length-appropriate
@@ -725,18 +723,20 @@ function assignImagesToChapters(segments, imageResolved) {
   return { perChapter, unassigned };
 }
 
-// ─── Version — auto-increment against whatever's already published ──
-
-async function nextContentVersion(hash, variantKey) {
-  try {
-    const resp = await fetch(`${workerUrl}/walkthroughs?url=${encodeURIComponent(url)}`, { signal: AbortSignal.timeout(5000) });
-    if (!resp.ok) return 1;
-    const data = await resp.json();
-    const existing = (data.walkthroughs || []).find((w) => w.variant === variantKey || w.id === `${hash}-${variantKey}`);
-    return existing?.contentVersion ? existing.contentVersion + 1 : 1;
-  } catch (_) {
-    return 1; // Worker unreachable — publish as v1, wrangler overwrite will still work
-  }
+// ─── Version ──────────────────────────────────────────────────────────
+// Always writes contentVersion: 1 — this function used to auto-increment
+// by querying the live Worker for whatever's already published, but that
+// queries raw.githubusercontent.com for a hash that's about to be
+// published moments later, and something in that chain (Cloudflare's or
+// GitHub/Fastly's own edge) holds onto the resulting 404 for close to a
+// minute, making a freshly-published pack look missing right after
+// publish. walkthru-admin's own publish step now computes the real next
+// version from its local git clone instead (see server.mjs) and
+// overwrites this value, so it's correct there regardless. Republishing
+// an existing hash/variant straight from this CLI (bypassing
+// walkthru-admin) needs the version bumped by hand.
+async function nextContentVersion(_hash, _variantKey) {
+  return 1;
 }
 
 // Shared by both the single-pack and per-chapter paths — synthesizes one

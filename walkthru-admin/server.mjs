@@ -186,15 +186,6 @@ async function lookupPacks(pageUrl) {
   const data = await resp.json();
   return Array.isArray(data.walkthroughs) ? data.walkthroughs : [];
 }
-async function nextContentVersion(pageUrl, variant) {
-  try {
-    const packs = await lookupPacks(pageUrl);
-    const existing = packs.find((w) => w.variant === variant);
-    return existing?.contentVersion ? existing.contentVersion + 1 : 1;
-  } catch (_) {
-    return 1;
-  }
-}
 
 // ─── NDJSON streaming response helper — each line is one JSON event ───
 function ndjsonRes(res) {
@@ -319,9 +310,6 @@ async function handlePublish(req, res) {
     return stream.end();
   }
 
-  const contentVersion = await nextContentVersion(pageUrl, variant);
-  const finalPack = { ...pack, contentVersion, publishedAt: new Date().toISOString() };
-
   try {
     await ensureGitClone(stream);
   } catch (e) {
@@ -330,8 +318,18 @@ async function handlePublish(req, res) {
   }
 
   const packDir = path.join(GIT_CLONE_DIR, "walkthru-worker", "packs", hash);
-  fs.mkdirSync(packDir, { recursive: true });
   const packFile = path.join(packDir, `${variant}.json`);
+  // Bump off whatever's already in the freshly-synced local clone, not a
+  // live query to the Worker/GitHub — those can lag behind a publish that
+  // hasn't landed yet (or, worse, cache a pre-publish 404 for this exact
+  // hash), which would silently reuse a stale/wrong contentVersion.
+  let contentVersion = 1;
+  if (fs.existsSync(packFile)) {
+    try { contentVersion = (JSON.parse(fs.readFileSync(packFile, "utf8")).contentVersion || 0) + 1; } catch (_) { /* fall through to 1 */ }
+  }
+  const finalPack = { ...pack, contentVersion, publishedAt: new Date().toISOString() };
+
+  fs.mkdirSync(packDir, { recursive: true });
   const relPath = path.relative(GIT_CLONE_DIR, packFile);
   fs.writeFileSync(packFile, JSON.stringify(finalPack, null, 2) + "\n");
 
