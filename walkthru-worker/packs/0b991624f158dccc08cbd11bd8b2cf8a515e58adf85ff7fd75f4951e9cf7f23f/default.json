@@ -1,0 +1,35 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "0b991624f158dccc08cbd11bd8b2cf8a515e58adf85ff7fd75f4951e9cf7f23f-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-05T14:34:57.830Z",
+  "sourceUrl": "https://example.com/walkthru-git-cache-fix-test",
+  "sourceTitle": "Walkthru Git Cache Fix Verification Test",
+  "author": "test-harness",
+  "intro": "This article explains a fix for caching issues in Git-based publishing pipelines, specifically for Cloudflare Workers. The problem was that freshly published walkthroughs were being hidden by stale cached 404 responses. The fix ensures immediate visibility of new content.",
+  "essay": "The article discusses a critical fix for caching behavior in Git-based publish pipelines, particularly for Cloudflare Workers. **Cloudflare Workers** enable developers to deploy serverless JavaScript functions globally without server management. The core issue was that freshly published walkthroughs weren't appearing immediately because they were being hidden by stale cached 404 responses from pre-publish existence checks. This created a frustrating user experience where new content remained invisible despite successful publication. The fix addresses this specific caching problem, ensuring that once a walkthrough is published, it becomes visible right away without being blocked by outdated cache data. This improvement is particularly important for time-sensitive content or when users need immediate access to newly published materials.",
+  "outro": "The fix resolves the caching issue that was delaying visibility of newly published content in Git-based pipelines.",
+  "steps": [
+    {
+      "quote": "This is a second synthetic test article used to verify the fixed caching behavior in the git-based publish pipeline.",
+      "title": "Test Verification",
+      "narration": "This explains that the article itself is part of testing the fix, providing evidence that the solution is being implemented and validated.",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Cloudflare Workers let developers deploy serverless JavaScript functions to a global edge network without managing servers.",
+      "title": "Cloudflare Workers",
+      "narration": "This establishes the context of what Cloudflare Workers are - a serverless deployment platform that eliminates the need for server management.",
+      "kind": "context"
+    },
+    {
+      "quote": "The fix ensures a freshly published walkthrough becomes visible immediately, instead of being hidden by a stale cached 404 from a pre-publish existence check.",
+      "title": "Cache Fix Purpose",
+      "narration": "This introduces the core problem - stale cached 404 responses were preventing new content from appearing immediately after publication.",
+      "kind": "claim"
+    }
+  ]
+}
