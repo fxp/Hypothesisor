@@ -69,37 +69,26 @@ function json(body, status = 200, extraHeaders = {}) {
   });
 }
 
-// Fetches one variant's pack JSON from GitHub, fronted by this Worker's own
-// edge cache (Cache API) so repeat lookups for the same hash don't re-hit
-// GitHub within EDGE_CACHE_TTL_SECONDS. Returns null on 404 or any error —
-// a missing variant is a normal, expected outcome, not a failure.
-async function fetchVariant(hash, variant, ctx) {
+// Fetches one variant's pack JSON from GitHub. `cf.cacheTtl`/`cacheEverything`
+// tells Cloudflare's own subrequest cache to hold the response at the edge
+// for EDGE_CACHE_TTL_SECONDS regardless of GitHub's own cache headers, so
+// repeat lookups for the same hash don't re-hit GitHub every time. Returns
+// null on 404 or any error — a missing variant is a normal, expected
+// outcome (most hashes only publish one of the two known variants).
+async function fetchVariant(hash, variant) {
   const rawUrl = `${GITHUB_RAW_BASE}/${hash}/${variant}.json`;
-  const cache = caches.default;
-  const cacheKey = new Request(rawUrl);
-
-  const cached = await cache.match(cacheKey);
-  if (cached) return cached.status === 200 ? cached.json() : null;
-
   let resp;
   try {
     resp = await fetch(rawUrl, { cf: { cacheTtl: EDGE_CACHE_TTL_SECONDS, cacheEverything: true } });
   } catch (_) {
     return null;
   }
-
-  // Cache both hits and misses (short TTL) so a hash with only one variant
-  // doesn't cost a GitHub round trip on every single lookup.
-  const toCache = new Response(resp.body, resp);
-  toCache.headers.set("Cache-Control", `public, max-age=${EDGE_CACHE_TTL_SECONDS}`);
-  ctx.waitUntil(cache.put(cacheKey, toCache.clone()));
-
   if (resp.status !== 200) return null;
   try { return await resp.json(); } catch (_) { return null; }
 }
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
 
     const url = new URL(request.url);
@@ -118,7 +107,7 @@ export default {
       return json({ walkthroughs: [] });
     }
 
-    const results = await Promise.all(KNOWN_VARIANTS.map((v) => fetchVariant(hash, v, ctx)));
+    const results = await Promise.all(KNOWN_VARIANTS.map((v) => fetchVariant(hash, v)));
     const walkthroughs = results.filter(Boolean);
     // numeric:true makes this a natural sort — "ch2" before "ch10" — which
     // plain localeCompare gets wrong (lexicographic: ch1, ch10, ch11, ch2, ...),
