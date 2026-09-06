@@ -1,7 +1,23 @@
 name = "walkthru-worker"
 main = "src/index.js"
 compatibility_date = "2026-08-28"
+# Adding [[routes]] below makes wrangler default workers_dev to false —
+# must stay explicitly true, or the shipped extension's default URL
+# (walkthru-worker.fxp007.workers.dev) goes dark for every install that
+# hasn't manually set a custom Worker URL in Options.
+workers_dev = true
 
 # No R2 binding — pack content lives in git (walkthru-worker/packs/) and is
 # read back from raw.githubusercontent.com. Audio clips (TTS) still live on
 # R2's public bucket URL directly (pub-*.r2.dev), unrelated to this Worker.
+
+# Also reachable at api.xiaopingfeng.com/walkthru/* (in addition to the
+# default *.workers.dev URL, which stays live — the shipped extension's
+# default still points there). Path-based, not a dedicated subdomain, so
+# api.xiaopingfeng.com can host other Workers at other paths later.
+# Requires a proxied DNS record for "api" on the xiaopingfeng.com zone —
+# this account's wrangler token can write the route but has no DNS scope,
+# so that record has to be created by hand first (see README).
+[[routes]]
+pattern = "api.xiaopingfeng.com/walkthru/*"
+zone_name = "xiaopingfeng.com"

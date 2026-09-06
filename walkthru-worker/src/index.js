@@ -69,17 +69,23 @@ function json(body, status = 200, extraHeaders = {}) {
   });
 }
 
-// Fetches one variant's pack JSON from GitHub. `cf.cacheTtl`/`cacheEverything`
-// tells Cloudflare's own subrequest cache to hold the response at the edge
-// for EDGE_CACHE_TTL_SECONDS regardless of GitHub's own cache headers, so
-// repeat lookups for the same hash don't re-hit GitHub every time. Returns
-// null on 404 or any error — a missing variant is a normal, expected
-// outcome (most hashes only publish one of the two known variants).
+// Fetches one variant's pack JSON from GitHub. `cf.cacheTtl` tells
+// Cloudflare's own subrequest cache to hold successful responses at the
+// edge for EDGE_CACHE_TTL_SECONDS, so repeat lookups for the same hash
+// don't re-hit GitHub every time. Deliberately NOT `cacheEverything: true`
+// — that forces caching of every status including 404, and this Worker
+// gets probed for a hash's existence (nextContentVersion, right before a
+// publish) moments before the content actually lands on GitHub; caching
+// that negative result would make a freshly-published pack invisible for
+// up to EDGE_CACHE_TTL_SECONDS. Without cacheEverything, only normally-
+// cacheable (200) responses get held. A missing variant (404) is a normal,
+// expected outcome — most hashes only publish one of the two known
+// variants — so any fetch/parse failure just returns null, not a throw.
 async function fetchVariant(hash, variant) {
   const rawUrl = `${GITHUB_RAW_BASE}/${hash}/${variant}.json`;
   let resp;
   try {
-    resp = await fetch(rawUrl, { cf: { cacheTtl: EDGE_CACHE_TTL_SECONDS, cacheEverything: true } });
+    resp = await fetch(rawUrl, { cf: { cacheTtl: EDGE_CACHE_TTL_SECONDS } });
   } catch (_) {
     return null;
   }
@@ -92,7 +98,11 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
 
     const url = new URL(request.url);
-    if (url.pathname !== "/walkthroughs") {
+    // Reachable two ways: bare /walkthroughs on the default *.workers.dev
+    // URL, or /walkthru/walkthroughs via the api.xiaopingfeng.com/walkthru/*
+    // route — same Worker, same handler either way.
+    const pathname = url.pathname.startsWith("/walkthru/") ? url.pathname.slice("/walkthru".length) : url.pathname;
+    if (pathname !== "/walkthroughs") {
       return json({ error: "not_found" }, 404);
     }
     if (request.method !== "GET") {

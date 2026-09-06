@@ -40,7 +40,7 @@ const BUILDER_DIR = path.join(REPO_ROOT, "walkthru-builder");
 const WORKER_DIR = path.join(REPO_ROOT, "walkthru-worker");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const PORT = process.env.PORT ? Number(process.env.PORT) : 5391;
-const WORKER_URL = (process.env.WALKTHRU_WORKER_URL || "https://walkthru-worker.fxp007.workers.dev").replace(/\/+$/, "");
+const WORKER_URL = (process.env.WALKTHRU_WORKER_URL || "https://api.xiaopingfeng.com/walkthru").replace(/\/+$/, "");
 const GIT_REMOTE = process.env.WALKTHRU_GIT_REMOTE || "https://github.com/fxp/Hypothesisor.git";
 const GIT_CLONE_DIR = process.env.WALKTHRU_GIT_CLONE_DIR || path.join(os.homedir(), ".walkthru-worker-git");
 
