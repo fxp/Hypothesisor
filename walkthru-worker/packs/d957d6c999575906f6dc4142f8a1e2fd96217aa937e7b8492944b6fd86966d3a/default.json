@@ -1,0 +1,59 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "d957d6c999575906f6dc4142f8a1e2fd96217aa937e7b8492944b6fd86966d3a-default",
+  "variant": "default",
+  "variantLabel": "标准版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-11T02:49:51.829Z",
+  "sourceUrl": "https://www.anthropic.com/threat-intelligence-report-september-2026",
+  "sourceTitle": "Detecting and countering misuse of AI: September 2026",
+  "author": "xiaoping",
+  "intro": "Anthropic发布的2026年威胁情报报告揭示了AI系统被滥用的最新趋势。报告详细分析了多个案例，展示了AI如何被用于网络攻击、间谍活动、欺诈等恶意行为。最引人注目的是，AI正在改变网络攻击的格局——不仅降低了攻击的技术门槛，还使攻击速度和规模大幅提升。这种转变正在重新定义安全与威胁之间的平衡，同时也引发了一个关键问题：当AI能力越来越强大时，我们如何才能有效防御这些新型威胁？",
+  "essay": "Anthropic的2026年威胁情报报告揭示了AI系统被滥用的最新趋势，展示了AI如何正在从根本上改变网络攻击的格局。报告详细分析了多个案例，包括俄罗斯间谍活动、网络犯罪团伙攻击以及黑客行动主义活动，这些案例共同指向一个核心趋势：AI正在降低攻击的技术门槛，同时大幅提升攻击的速度和规模。\n\n最显著的趋势是\"AI能力扩散\"现象。过去，复杂的网络攻击需要专业技能和丰富资源，这使国家支持的行动与个人攻击者之间存在明显差距。然而，AI模型如Claude的普及正在消除这一差距。正如报告所指出的，\"网络安全技能的AI化意味着AI已经瓦解了曾经将资源充足的国家支持行动与个人操作者区分开来的劳动和工具差距\"。一个使用被盗API密钥的黑客活动人士、分散的金融动机个体和国家间谍行动者都能够维持多受害者活动，这些活动在一年前需要许多熟练操作者和专业知识。\n\nAI在网络行动中的角色也变得越来越自主。大多数报告中的操作通过直接执行或编排由AI实现。AI的使用超越了简单的问答聊天机器人，而是涉及使用多代理框架执行侦察、利用和数据泄露。人类仍然参与攻击目标选择和数据泄露审查，但AI已经能够自主完成大部分工作。例如，GTG-20006案例中的攻击者开发了AI辅助的工作流程，能够自动重建和重新部署其工具包，如果被安全产品检测到。\n\n另一个关键趋势是AI供应链成为攻击目标。恶意行为者越来越关注AI API密钥和会话令牌，因为这些不仅具有转售价值，还能让攻击者在他人费用上运行攻击工作负载，并将活动归咎于凭证的合法所有者。GTG-50020案例展示了这一趋势，攻击者通过注入恶意指令到AI供应商的自动评估沙箱中，成功获取了该沙箱持有的凭证，包括多个供应商的生产AI API密钥。\n\n报告还揭示了AI如何使\"低水平黑客行动主义者\"成为高级持续威胁。GTG-50029案例中，一名法语使用者使用Claude针对欧洲政党、媒体和智库，建立了自己的定制扫描程序，并开发了名为\"fafsearch\"的专门网络平台，用于大规模侵犯隐私。整个平台仅由一人创建，展示了AI辅助软件工程直接应用于大规模隐私攻击的能力。\n\n这些趋势共同指向一个严峻的现实：AI正在改变网络攻击的经济学。过去将资源充足行动与众不同的劳动类型——侦察、利用、工具开发和数据处理——现在都委托给AI模型，这些模型以机器速度并行运行。结果如报告所示：在两到三个小时内完成的入侵，以及单个操作者并行处理数十名受害者。这种转变正在重新定义安全与威胁之间的平衡，要求防御者必须采用新的策略来应对这一不断演变的威胁格局。",
+  "outro": "这份报告揭示了一个严峻现实：AI正在重新定义网络攻击的格局，降低攻击门槛，提高攻击速度和规模。防御者必须适应这一新现实，开发更智能的安全措施，并加强合作，才能有效应对这一不断演变的威胁。",
+  "steps": [
+    {
+      "quote": "Over the past eight months, our Threat Intelligence team identified and disrupted operations in which threat actors tried to use Claude for malicious activity. In this report, we share case studies from those operations and describe how malicious use of Claude has evolved since our previous threat reports in March, August, and November 2025.",
+      "title": "报告概述",
+      "narration": "Anthropic的威胁情报团队在过去八个月里发现并挫败了多起利用Claude进行恶意活动的行动。这份报告分享了这些案例研究，并描述了自2025年3月、8月和11月的上一份威胁报告以来，Claude的恶意使用方式如何演变。",
+      "kind": "context"
+    },
+    {
+      "quote": "In the case studies we report below, a hacktivist using stolen API keys, disparate financially motivated individuals, and a state espionage operator each sustained multi-victim campaigns that, even just a year ago, would have required many skilled operators and specialist knowledge.",
+      "title": "攻击能力扩散",
+      "narration": "报告中的案例显示，使用被盗API密钥的黑客活动人士、分散的金融动机个体和国家间谍行动者都能够维持多受害者活动，这些活动在一年前需要许多熟练操作者和专业知识，证明了AI能力正在扩散到各类攻击者手中。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Publicly available offensive agent frameworks, like PentAGI, reproduce much of the same scaffolding for anyone who downloads them. This scaffolding effectively automates each step of the cyber kill chain.",
+      "title": "自动化攻击框架",
+      "narration": "公开可用的攻击代理框架如PentAGI为任何下载它们的人提供了类似的攻击框架，有效自动化了网络杀伤链的每个步骤，使即使是技术有限的攻击者也能执行复杂的网络攻击。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "If their monitoring AI agents identified that any of their deployed malware was detected by a security product, agents would then set about the process of autonomously modifying and rebuilding the malware to evade the existing detections.",
+      "title": "自适应恶意软件",
+      "narration": "攻击者使用AI监控其恶意软件是否被安全产品检测到，一旦发现被检测，AI代理就会自主修改和重建恶意软件以逃避现有检测，使防御者难以通过静态检测来有效对抗攻击者。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "AI access should be purchased only through authorized channels. An alleged discount that requires routing traffic and credentials through an unknown intermediary introduces tremendous risk to user data and systems.",
+      "title": "AI供应链风险",
+      "narration": "AI API密钥和会话令牌已成为攻击目标，组织应只通过授权渠道购买AI访问，因为通过未知中介路由流量和凭证会为用户数据和系统带来巨大风险。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "GTG-50029 provides another example of an actor embracing the use of AI across the kill chain. The actor used AI's agentic coding skills in a framework that helped it manage sub-agents; the sub-agents were themselves responsible for pre- and post-authentication reconnaissance, code review, and vetting findings from different AI models.",
+      "title": "黑客行动主义升级",
+      "narration": "GTG-50029案例展示了黑客行动主义者如何利用AI能力升级。攻击者使用AI的代理编码技能管理子代理，这些子代理负责身份验证前后的侦察、代码审查和验证来自不同AI模型的发现，将个人行动者变成了高级持续威胁。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The diffusion of AI has leveled the playing field giving both classes of actors access to the same set of advanced capabilities. The main distinguishing feature between these classes of actors is no longer sophistication but intent.",
+      "title": "能力平等化",
+      "narration": "AI的扩散使竞技场水平化，使两类攻击者都能获得相同的高级能力。这两类攻击者之间的主要区别不再是复杂程度而是意图。国家支持的行动者曾经能够利用更多资源部署更先进的网络能力，而现在AI为非国家行为者提供了以前只有国家行为者才能获得的相同能力。",
+      "kind": "conclusion"
+    }
+  ]
+}
