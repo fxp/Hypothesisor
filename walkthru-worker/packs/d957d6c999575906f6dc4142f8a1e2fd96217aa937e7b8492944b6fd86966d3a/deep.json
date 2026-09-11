@@ -1,0 +1,533 @@
+{
+  "format": "walkthru-pack",
+  "version": 1,
+  "id": "d957d6c999575906f6dc4142f8a1e2fd96217aa937e7b8492944b6fd86966d3a-deep",
+  "variant": "deep",
+  "variantLabel": "完整版",
+  "contentVersion": 1,
+  "publishedAt": "2026-09-11T02:50:06.881Z",
+  "sourceUrl": "https://www.anthropic.com/threat-intelligence-report-september-2026",
+  "sourceTitle": "Detecting and countering misuse of AI: September 2026",
+  "author": "xiaoping",
+  "intro": "这份报告详细记录了Anthropic团队在2025年12月至2026年8月期间发现的AI滥用案例，展示了AI技术如何被用于网络间谍、金融犯罪和黑客活动等恶意目的。报告揭示了AI技术如何改变了网络攻击的格局，使攻击变得更加自动化、规模化，并降低了攻击门槛。最引人关注的是，AI技术如何帮助不同类型的攻击者（从国家支持的团体到个人黑客）获得了曾经只有资源丰富的组织才能拥有的能力。",
+  "essay": "这份报告记录了Anthropic团队在过去八个月中发现的AI滥用案例，展示了AI技术如何被用于各种恶意活动。报告详细描述了七个主要危害领域的案例：网络行动、影响行动、监视、诈骗和欺诈、生物滥用、常规武器开发和蒸馏。这些案例表明，AI技术正在改变网络攻击的格局，使攻击变得更加自动化、规模化，并降低了攻击门槛。\n\n最显著的趋势是AI技术如何缩小了攻击者之间的能力差距。报告指出，\"AI模型的安全技能意味着AI已经消除了曾经将资源充足的国家支持行动与个人操作者分开的劳动和工具差距\"。这意味着即使是个人黑客也能使用AI工具执行复杂的网络攻击，这些攻击在过去需要多个熟练操作者和专业知识。例如，GTG-50014案例中，一个使用被盗API密钥的黑客能够维持多受害者活动，这在一年前需要多个熟练操作者。\n\n另一个重要趋势是AI在网络行动中日益自主的角色。报告指出，\"AI在网络行动中的作用变得越来越自主\"。大多数报告中的行动通过直接执行或编排得到AI支持，超越了简单的问答交互，涉及使用多代理框架执行侦察、利用和数据窃取。例如，GTG-20006案例中的俄罗斯间谍行为者开发了AI辅助的工作流程，自动重建和重新部署其工具包，如果被安全产品检测到。\n\n报告还揭示了AI供应链已成为攻击目标、战利品和攻击计算资源。恶意行为者越来越寻求访问AI能力，以被盗API密钥、会话令牌和设备形式出现的AI访问已成为多个犯罪团体的唯一目标。例如，GTG-50021团体创建欺诈性AI转售商，提供廉价的Claude访问权限，实际上是秘密代理用户流量到不同的AI模型，同时窃取用户的Anthropic凭据。\n\n最后，报告强调了AI如何帮助缩小\"黑客行动主义者\"与高级持续性威胁之间的能力差距。AI能力提高了进攻网络操作员的基线，并降低了资源要求。例如，GTG-50029案例中，一名法语行为者使用Claude针对欧洲政党、媒体和智库，建立了自己的定制Rust扫描程序，扫描和验证公共容器中的暴露API密钥。\n\n总体而言，这份报告表明，AI技术的扩散已经改变了网络战场的格局，使不同类型的攻击者都能获得先进能力。主要区别不再是复杂性，而是意图。AI技术压缩了攻击者投资回报计算的成本方面，降低了每项技能的技能门槛和劳动要求，使网络攻击更加普遍和危险。",
+  "outro": "这份报告揭示了AI技术如何改变了网络攻击的格局，使攻击更加自动化、规模化，并降低了攻击门槛。从国家支持的间谍活动到个人黑客，各种类型的攻击者都能利用AI实施复杂的网络行动。AI扩散已经缩小了攻击者之间的能力差距，主要区别不再是复杂性，而是意图。",
+  "steps": [
+    {
+      "quote": "Over the past eight months, our Threat Intelligence team identified and disrupted operations in which threat actors tried to use Claude for malicious activity.",
+      "title": "威胁识别",
+      "narration": "Anthropic威胁情报团队在过去八个月里成功识别并挫败了多起利用Claude模型进行恶意活动的行动，这标志着AI安全威胁已成为现实问题，而不仅仅是理论上的担忧。",
+      "kind": "context"
+    },
+    {
+      "quote": "In this report, we share case studies from those operations and describe how malicious use of Claude has evolved since our previous threat reports in March, August, and November 2025.",
+      "title": "案例研究",
+      "narration": "报告分享了这些行动的具体案例研究，并描述了自2025年3月、8月和11月的先前威胁报告以来，Claude的恶意使用方式如何演变，这表明威胁行为者正在不断调整策略以应对安全措施。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "This report covers activity we disrupted between December 2025 and August 2026 across seven harm areas: cyber operations, influence operations, surveillance, scams and fraud, biological misuse, conventional weapons development, and distillation.",
+      "title": "七大危害领域",
+      "narration": "报告涵盖了七个危害领域的活动，从网络行动到生物滥用，范围之广令人担忧，这表明AI技术的恶意使用已经渗透到社会的多个关键领域，威胁的多样性正在增加。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Claude Haiku, Sonnet, and Opus models were used. None of the misuse cases involved the use of Claude Fable or Mythos-class models, with the exception of one illicit distillation case.",
+      "title": "模型使用情况",
+      "narration": "值得注意的是，滥用案例主要涉及Claude Haiku、Sonnet和Opus模型，而更高级的Claude Fable和Mythos-class模型几乎未被使用，这可能表明更高级的模型拥有更强的安全防护措施，但也可能只是时间问题。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The cases we share here aren't typical misuse, but rather examples of the most notable and novel threat activity we've identified to date.",
+      "title": "非常规威胁",
+      "narration": "这些分享的案例并非典型的滥用情况，而是迄今为止最显著和最新颖的威胁活动，这暗示着恶意行为者正在探索AI能力的边界，寻找传统安全措施难以检测的创新滥用方式。",
+      "kind": "claim"
+    },
+    {
+      "quote": "As models become increasingly capable, their risks will increase, unless AI developers and society's defenders act to make them safer.",
+      "title": "风险增长",
+      "narration": "随着AI模型能力的不断提升，风险也在增加，除非开发者和安全专家采取积极措施，否则这些威胁只会变得更加复杂和难以应对，这强调了持续改进安全措施的紧迫性。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "The threat actors covered in this report include suspected state-sponsored groups, financially motivated criminals, commercial spyware vendors, state propaganda institutions, and politically motivated individuals. The cases range from a network of fake dating apps designed to defraud users to surveillance systems built to identify and monitor dissidents.",
+      "title": "威胁行为者概览",
+      "narration": "这就引出了报告的第一个关键点：AI威胁的多样性。从国家支持的团体到普通罪犯，各种行为者都在利用AI技术，但他们的动机和手段截然不同，这为防御带来了巨大挑战。",
+      "kind": "context"
+    },
+    {
+      "quote": "GTG-20006: Russian espionage",
+      "title": "国家间谍活动",
+      "narration": "于是我们看到第一个具体案例：俄罗斯间谍活动。这代表了有国家支持的威胁，这类攻击通常资源充足、目标明确，且具有长期持续性，对国家安全构成直接威胁。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "GTG-50014: ShinyHunters smash-and-grab opportunists",
+      "title": "机会主义攻击",
+      "narration": "但作者马上话锋一转，转向了完全不同的威胁模式：ShinyHunters这样的机会主义者。这解释了为什么防御如此困难——除了有组织的国家行为者，还有大量无固定目标、快速行动的犯罪团伙。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "GTG-10007: Exploit foundries and autonomous attack frameworks",
+      "title": "自动化攻击框架",
+      "narration": "紧接着的报告揭示了更令人担忧的趋势：利用链攻击框架的出现。这标志着攻击正从手动操作向自动化、自主化转变，AI已成为攻击的核心组成部分，而不仅仅是工具。",
+      "kind": "insight"
+    },
+    {
+      "quote": "AI supply chain as target, loot, and attack compute",
+      "title": "三重威胁模式",
+      "narration": "这句话点出了AI威胁的一个关键转变：AI供应链同时成为攻击目标、战利品和计算资源。这种三重威胁模式意味着防御者需要在多个层面同时应对，大大增加了防御复杂性。",
+      "kind": "insight"
+    },
+    {
+      "quote": "GTG-50020: From hotel bookings to the AI supply chain",
+      "title": "传统犯罪与新技术的融合",
+      "narration": "于是我们看到一个具体案例展示了传统犯罪手法如何与新兴AI技术融合。这表明攻击者正在将已验证的犯罪模式与AI能力结合，创造出更有效的攻击手段。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "GTG-50029: Hacktivists targeted European political and affiliated entities",
+      "title": "政治动机攻击",
+      "narration": "但作者进一步指出，政治动机的攻击也在演变。黑客行动主义者正利用AI技术针对政治实体，这表明AI威胁已不仅限于经济或国家安全领域，正扩展到政治影响层面。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Over the past six months, our Threat Intelligence team identified and disrupted a series of cyber operations in which threat actors used Claude. The actors included suspected state-sponsored groups, financially motivated criminals, and politically motivated individuals.",
+      "title": "威胁行为者类型",
+      "narration": "这就引出了报告的第一个关键点：在过去六个月中，Anthropic团队发现并挫败了一系列使用Claude的网络行动，而这些行动者涵盖了从国家支持团体到经济犯罪分子再到政治动机个人的广泛群体。",
+      "kind": "context"
+    },
+    {
+      "quote": "Throughout these case studies, the report will reference Generative Threat Groups (GTGs). These are Anthropic's internal designators for actors observed to be abusing AI. The report also attempts to measure uplift, a term we use to describe the AI capability boost, or how much more harm was caused with AI versus without AI.",
+      "title": "GTGs与提升概念",
+      "narration": "于是，报告引入了两个核心概念：'生成威胁团体'(GTGs)作为内部标识符，用于描述被观察到滥用AI的行为者；以及'提升'概念，用来衡量AI带来的能力增强，即AI相比无AI情况下造成的额外伤害程度。",
+      "kind": "claim"
+    },
+    {
+      "quote": "We view uplift through the lens of speed, scale, and depth, and attempt to determine how an actor's adoption of AI meaningfully impacts each of these traits.",
+      "title": "提升的三个维度",
+      "narration": "这就解释了'提升'的具体测量维度：速度、规模和深度。报告试图确定AI的采用如何实质性地影响这些特性，为理解AI如何增强攻击能力提供了具体框架。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Many commentators focus on the risk of AI developing exploits at scale. While this is a danger, the risk from AI adoption is more pronounced across the cyber kill chain, where adversaries can operate faster, across a broader and deeper surface area, with fewer resources.",
+      "title": "风险重新定位",
+      "narration": "但作者马上话锋一转：虽然许多人关注大规模漏洞开发的风险，但AI采用带来的真正危险更体现在整个网络攻击链中，使对手能够以更少资源更快、更广泛、更深入地行动。",
+      "kind": "insight"
+    },
+    {
+      "quote": "In all cases, Claude Haiku, Sonnet, and Opus models were used; no malicious activity was found on Claude Fable or Mythos (which has a series of safeguards in place that greatly reduce its ability to perform harmful cyber tasks).",
+      "title": "模型使用差异",
+      "narration": "紧接着的证据显示，所有案例中使用的都是Claude Haiku、Sonnet和Opus模型，而Claude Fable和Mythos因内置的安全保护措施被发现没有恶意活动，这突显了不同模型设计对安全性的影响。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "In each case we disrupted the activity involved, strengthened our AI safeguards based on what we learned, and shared intelligence with authorities and industry partners where appropriate.",
+      "title": "应对措施",
+      "narration": "这解释了Anthropic的应对策略：在每起案例中都成功挫败了相关活动，并根据学到的经验加强了AI安全保护，同时与当局和行业伙伴共享了情报信息，形成了一种主动防御的循环。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "Sophisticated attacks no longer require sophisticated attackers",
+      "title": "技能鸿沟消失",
+      "narration": "这就带来一个问题——AI如何改变了攻击门槛？作者指出，AI模型的能力已经填平了资源丰富、国家支持型操作与个人操作者之间的劳动和工具差距，使得复杂攻击不再需要复杂的攻击者。",
+      "kind": "claim"
+    },
+    {
+      "quote": "In the case studies we report below, a hacktivist using stolen API keys, disparate financially motivated individuals, and a state espionage operator each sustained multi-victim campaigns that, even just a year ago, would have required many skilled operators and specialist knowledge.",
+      "title": "案例证明",
+      "narration": "于是，作者用具体案例支撑这一观点：从使用被盗API键的黑客活动分子，到分散的金融犯罪分子，再到国家间谍操作者，他们都能维持多受害者活动，而这些活动在一年前需要许多熟练操作者和专业知识。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Every layer of offensive operations has been uplifted by AI, from reconnaissance and tool development to data processing and exploitation. An example of this uplift in capabilities is documented in case study GTG-50014",
+      "title": "全方位提升",
+      "narration": "这解释了为什么这种变化如此彻底——AI提升了攻击的每个层面，从侦察、工具开发到数据处理和利用。能力提升的净效应是获得更广泛和深入的知识，从而推动能力开发和实施的加速。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "In November 2025, we documented an operating model used by a suspected state-sponsored campaign to carry out autonomous attacks. That operating model has now proliferated across every class of actors we investigated.",
+      "title": "模式扩散",
+      "narration": "但作者马上话锋一转：更令人担忧的是，原本只有国家支持型活动使用的自主攻击模式现已扩散到所有调查的行为者类别中，这意味着攻击自主性的革命已从精英组织蔓延到各类行为者。",
+      "kind": "insight"
+    },
+    {
+      "quote": "As models continue to evolve and improve, we assess that more actors, from lone wolves to organized entities, will continue to adopt AI frameworks to enable more sophisticated cyber attacks at greater speed and scale.",
+      "title": "未来趋势",
+      "narration": "于是，作者提出了一个令人不安的预测：随着模型不断演进和改进，从孤狼到有组织的实体，更多行为者将继续采用AI框架，以更大的速度和规模实施更复杂的网络攻击。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "A majority of the operations described in this report were enabled by AI via direct execution or orchestration. The use of AI went beyond simple questions and responses from a chatbot but rather involved the use of multi-agent frameworks executing reconnaissance, exploitation, and data exfiltration.",
+      "title": "自主执行",
+      "narration": "这就引出了文章的第二个核心观点：AI在网络行动中的角色已变得越来越自主。大多数报告中的活动通过直接执行或编排由AI启用，超越了简单的聊天机器人问答，而是涉及执行侦察、利用和数据外泄的多代理框架。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Humans remained in the loop by setting the targets of attacks and reviewing exfiltration. An example of this trend is GTG-20006.",
+      "title": "角色转变",
+      "narration": "注意这里——人类在网络攻击中的角色正在发生根本性转变。虽然人类仍设定攻击目标并审查数据外泄，但已从执行者转变为监督者，这标志着AI自主性的显著提升。",
+      "kind": "insight"
+    },
+    {
+      "quote": "This actor developed an AI-assisted workflow that automatically rebuilt and re-deployed their toolkit if it was detected by security products.",
+      "title": "自适应能力",
+      "narration": "这解释了为什么AI驱动的攻击如此难以防御——GTG-20006开发的AI辅助工作流能自动重建和重新部署其工具包，即使被安全产品检测到也能继续运作，展示了AI的适应性和持久能力。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Historically, cyber espionage actors have followed a pattern of developing and deploying custom toolkits designed to evade detections. Actors would use these tools until defenders identified and built signatures to detect and block them, and there would then begin a new cycle of evasion and detection. Robust defenses and detections therefore created increased costs for adversaries. Now, however, the adoption of AI threatens to quickly and easily subvert defenders' ability to impose costs on adversaries via static detections alone.",
+      "title": "攻防循环变革",
+      "narration": "这里揭示了网络安全领域的传统攻防模式：攻击者开发工具，防御者检测并建立防御机制，然后攻击者再开发新工具绕过防御。但现在AI的引入正在颠覆这一模式，使静态防御几乎失效。",
+      "kind": "context"
+    },
+    {
+      "quote": "GTG-20006 is an actor who has increased their speed by automating their operations using AI. Our attribution is consistent with public reporting linking the actor to Midnight Blizzard. One of the operators is a Russian speaker using the handle \"JackPoterz\" whose tradecraft and targeting are consistent with Russian state-nexus espionage.",
+      "title": "这就引出了文章的主角GTG-",
+      "narration": "这就引出了文章的主角GTG-20006，一个通过AI自动化操作大幅提高速度的攻击组织。他们与俄罗斯国家间谍活动有关，这解释了为什么他们的目标主要集中在乌克兰和欧洲的政府及军事机构。",
+      "kind": "claim"
+    },
+    {
+      "quote": "They ran operations attacking military intelligence targets in Ukrainian and European governments, as well as diplomatic and defense organizations and individuals connected to US foreign policy. We observed GTG-20006 operate through customized AI-driven workflows that automated much of their operations from development, infrastructure acquisition, phishing, persistence through command and control, to data exfiltration.",
+      "title": "这个组织的攻击范围非常广泛，",
+      "narration": "这个组织的攻击范围非常广泛，从乌克兰和欧洲政府的军事情报目标，到外交和防御组织，与美国外交政策相关的个人。他们使用AI驱动的工作流程自动化了从开发到数据提取的整个攻击过程，这解释了为什么他们的攻击速度和效率如此之高。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The actor also used AI to monitor how well their tools evaded detections from known security defenses. If their monitoring AI agents identified that any of their deployed malware was detected by a security product, agents would then set about the process of autonomously modifying and rebuilding the malware to evade the existing detections. The agents were designed to continue iterating on GTG-20006's toolkit until it was undetected.",
+      "title": "但这里出现了一个关键转折：这",
+      "narration": "但这里出现了一个关键转折：这个组织不仅使用AI进行攻击，还用AI来监控其工具的检测情况。一旦发现恶意软件被检测到，AI代理就会自主修改和重建恶意软件，直到完全绕过安全检测。这种\"闭环\"攻击模式是传统防御从未应对过的挑战。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The actor also used AI to drive their phishing operations. They developed AI-driven workflows to research then register domains and then configure the hosting infrastructure used to send phishing emails. Additional workflows were developed to send the emails and monitor the C2 channels for successful compromises.",
+      "title": "于是，这种AI驱动的自动化不",
+      "narration": "于是，这种AI驱动的自动化不仅限于恶意软件修改，还扩展到了钓鱼攻击的整个流程。从研究注册域名，配置托管基础设施，发送钓鱼邮件，到监控C2通道获取成功入侵信息，整个过程都由AI工作流完成，大大提高了攻击效率。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Our investigation identified more than 20 distinct organizations targeted in the actor's operational planning, reconnaissance, and live operations. They included government ministries, defense and intelligence bodies, embassies and diplomatic missions, think tanks, and defense-industrial companies, concentrated in Ukraine and Europe but extending to the Middle East and maritime related government agencies in Asia.",
+      "title": "这就解释了为什么这个组织的攻",
+      "narration": "这就解释了为什么这个组织的攻击范围如此广泛。他们针对超过20个不同组织，包括政府部、国防和情报机构、大使馆、外交使团、智库和国防工业公司，主要集中在乌克兰和欧洲，但扩展到中东和亚洲海事相关政府机构。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "A common theme of the targeting was Ukraine and military drone technology providers and supply chains. Exceptions included a Southeast Asian government entity relating to maritime shipping and tracking, and a North African government technology authority.",
+      "title": "值得注意的是，这些攻击有一个",
+      "narration": "值得注意的是，这些攻击有一个共同主题：乌克兰和军事无人机技术供应商及供应链。这表明该组织有明确的战略目标，而不仅仅是随机攻击。这种有针对性的攻击策略使他们能够获取最有价值的信息。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Not all targets were direct: to reach their targets indirectly, the actor compromised at least three hospitality vendors that operate hotel guest WiFi. They used compromised admin credentials to modify DNS records so that they pointed to services owned by the actor (a technique known as DNS hijacking).",
+      "title": "但这里有一个重要的战术转变：",
+      "narration": "但这里有一个重要的战术转变：并非所有目标都是直接攻击的。为了间接接触目标，该组织入侵了至少三家经营酒店客人WiFi的酒店供应商。他们使用被入侵的管理员凭据修改DNS记录，将其指向攻击者拥有的服务，这是一种被称为DNS劫持的技术。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "The actor also took over victims' WhatsApp accounts, using a platform of headless browsers to link victim accounts as companion devices. In part by using the WPPConnect open-source WhatsApp automation library, the actor's configuration suppressed read receipts so victims would not notice while it bulk-exported Russian and Ukrainian language conversations.",
+      "title": "此外，该组织还接管了受害者的",
+      "narration": "此外，该组织还接管了受害者的WhatsApp账户，使用无头浏览器平台将受害者账户链接为配套设备。通过使用WPPConnect开源WhatsApp自动化库，他们配置了抑制已读回执的功能，使受害者不会注意到他们的俄语和乌克兰语对话被批量导出。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The result of the above is that AI has inverted the cost back onto defenders. Previously, defenders might have been able to slow an attacker's operational tempo via the deployment of a new detection. Now, at least in theory, capable adversaries can \"close the loop,\" bypassing traditional security detections faster than defenders can develop and deploy them.",
+      "title": "这就回到了文章的核心观点：A",
+      "narration": "这就回到了文章的核心观点：AI已经将成本重新转嫁给防御者。以前，防御者可以通过部署新的检测来减缓攻击者的行动节奏。但现在，理论上，有能力的攻击者能够\"闭环\"操作，比防御者开发和部署传统安全检测更快地绕过它们。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "The actor's malware included the following:Windows malware: PowerChrome, WUEngine, Shadow C2, MiniPlasma, CloudSyncSvc;Android malware: GiftDrop, a rebranded GiftsExpress Android surveillance RAT;iOS malware: DarkSword, an iOS exploit chain.",
+      "title": "最后，我们来看看这个组织使用",
+      "narration": "最后，我们来看看这个组织使用的具体恶意软件组合，包括Windows、Android和iOS平台的多款恶意程序。这种多平台攻击能力使他们能够针对不同设备和操作系统进行攻击，进一步提高了他们的攻击范围和成功率。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "While some cyber threat actors may conduct targeted intrusions, seeking specific information for espionage or other purposes, others are less focused and deliberate in their operations. These opportunistic hackers have historically used broad-based scanning techniques to identify and probe unpatched internet-facing systems, before exploiting these vulnerabilities to compromise or take over the target systems.",
+      "title": "机会主义黑客",
+      "narration": "这就引出了文章的核心主题——机会主义黑客与传统定向入侵者的区别。这些黑客不像传统间谍那样有明确目标，而是采用大规模扫描技术，专门寻找未修补的互联网系统进行攻击，为后续讨论AI如何改变这种攻击模式奠定基础。",
+      "kind": "context"
+    },
+    {
+      "quote": "We've identified several advanced threat actors who used AI to uplift their opportunistic criminal activity, using Claude's capabilities to accelerate their ability to rapidly scan, exploit, and take over target systems.",
+      "title": "AI加速攻击",
+      "narration": "作者在这里抛出了一个关键转折——AI技术如何被用于提升犯罪活动。这些高级威胁行为者利用Claude的能力，加速了扫描、利用和接管目标系统的过程，这是AI赋能网络犯罪的具体体现。",
+      "kind": "claim"
+    },
+    {
+      "quote": "Opportunistic attacks come in many forms: racing N-day patches for mass exploitation; rummaging through public container stores, code repos, mobile applications, websites and more looking for credentials, tokens, and API keys; mass scan and exploitation of vulnerable internet facing devices; the creation of service accounts on novice service providers with poor security to escape their containers; prompt injection of LiteLLM or OpenClaw deployments; and more.",
+      "title": "多样化攻击形式",
+      "narration": "接着，作者列举了机会主义攻击的多种形式，包括利用N日漏洞、扫描公共存储库寻找凭证、大规模利用漏洞设备等。这些例子展示了攻击者如何利用各种技术手段寻找入口点，为理解AI如何融入这些攻击提供背景。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "With AI, however, the pre-existing ecosystem of criminal cyber conduct has increased in scale and severity. With AI, diverse target environments are made trivial to understand and adjust to; unique and obscure configurations are made clear and exploitable. The old adage of \"security through obscurity\" is no longer viable in this new AI-assisted world: everything connected to the internet is a potential target for exploitation.",
+      "title": "AI改变游戏规则",
+      "narration": "作者在这里提出了一个深刻的洞见——AI不仅加速了现有攻击，还从根本上改变了网络犯罪的生态系统。AI使复杂环境变得易于理解，模糊配置变得清晰可利用，彻底颠覆了\"安全通过模糊性\"的传统理念，使所有联网设备都成为潜在目标。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Once actors gain access, they typically move straight to databases and look for customer data. If the target is a software-as-a-service (SaaS) provider, they often use the stolen data to access the end customers, and make extortion demands, telling the provider that all of their data and their customers' data will be leaked or sold online if they do not pay.",
+      "title": "数据窃取与勒索",
+      "narration": "这揭示了攻击者的典型后续行动——一旦获得访问权限，他们直奔数据库寻找客户数据，特别是针对SaaS提供商时，会利用窃取的数据访问终端客户并进行勒索。这种模式展示了攻击者的主要动机和变现方式。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "One French-speaking operator going by the aliases of (MeowSHA | frkoo | blazespider) ran a distributed credential-harvesting pipeline across a fleet of 10 AWS EC2 workers. This pipeline mass-downloaded 1.8 million distinct Android APKs from multiple app-store sources, decompiled them, and scanned for hardcoded secrets with TruffleHog. Verified findings were routed in real time to a Telegram group organized into over 100 source types.",
+      "title": "大规模凭证收集",
+      "narration": "作者通过frkoo这个具体案例展示了攻击者如何大规模收集凭证。这个操作员使用10个AWS EC2工作节点运行分布式凭证收集管道，下载了180万个Android APK文件，使用TruffleHog扫描硬编码秘密，并将结果实时路由到按100多种源类型组织的Telegram群组中。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "They also registered a domain name impersonating the French national police, policenationale[.]cc (though we believe this served as branding for the criminal storefront rather than as a phishing lure). The subdomain autoshop.policenationale[.]cc served as the web frontend for the actor's carding autoshop: a storefront selling stolen payment-card records (\"fiches\") enriched with BIN lookups, full cardholder PII, and an interactive geolocation map of victim addresses.",
+      "title": "冒充警察的网店",
+      "narration": "这个例子展示了攻击者的创新和胆大妄为——他们注册了一个冒充法国国家警察的域名，建立了一个销售被盗支付卡记录的网店，包括完整的持卡人个人信息和受害者地址的交互式地理定位地图。这种操作表明攻击者不仅技术娴熟，还懂得社会工程学。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "One of the more serious compromises was of a technology provider. The operators exfiltrated more than a terabyte of data, including hundreds of thousands of national identifiers and millions of payment card records, then staged the stolen material on a public website to pressure the victim into paying a ransom.",
+      "title": "严重数据泄露",
+      "narration": "作者通过一个技术提供商被入侵的案例展示了攻击的严重性。攻击者窃取了超过一兆字节的数据，包括数十万份国家身份证和数百万支付卡记录，然后将这些材料发布在公共网站上施压受害者支付赎金。这显示了攻击的规模和影响。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "In a different compromise, the actor leveraged Claude in a supply chain compromise of a software-as-a-service (SaaS) vendor to accelerate reconnaissance and to enable data exfiltration. The actor exploited a cross-site scripting vulnerability to gain access, escalated privileges, and ultimately exfiltrated data from thousands of downstream customer organizations.",
+      "title": "AI赋能供应链攻击",
+      "narration": "这里揭示了AI在供应链攻击中的关键作用。攻击者利用Claude加速对SaaS供应商的侦察和数据提取，利用跨站脚本漏洞获得访问权限，提升特权，最终从数千个下游客户组织提取数据。这展示了AI如何使复杂攻击变得高效。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Against a different target, the same attacker also claimed to have collected legitimate HackerOne bug-bounty payouts of $2,000 and $5,000 from two of the companies they infiltrated and extorted, treating BugBounty disclosure programs and intrusion as additional revenue streams against the same targets they were compromising.",
+      "title": "双重收入模式",
+      "narration": "这个例子展示了攻击者的创新商业模式——他们不仅进行勒索，还从入侵的公司获取合法的漏洞赏金，将漏洞披露程序和入侵视为针对同一目标的额外收入来源。这种双重策略显示了攻击者的商业头脑和适应能力。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "We detected and banned accounts associated with the ShinyHunters associates, implemented measures to detect and disrupt future misuse from the actors, and engaged government authorities, industry partners, and victims to remediate threats posed by the actors.",
+      "title": "防御措施",
+      "narration": "作者在这里转向防御视角，说明他们已经检测并封禁了与ShinyHunters关联的账户，实施了检测和破坏未来滥用的措施，并与政府当局、行业合作伙伴和受害者合作以减轻威胁。这表明尽管攻击很强大，但防御措施也在不断演进。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "The use of AI during intrusions and data theft operations often resembles \"vibe hacking,\" wherein operators direct AI to achieve general goals like using a credential for an entity or retrieving data from a broad set of targets, then allow the AI to evaluate the environment, author and execute scripts, provide summaries, and repeatedly execute until the task is complete.",
+      "title": "氛围黑客模式",
+      "narration": "作者提出了一个关键概念——\"氛围黑客\"，描述了攻击者如何使用AI。操作员设定一般目标（如使用实体凭证或从广泛目标中检索数据），然后让AI自主评估环境、编写和执行脚本、提供总结，直到任务完成。这种模式使攻击者不必深入了解每个目标环境的具体细节。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Security practitioners use the phrase \"living off the land\" to describe attacks that use tools that are already present in the victim's environment. The opportunistic hackers described in this section have applied the same principles to AI. The operators treated the AI supply chain itself as both a target and a resource.",
+      "title": "AI即资源",
+      "narration": "作者将攻击者对AI的使用比作\"利用现有资源\"的攻击策略。这些黑客将AI供应链本身视为目标资源，从多个目标环境中窃取AI API密钥，提供额外的AI计算能力。这种策略使他们能够利用受害者环境中已有的AI工具，而不必部署自己的基础设施。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Attack lifecycle and AI integration",
+      "title": "攻击生命周期",
+      "narration": "作者接下来将详细介绍攻击生命周期和AI的集成方式，这为理解攻击的完整流程提供了框架。从侦察和凭证收集到数据提取和变现，每个阶段都融入了AI技术，使攻击更加高效和自动化。",
+      "kind": "context"
+    },
+    {
+      "quote": "The actor also engaged in extensive scanning, vishing, phishing and domain spoofing operations to trick employees into giving access to systems.",
+      "title": "社会工程学攻击",
+      "narration": "这揭示了攻击者如何结合技术手段和社会工程学。除了大规模扫描外，他们还进行语音钓鱼、网络钓鱼和域名欺骗，诱骗员工提供系统访问权限。这种组合攻击展示了攻击者的全面性和创新性。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Historically, cyber operations have been limited in their scale and impact by two key constraints: the supply of working offensive exploits, and the supply of skilled operators capable of deploying those exploits.",
+      "title": "历史限制",
+      "narration": "这就引出了文章的核心问题：网络攻击历史上一直受到两个关键限制——可用攻击漏洞的供应和能部署这些漏洞的熟练操作员的供应。这为后面AI如何打破这些限制做了铺垫。",
+      "kind": "context"
+    },
+    {
+      "quote": "We have identified multiple threat actors who have effectively established automated exploit foundries with AI. In doing so, they have designed and implemented autonomous workflows by which they can direct Claude to conduct vulnerability and exploit research agentically around the clock.",
+      "title": "AI漏洞工厂",
+      "narration": "于是，作者话锋一转，指出多个威胁行为者已经有效地建立了AI驱动的自动化漏洞利用工厂，他们设计了自主工作流程，可以指导Claude全天候进行漏洞和攻击研究。这标志着网络攻击进入了一个新时代。",
+      "kind": "claim"
+    },
+    {
+      "quote": "We identified and investigated a sustained espionage operation, tracked as GTG-10007, conducted by Chinese-speaking operators likely residing in Changsha in China's Hunan province. Two of the operators were identified as undergraduate students at a Chinese university in Hunan studying curriculum in a School of Computer & Communication Engineering.",
+      "title": "GTG-10007间谍行动",
+      "narration": "这就引出了一个具体案例：GTG-10007持续性间谍行动，由湖南长沙的中文操作员执行。其中两名操作员是湖南某大学的计算机与通信工程专业本科生，这表明即使是学生也能利用AI进行复杂的网络攻击。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Notably, a team ran parallel workstreams that had shared tooling and infrastructure bases and persistent campaign records that maintained context between working sessions; it also had collection and vulnerability research capabilities that kept operating while its owners were away.",
+      "title": "并行工作流",
+      "narration": "但作者马上指出一个关键特点：该团队运行并行工作流，具有共享工具和基础设施基础，以及持久性战役记录，能在工作会话之间保持上下文。这意味着攻击可以24/7不间断进行，即使操作员不在场也能继续。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The operators routinely ran \"agent swarms,\" where a lead AI agent decomposed reconnaissance and post-exploitation work and dispatched it to many subagents running in parallel.",
+      "title": "代理群技术",
+      "narration": "于是，作者揭示了他们如何实现这种效率：通过\"代理群\"技术，主要AI代理将侦察和攻击后工作分解并分发给许多并行运行的子代理。这种分布式工作模式使他们能够同时处理多个任务，大幅提高了攻击规模。",
+      "kind": "insight"
+    },
+    {
+      "quote": "One workflow iterating continuously on network appliances yielded more than a dozen possible zero day findings in a single month.",
+      "title": "惊人发现速度",
+      "narration": "但作者立即强调了一个惊人的数据：一个针对网络设备的连续工作流程在一个月内产生了十多个可能的零日漏洞发现。这展示了AI如何将漏洞发现的速度提升到前所未有的水平，对网络安全构成了巨大威胁。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Despite targeting entities globally in AI workflows, the actor concentrated hands-on efforts exclusively on domestic China victims.",
+      "title": "攻击策略矛盾",
+      "narration": "然而，作者话锋一转，指出了一个看似矛盾的现象：尽管他们的AI工作流程针对全球实体，但他们将实际入侵工作完全集中在中国国内的受害者身上。这表明AI可以扩展攻击范围，但人类操作员可能仍然受到地理或政治限制。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "AI supply chain as target, loot, and attack compute",
+      "title": "AI供应链攻击",
+      "narration": "最后，作者以一个简洁的结论收尾：AI供应链作为目标、战利品和攻击计算资源。这总结了文章的核心观点：AI不仅改变了网络攻击的方式，本身也成为攻击的目标和工具，形成了一个复杂的攻击生态系统。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "Despite the fact that each of the case studies above shared no connection, there are two broad developments that are relevant to each of them.AI tradecraft is proliferating: Diffusion of AI-enabled cyber operations",
+      "title": "AI技术扩散",
+      "narration": "这提出了一个关键背景：尽管各个案例研究之间没有直接联系，但两个广泛的趋势与每个案例都相关。AI技术正在迅速扩散到网络战场，各种行为者都在开发和使用自己的自主攻击框架。",
+      "kind": "context"
+    },
+    {
+      "quote": "A marketplace supporting the battlefield has formed as well. We discovered GTG-50021 creating fraudulent resellers offering discounted Claude access, while silently proxying user traffic to a different model, and harvesting the Anthropic credentials of anyone who signed up.",
+      "title": "战场市场形成",
+      "narration": "这就带来一个问题：随着AI技术的扩散，一个支持战场的市场已经形成。例如，我们发现GTG-50021创建了欺诈性的转售商，提供折扣的Claude访问权限，同时悄悄地将用户流量重定向到不同的模型，并收集任何注册者的Anthropic凭据。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Diffusion is occurring across different classes of threat actors, different regions, and different types of mission. The capabilities described in this report should be assumed to be available to any actors who are motivated to use them.",
+      "title": "能力普及化",
+      "narration": "这里有一个重要洞见：AI技术的扩散跨越了不同类型的威胁行为者、不同地区和不同类型的任务。报告中描述的能力应该被假定对任何有动机使用它们的行为者都可用。这意味着先进网络能力的门槛正在显著降低。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The main distinguishing feature between these classes of actors is no longer sophistication but intent. Previously, state-sponsored actors were able to leverage access to greater resources to deploy more advanced cyber capabilities.",
+      "title": "能力趋同",
+      "narration": "这就解释了一个重要转变：这些行为者之间的主要区别不再是复杂性而是意图。以前，国家支持的行为者能够利用更多资源部署更先进的网络能力。现在，AI的进步使非国家行为者能够获得原本只有国家行为者才能访问的相同能力。",
+      "kind": "insight"
+    },
+    {
+      "quote": "A hacktivist using stolen API keys (GTG-50029), a financially motivated crew harvesting credentials from mobile applications (GTG-50014), and a state-nexus espionage operator (GTG-20006) all showed similar methodology: they ran multi-victim campaigns using agentic AI that would previously have required teams of operators.",
+      "title": "方法趋同",
+      "narration": "这提供了具体证据：使用被盗API密钥的黑客活动家(GTG-50029)、从移动应用程序收集凭据的财务动机团队(GTG-50014)和国家背景的间谍行动者(GTG-20006)都展示了相似的方法：他们使用代理AI运行多受害者活动，这以前需要团队操作员。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "The attacks themselves are familiar, involving stolen credentials, unpatched edge devices, exposed services, SQL injection, and phishing. None of the operations in this report depended on some entirely novel technique that defenders have never seen.",
+      "title": "攻击技术熟悉",
+      "narration": "但有一个重要局限需要指出：攻击本身是熟悉的，涉及被盗凭据、未修补的边缘设备、暴露的服务、SQL注入和网络钓鱼。本报告中的任何操作都不依赖于防御者从未见过的全新技术。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "Instead, the economics of the attacks have changed. The kind of labor that previously set the well-resourced operations apart from everyone else—reconnaissance, exploitation, tool development, and data processing—are all now delegated to AI models, which run in harnesses at machine speed and in parallel.",
+      "title": "攻击经济学改变",
+      "narration": "这就带来关键洞见：攻击的经济学已经改变。以前将资源充足的行动者与其他人区分开来的劳动类型——侦察、利用、工具开发和数据处理——现在都委托给AI模型，这些模型以机器速度并行运行。",
+      "kind": "insight"
+    },
+    {
+      "quote": "The results are visible in the numbers reported above: breaches completed in two to three hours, and dozens of victims handled in parallel by individual operators.",
+      "title": "攻击速度提升",
+      "narration": "这解释了为什么报告中的数字如此惊人：漏洞可以在两到三个小时内完成，单个操作者可以并行处理数十个受害者。这种规模和速度的飞跃是AI技术带来的直接结果。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "AI's increasingly autonomous role in cyber operationsThe AI use in the cases in this report spans a wide range of levels of autonomy. At one end, actors used Claude conversationally: it acted as an engineering assistant in the creation of malware, phishing kits, and surveillance tooling.",
+      "title": "AI自主程度",
+      "narration": "接下来，我们来看AI在网络行动中日益自主的角色。本报告案例中的AI使用范围很广，从简单的对话式使用到完全自主的操作。在低端，行为者使用Claude进行对话式交互，充当创建恶意软件、网络钓鱼工具和监视工具的工程助手。",
+      "kind": "context"
+    },
+    {
+      "quote": "At the far end, operations ran autonomously, with minimal human input or supervision: these included multi-agent frameworks conducting reconnaissance, exploitation, and theft against multiple victims, in parallel, for hours or days at a time (GTG-50014, GTG-50020, GTG-50029).",
+      "title": "完全自主操作",
+      "narration": "在另一端，操作完全自主运行，几乎没有人类输入或监督：包括多代理框架并行对多个受害者进行侦察、利用和盗窃，持续数小时或数天(GTG-50014, GTG-50020, GTG-50029)。这代表了AI自主性的最高级别。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "It's important to bear in mind two caveats. First, humans have retained the decisions that matter most to them: for example, they're still heavily involved in target selection, monetization of findings, and review of results.",
+      "title": "人类保留关键决策",
+      "narration": "但这里有一个重要局限需要考虑：人类仍然保留了最重要的决策。例如，他们仍然深度参与目标选择、发现结果的变现和结果审查。AI自动化了执行过程，但战略决策仍然掌握在人类手中。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "Second, autonomy and harm are separate axes: Autonomy multiplies the scale and speed of an operation, and reduces operating costs and complexity, but severity is still determined by a multitude of factors.",
+      "title": "自主性与伤害分离",
+      "narration": "这就带来一个关键洞见：自主性和伤害是两个独立的维度。自主性增加了操作的规模和速度，降低了操作成本和复杂性，但严重性仍然由多种因素决定。最严重的妥协往往来自人类指导每一步的行动，而非完全自主的AI系统。",
+      "kind": "insight"
+    },
+    {
+      "quote": "In economic terms, AI autonomy compresses the cost side of attacker ROI calculations, lowering the skill threshold and labor required per campaign, while leaving potential payoffs largely unchanged.",
+      "title": "攻击经济转变",
+      "narration": "从经济角度看，AI自主性压缩了攻击者投资回报计算中的成本部分，降低了每场活动所需的技能门槛和劳动力，同时潜在回报基本保持不变。这种单位经济的有利转变使原本边缘的目标变得可行。",
+      "kind": "insight"
+    },
+    {
+      "quote": "This favorable shift in unit economics makes previously marginal targets viable and encourages higher-volume, lower-touch operations.",
+      "title": "操作模式转变",
+      "narration": "这就解释了为什么我们看到操作模式的转变：这种单位经济的有利转变使以前边缘的目标变得可行，并鼓励更高容量、更低接触的操作。攻击者现在可以同时针对更多目标，而每个目标的互动更少。",
+      "kind": "conclusion"
+    },
+    {
+      "quote": "Influence operations are neither new nor unique to the internet. An established community of journalists, researchers, and government agencies has studied these tactics, exposed them, and built the frameworks we use to understand them.",
+      "title": "信息操纵背景",
+      "narration": "现在我们转向信息操纵领域。信息操纵既不新鲜也不局限于互联网。记者、研究人员和政府机构组成的成熟社区已经研究了这些战术，揭露了它们，并构建了我们用来理解它们的框架。",
+      "kind": "context"
+    },
+    {
+      "quote": "However, while a social media site usually sees an operation once its content is already circulating, we may see it on Claude while the operation is still being built. Actors use AI to plan their campaign, choose their targets, and write the material.",
+      "title": "AI改变侦查时机",
+      "narration": "这里有一个关键洞见：然而，虽然社交媒体平台通常在内容已经传播时才看到操作，我们可能在操作仍在构建时就在Claude上看到它。行为者使用AI来计划他们的活动、选择目标和撰写材料。",
+      "kind": "insight"
+    },
+    {
+      "quote": "Those types of tasks produce signals that our systems are trained to detect, which often lets us disrupt an operation before it gets off the ground.",
+      "title": "早期干预可能",
+      "narration": "这就解释了为什么我们能够提前干预：这些类型的任务产生我们的系统经过训练可以检测的信号，这通常让我们能够在行动启动之前破坏它。这是AI在信息操纵领域的一个独特优势。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Influence sold as a service. As we noted in our previous report, commercial actors hired by entities (political, government, et cetera) produce content for whoever wishes to pay.",
+      "title": "商业影响力服务",
+      "narration": "这提供了具体证据：影响力作为服务出售。正如我们在之前的报告中指出的，由政治、政府等实体雇佣的商业行为者为任何愿意付费的人制作内容。这为影响力操作提供了 plausible deniability，并将这种能力放在无法或不想自行构建它的行为者的范围内。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "AI as a newsdesk. In several cases, Claude was slotted into a human-edited pipeline that was already up and running, playing the role of a sub-editor or content creator.",
+      "title": "AI作为新闻编辑室",
+      "narration": "这展示了AI的另一种用法：在几个案例中，Claude被插入到已经运行的人类编辑流程中，扮演副编辑或内容创作者的角色。这使低资源行动者能够运行超出他们个人能力范围的影响力操作。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "AI helped to build the apparatus as well as the content. Actors had the model produce doctrine manuals, opposition dossiers, ministerial portfolios, persona systems, target databases, employment contracts encoding editorial loyalty, and scoring rubrics that were used to rank staff who were part of the operation.",
+      "title": "AI构建完整系统",
+      "narration": "这展示了AI的更广泛用途：AI不仅帮助创建内容，还帮助构建整个运作体系。行为者让模型产生教义手册、对手档案、部长档案、人物系统、目标数据库、编码编辑忠诚度的雇佣合同和用于排名参与员工的评分标准。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Complex tool use. We found influence operations that were built to persist and easily scale over time. Markdown files containing doctrine were reused almost verbatim across hundreds of sessions.",
+      "title": "复杂工具使用",
+      "narration": "这提供了具体证据：我们发现的信息操纵操作旨在持久并轻松扩展。包含教义的Markdown文件在数百个会话中被几乎一字不差地重用。这表明操作已经变得高度系统化和可扩展。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Laundering of attribution, sourcing, and certainty. Actors used Claude to engineer content so that state or commissioned narratives appeared to come from independent voices.",
+      "title": "归因清洗",
+      "narration": "这展示了AI如何被用于欺骗：行为者使用Claude来设计内容，使国家或委托的叙事看起来来自独立声音。他们提示Claude故意去除重新发布材料的国家归因，通过一系列渠道传递主张，使它们看起来像是独立确认的。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Fake personas (and impersonation of real personas). Actors generated full personas by using AI-generated profile photos, invented biographies for fake reporters, and fabricated political spokespeople.",
+      "title": "虚假人物身份",
+      "narration": "这提供了具体证据：行为者使用AI生成的个人资料照片生成完整的人物身份，为虚假记者编造传记，并捏造政治发言人。我们还发现了对真实人物和真实机构（包括国家发言人和人权组织）的冒充。",
+      "kind": "evidence"
+    },
+    {
+      "quote": "Influence operations often fail to reach a genuine audience. Because we sit at the production stage of operations, upstream of platforms like social media platforms, we may detect and disrupt an operation while it is still being put together.",
+      "title": "影响有限",
+      "narration": "这里有一个重要局限需要指出：信息操纵行动常常无法触及真实受众。因为我们位于操作的生产阶段，在社交媒体平台的上游，我们可能在操作仍在构建时就检测并破坏它。大多数我们发现的内容几乎没有或没有真实的参与度。",
+      "kind": "caveat"
+    },
+    {
+      "quote": "The widest authentic reach occurred where state media outlets were the distribution mechanism (including FM radio, satellite and shortwave radio, and global television).",
+      "title": "国家媒体渠道",
+      "narration": "这解释了为什么有些行动更有效：最广泛的真实接触发生在国家媒体渠道作为分发机制的情况下（包括FM广播、卫星和短波广播以及全球电视）。这表明国家支持的行动通常能够接触到更广泛的受众。",
+      "kind": "evidence"
+    }
+  ]
+}
